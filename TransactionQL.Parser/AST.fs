@@ -11,21 +11,17 @@
         | GreaterThanOrEqualTo 
         | LessThan 
         | LessThanOrEqualTo 
-        | Substring of String 
-        | Matches of Regex
+        | Substring
+        | Matches
 
-    //type Expression =
-    //    | ExprWord of Word
-    //    | ExprNum of Number
-    //    | Expression of Expression * ArithmeticOperator * Expression
+    type Expression =
+        | ExprWord of string
+        | ExprNum of float
+        | Expression of Expression * ArithmeticOperator * Expression
 
-    //type FilterAtom =
-    //    | Regex
-    //    | String
-    //    | Number
-
-    //type Account = Account of Word list
-    ////type Transaction = Transaction of Account * Commodity * Expression
+    type Account = Account of string list
+    type Commodity = Commodity of string
+    type Transaction = Transaction of Account * Commodity * Expression
     //type Posting = Posting of Transaction list
     //type Column = Column of string
     //type Filter = Filter of Column * BooleanOperator * FilterAtom

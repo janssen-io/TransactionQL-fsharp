@@ -33,5 +33,50 @@ let ``qarithop parses`` () =
     test QLParser.qarithop "-" Subtract
     test QLParser.qarithop "*" Multiply
     test QLParser.qarithop "/" Divide
-    
+ 
+[<Fact>]
+let ``qboolop parses`` () =
+    test QLParser.qboolop "=" Equals
+    test QLParser.qboolop "/=" NotEquals
+    test QLParser.qboolop ">" GreaterThan
+    test QLParser.qboolop ">=" GreaterThanOrEqualTo
+    test QLParser.qboolop "<" LessThan
+    test QLParser.qboolop "<=" LessThanOrEqualTo
+    test QLParser.qboolop "contains" Substring
+    test QLParser.qboolop "matches" Matches
+
+[<Fact>]
+let ``Expressions!`` () =
+    test QLParser.qexpression "{total/2}" (
+        Expression (
+            ExprWord "total"
+            , Divide
+            , ExprNum 2.0
+        )
+    )
+
+[<Fact>]
+let ``Simple Expressions`` () =
+    test QLParser.qexpression "{total}" (ExprWord "total")
+    test QLParser.qexpression "{13.37}" (ExprNum 13.37)
+
+[<Fact>]
+let ``qaccount parses words separated by colons`` () =
+    test QLParser.qaccount "Expenses:Recreation:Hobby" (Account ["Expenses"; "Recreation"; "Hobby"])
+
+[<Fact>]
+let ``qcommodity parses string literals`` () =
+    test QLParser.qcommodity "\"Vanguard SP500\"" (Commodity "Vanguard SP500")
+
+[<Fact>]
+let ``qcommodity parses words`` () =
+    test QLParser.qcommodity "EUR" (Commodity "EUR")
+
+[<Fact>]
+let ``qtransaction`` () =
+    test QLParser.qtransaction "Expenses:Living:Food EUR {total-5.25}" (
+        Account ["Expenses";"Living";"Food"]
+        , Commodity "EUR"
+        , Expression (ExprWord "total", Subtract, ExprNum 5.25)
+    )
 
