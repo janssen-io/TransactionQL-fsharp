@@ -21,8 +21,12 @@
 
     type Account = Account of string list
     type Commodity = Commodity of string
-    type Transaction = Transaction of Account * Commodity * Expression
-    //type Posting = Posting of Transaction list
+    type Transaction =
+        | Transaction of Account * Commodity * float
+        | TrxExpression of Account * Commodity * Expression
+        | TrxAccount of Account
+
+    type Posting = Posting of Transaction list
     //type Column = Column of string
     //type Filter = Filter of Column * BooleanOperator * FilterAtom
     //type Payee = Payee of string
