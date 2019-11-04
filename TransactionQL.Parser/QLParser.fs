@@ -2,24 +2,25 @@
     open FParsec
     open AST
 
-    let str s = pstring s
-    let pword s = 
+    let curry3 f a b c = f (a, b, c)
+
+    let str = pstring
+    let pword = 
         let islower x = List.contains x ['a' .. 'z']
         let isupper x = List.contains x ['A' .. 'Z']
         let isdigit x = List.contains x ['0' .. '9']
-        many1Satisfy (fun c -> islower c || isupper c || isdigit c) s
+        many1Satisfy (fun c -> islower c || isupper c || isdigit c)
 
-    let qword s = pword |>> Word <| s
-    let qnumber s = pfloat |>> Number <| s
+    let qword = pword |>> Word
+    let qnumber = pfloat |>> Number
 
-    let regexEscape s =
+    let regexEscape =
         anyOf @"{}[]/()?*+\"
         |>> function
               | '/' -> "/"
               | c   -> "\\" + string c
-        <| s
 
-    let stringEscape s =
+    let stringEscape =
         anyOf  "\"\\bfnrt"
         |>> function
               | 'b' -> "\b"
@@ -28,48 +29,39 @@
               | 'r' -> "\r"
               | 't' -> "\t"
               | c   -> string c // every other char is mapped to itself
-        <| s
 
-    let escapedBetween (betweenChar:char) escape s =
+    let escapedBetween (betweenChar:char) escape =
         let escapedCharSnippet = str "\\" >>. escape
         let normalCharSnippet  = manySatisfy (fun c -> c <> betweenChar && c <> '\\')
     
         let surrounder = betweenChar.ToString()
         between (str surrounder) (str surrounder)
                 (stringsSepBy normalCharSnippet escapedCharSnippet)
-                s
 
-    let stringLiteral s = escapedBetween '"' stringEscape s
-    let qstring s = stringLiteral |>> String <| s
+    let stringLiteral = escapedBetween '"' stringEscape
+    let qstring = stringLiteral |>> String
 
-    let regexLiteral s = escapedBetween '/' regexEscape s
-    let qregex s = regexLiteral |>> Regex <| s
+    let regexLiteral : Parser<string, unit> = escapedBetween '/' regexEscape
+    let qregex = regexLiteral |>> Regex 
 
-    let qarithop s = 
-        let qadd s = stringReturn "+" Add s
-        let qsubstract s = stringReturn "-" Subtract s
-        let qmultiply s = stringReturn "*" Multiply s
-        let qdivide s = stringReturn "/" Divide s
-        choice [qadd; qsubstract; qmultiply; qdivide] s
+    let qboolop =
+        let qequals = stringReturn "=" Equals
+        let qnotEqual = stringReturn "/=" NotEquals
+        let qlte = stringReturn "<=" LessThanOrEqualTo
+        let qgte = stringReturn ">=" GreaterThanOrEqualTo
+        let qlt = stringReturn "<" LessThan
+        let qgt = stringReturn ">" GreaterThan
+        let qcontains = stringReturn "contains" Substring
+        let qmatches = stringReturn "matches" Matches
+        choice [ qnotEqual; qequals; qgte; qgt; qlte; qlt; qcontains; qmatches; ];
 
-    let qboolop s =
-        let qequals s = stringReturn "=" Equals s
-        let qnotEqual s = stringReturn "/=" NotEquals s
-        let qlte s = stringReturn "<=" LessThanOrEqualTo s
-        let qgte s = stringReturn ">=" GreaterThanOrEqualTo s
-        let qlt s = stringReturn "<" LessThan s
-        let qgt s = stringReturn ">" GreaterThan s
-        let qcontains s = stringReturn "contains" Substring s
-        let qmatches s = stringReturn "matches" Matches s
-        choice [ qnotEqual; qequals; qgte; qgt; qlte; qlt; qcontains; qmatches; ] s;
-
-    // TODO: ignore whitespace
+    // TODO: ignore whitespac
     let qexpression =
         let exprBuilder op lh rh = Expression (lh, op ,rh)
         let opp = OperatorPrecedenceParser<Expression, unit, unit> ()
         let ws = spaces
-        let qexprNum = pfloat |>> ExprNum
-        let qexprWord = pword |>> ExprWord
+        let qexprNum = (pfloat .>> ws) |>> ExprNum
+        let qexprWord = (pword .>> ws) |>> ExprWord
 
         opp.TermParser <- choice [qexprNum; qexprWord]
         opp.AddOperator(InfixOperator("+", ws, 1, Associativity.Left, exprBuilder Add))
@@ -80,16 +72,60 @@
         opp.ExpressionParser
         |> between (pchar '{') (pchar '}')
 
-    let qaccount s =
-        sepBy1 (pword) (pstring ":") |>> Account <| s
+    let paccount =
+        sepBy1 (pword) (pstring ":")
 
-    let qcommodity s =
-        choice [stringLiteral; pword] |>> Commodity <| s
+    let qaccount = paccount |>> Account
+
+    let qcommodity =
+        choice [stringLiteral; pword] |>> Commodity
+
+    let qamount =
+        let pamount = (pfloat |>> ExprNum) <|> qexpression
+        pipe2 (qcommodity .>> spaces1) pamount (fun commodity amount ->
+            match amount with
+            | ExprNum f -> Amount (commodity, f)
+            | expression -> AmountExpression (commodity, expression)
+            )
 
     // TODO: how to handle ws more gracefully
     let qtransaction = 
-        pipe5 qaccount spaces1 qcommodity spaces1 qexpression (fun a _ c _ e -> (a, c, e))
+        let withExpr = 
+            pipe2 (qaccount .>> spaces1) qamount
+                (fun account amount -> Trx (account, Some amount))
+        let withoutExpr = qaccount |>> (fun a -> Trx (a, None))
+        //qaccount .>>. opt (attempt qamount) |>> fun (acc, amOpt) -> Trx (acc, amOpt) // <-- why doesn't this als work?
+        (attempt withExpr) <|> withoutExpr
 
+    let qposting = 
+        let transactions = many (qtransaction .>> spaces)
+        pstringCI "posting"
+        >>. spaces
+        >>. between 
+            (pchar '{' >>. spaces) (spaces .>> pchar '}') 
+            transactions |>> Posting 
 
+    let qcolumnIdentifier = 
+        (anyOf ['A' .. 'Z'])
+        .>>. pword 
+        |>> fun (first, rest) -> Column (string first + rest)
 
+    let qfilter =
+        let column = qcolumnIdentifier .>> spaces
+        let operator = qboolop .>> spaces
+        let expression = choice [qnumber;qstring;qregex]
+        pipe3 column operator expression 
+        <| (curry3 Filter)
+
+    let qpayee : Parser<Payee, unit> =
+        let isNewline = fun c -> List.contains c ["\n"; "\r"]
+        (pchar '#' .>> spaces1)
+        >>. manySatisfy (not << isNewline << string)
+        |>> Payee
+
+    let qdescription =
+        let payee = qpayee .>> newline
+        let filters = many (between spaces spaces1 qfilter)
+        let posting = between spaces spaces qposting
+        pipe3 payee filters posting (curry3 Description)
 
