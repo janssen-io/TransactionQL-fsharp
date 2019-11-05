@@ -10,11 +10,6 @@ let test<'T> parser txt (expected:'T) =
     | Failure(msg, _, _) -> Assert.True(false, msg)
 
 [<Fact>]
-let ``qword parses alphanumerical characters`` () = 
-    let txt = "Word123"
-    test QLParser.qword txt (Word txt)
-    
-[<Fact>]
 let ``qstring parses quoted strings`` () =
     let txt = "\"Quoted \\\" String\""
     let expected = "Quoted \" String"
@@ -27,37 +22,24 @@ let ``qregex parses regular expressions`` () =
     test QLParser.qregex txt (Regex expected)
 
 [<Fact>]
-let ``qboolop parses`` () =
-    test QLParser.qboolop "=" Equals
-    test QLParser.qboolop "/=" NotEquals
-    test QLParser.qboolop ">" GreaterThan
-    test QLParser.qboolop ">=" GreaterThanOrEqualTo
-    test QLParser.qboolop "<" LessThan
-    test QLParser.qboolop "<=" LessThanOrEqualTo
-    test QLParser.qboolop "contains" Substring
-    test QLParser.qboolop "matches" Matches
-
-[<Fact>]
 let ``Expressions!`` () =
     test QLParser.qexpression "{total/2}" (
-        Expression (
-            ExprWord "total"
-            , Divide
+        Divide (
+            Variable "total"
             , ExprNum 2.0
         )
     )
 
 [<Fact>]
 let ``Simple Expressions`` () =
-    test QLParser.qexpression "{total}" (ExprWord "total")
+    test QLParser.qexpression "{total}" (Variable "total")
     test QLParser.qexpression "{13.37}" (ExprNum 13.37)
 
 [<Fact(Skip = "Parentheses are not implemented yet")>]
 let ``Nested expressions`` () =
     test QLParser.qexpression "({total} + 10) / 2" (
-        Expression (
-            Expression (ExprWord "total", Add, ExprNum 10.0)
-            , Divide
+        Divide (
+            Add (Variable "total", ExprNum 10.0)
             , ExprNum 2.0)
     )
 
@@ -79,7 +61,7 @@ let ``qamount parses numbers`` =
 
 [<Fact>]
 let ``qamount parses expressions`` =
-    test QLParser.qamount "{total}" (AmountExpression (Commodity "EUR", ExprWord "total"))
+    test QLParser.qamount "{total}" (AmountExpression (Commodity "EUR", Variable "total"))
 
 [<Fact>]
 let ``qtransaction expression`` () =
@@ -88,7 +70,7 @@ let ``qtransaction expression`` () =
             Account ["Expenses";"Living";"Food"]
             , Some <| AmountExpression (
                 Commodity "EUR"
-                , Expression (ExprWord "total", Subtract, ExprNum 5.25))
+                , Subtract (Variable "total", ExprNum 5.25))
         ))
 
 [<Fact>]
@@ -115,7 +97,7 @@ let ``qposting with two transactions`` () =
             Assets:Checking
         }"
     test QLParser.qposting posting (Posting [
-        Trx (Account ["Expenses"; "Rent"], Some <| AmountExpression (Commodity "EUR", ExprWord "total"))
+        Trx (Account ["Expenses"; "Rent"], Some <| AmountExpression (Commodity "EUR", Variable "total"))
         Trx (Account ["Expenses"; "Rent"], Some <| Amount (Commodity "EUR", 5.0))
         Trx (Account ["Assets"; "Checking"], None)
     ])
@@ -127,11 +109,7 @@ let ``qcolumnIdentifier parses words starting with a capital letter`` () =
 [<Fact>]
 let ``qfilter parses <column> <op> <expr>`` () =
     test QLParser.qfilter "Creditor matches /some regex/" (
-        Filter (
-            Column "Creditor"
-            , Matches
-            , Regex "some regex"
-        )
+        Matches (Column "Creditor", Regex "some regex")
     )
 
 [<Fact>]
@@ -154,19 +132,19 @@ let ``qdescription parses an entire description`` () =
     test QLParser.qdescription description (
         Description (
             Payee "Full description test", [
-                Filter (Column "Creditor", Equals, String "NL")
-                Filter (Column "Amount", GreaterThanOrEqualTo, Number 50.0)]
+                Equals (Column "Creditor", String "NL")
+                GreaterThanOrEqualTo (Column "Amount", Number 50.0)]
             , Posting [
                 Trx (
                     Account ["Assets"; "TestAccount"],
                     Some <| AmountExpression (
                         Commodity "EUR",
-                        Expression (ExprWord "total", Divide, ExprNum 2.0)))
+                        Divide (Variable "total", ExprNum 2.0)))
                 Trx (
                     Account ["Assets"; "TestSavings"],
                     Some <| AmountExpression (
                         Commodity "EUR",
-                        ExprWord "remainder"))
+                        Variable "remainder"))
                 Trx (
                     Account ["Expenses"; "Development"],
                     None)]))
