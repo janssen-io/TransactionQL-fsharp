@@ -24,10 +24,7 @@ let ``qregex parses regular expressions`` () =
 [<Fact>]
 let ``Expressions!`` () =
     test QLParser.qexpression "{total/2}" (
-        Divide (
-            Variable "total"
-            , ExprNum 2.0
-        )
+        Divide (Variable "total", ExprNum 2.0)
     )
 
 [<Fact>]
@@ -35,13 +32,20 @@ let ``Simple Expressions`` () =
     test QLParser.qexpression "{total}" (Variable "total")
     test QLParser.qexpression "{13.37}" (ExprNum 13.37)
 
-[<Fact(Skip = "Parentheses are not implemented yet")>]
-let ``Nested expressions`` () =
-    test QLParser.qexpression "({total} + 10) / 2" (
-        Divide (
-            Add (Variable "total", ExprNum 10.0)
-            , ExprNum 2.0)
-    )
+[<Fact>]
+let ``Complex nested expressions`` () =
+    test QLParser.qexpression "{(5 + (total - ((1 / 2) * remainder)))}" (
+        Add (
+            ExprNum 5.0,
+            Subtract (
+                Variable "total",
+                Multiply(
+                    Divide (
+                        ExprNum 1.0,
+                        ExprNum 2.0),
+                    Variable "remainder"
+                )
+            )))
 
 [<Fact>]
 let ``qaccount parses words separated by colons`` () =
@@ -67,18 +71,18 @@ let ``qamount parses expressions`` =
 let ``qtransaction expression`` () =
     test QLParser.qtransaction "Expenses:Living:Food EUR {total - 5.25}" (
         Trx (
-            Account ["Expenses";"Living";"Food"]
-            , Some <| AmountExpression (
-                Commodity "EUR"
-                , Subtract (Variable "total", ExprNum 5.25))
+            Account ["Expenses";"Living";"Food"],
+            Some <| AmountExpression (
+                Commodity "EUR",
+                Subtract (Variable "total", ExprNum 5.25))
         ))
 
 [<Fact>]
 let ``qtransaction amount`` () =
     test QLParser.qtransaction "Expenses:Living:Food EUR 13.37" (
         Trx (
-            Account ["Expenses";"Living";"Food"]
-            , Some <| Amount (Commodity "EUR", 13.37)))
+            Account ["Expenses";"Living";"Food"],
+            Some <| Amount (Commodity "EUR", 13.37)))
 
 [<Fact>]
 let ``qtransaction just account`` () =

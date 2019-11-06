@@ -58,14 +58,17 @@
     let qexpression =
         let opp = OperatorPrecedenceParser<Expression, unit, unit> ()
         let ws = spaces
+        let paren, parenRef = createParserForwardedToRef ()
         let qexprNum = pfloat .>> ws |>> ExprNum
         let qvariable = pword .>> ws |>> Variable
 
-        opp.TermParser <- choice [qexprNum; qvariable]
+        opp.TermParser <- choice [paren; qexprNum; qvariable]
         opp.AddOperator(InfixOperator("+", ws, 1, Associativity.Left, curry2 Add))
         opp.AddOperator(InfixOperator("-", ws, 1, Associativity.Left, curry2 Subtract))
         opp.AddOperator(InfixOperator("*", ws, 2, Associativity.Left, curry2 Multiply))
         opp.AddOperator(InfixOperator("/", ws, 2, Associativity.Left, curry2 Divide))
+
+        parenRef := between (pchar '(') (pchar ')') opp.ExpressionParser .>> ws
 
         opp.ExpressionParser
         |> between (pchar '{') (pchar '}')
