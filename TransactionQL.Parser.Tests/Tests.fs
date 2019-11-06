@@ -2,6 +2,7 @@ module Tests
 
 open Xunit
 open FParsec
+open System
 open AST
 
 let test<'T> parser txt (expected:'T) =
@@ -9,31 +10,41 @@ let test<'T> parser txt (expected:'T) =
     | Success(actual, _, _) -> Assert.Equal(expected, actual)
     | Failure(msg, _, _) -> Assert.True(false, msg)
 
+let parseEquals<'T> (parser : Parser<'T, unit>) a b =
+    let parsedA = run parser a
+    let parsedB = run parser b
+    match (parsedA, parsedB) with
+    | Success(a', _, _), Success(b', _, _) -> Assert.Equal(a', b')
+    | Success(_, _, _), Failure(msg, _, _) -> Assert.True(false, msg)
+    | Failure(msg, _, _), Success(_, _, _) -> Assert.True(false, msg)
+    | Failure(msgA, _, _), Failure(msgB, _, _) ->
+        Assert.True(false, System.String.Join(Environment.NewLine, msgA, msgB))
+
 [<Fact>]
-let ``qstring parses quoted strings`` () =
+let ``String: "quoted strings"`` () =
     let txt = "\"Quoted \\\" String\""
     let expected = "Quoted \" String"
     test QLParser.qstring txt (String expected)
 
 [<Fact>]
-let ``qregex parses regular expressions`` () =
+let ``Regex: /regular expressions/`` () =
     let txt = @"/(a|b)*[^a-z]\/?$select=\{\}{2,}\*\?\+\(\)/"
     let expected = @"(a|b)*[^a-z]/?$select=\{\}{2,}\*\?\+\(\)"
     test QLParser.qregex txt (Regex expected)
 
 [<Fact>]
-let ``Expressions!`` () =
+let ``Expressions: simple`` () =
     test QLParser.qexpression "{total/2}" (
         Divide (Variable "total", ExprNum 2.0)
     )
 
 [<Fact>]
-let ``Simple Expressions`` () =
+let ``Expressions: atoms`` () =
     test QLParser.qexpression "{total}" (Variable "total")
     test QLParser.qexpression "{13.37}" (ExprNum 13.37)
 
 [<Fact>]
-let ``Complex nested expressions`` () =
+let ``Expressions: nested`` () =
     test QLParser.qexpression "{(5 + (total - ((1 / 2) * remainder)))}" (
         Add (
             ExprNum 5.0,
@@ -48,27 +59,36 @@ let ``Complex nested expressions`` () =
             )))
 
 [<Fact>]
-let ``qaccount parses words separated by colons`` () =
+let ``Expressions: precedence`` () =
+    parseEquals QLParser.qexpression "{5 + 2 * 3}" "{5 + (2 * 3)}"
+    parseEquals QLParser.qexpression "{5 * 2 + 3}" "{(5 * 2) + 3}"
+
+[<Fact>]
+let ``Expressions: subtraction is left associative`` () =
+    parseEquals QLParser.qexpression "{5 - 2 - 3}" "{(5 - 2) - 3}"
+
+[<Fact>]
+let ``Accounts: words separated by colons`` () =
     test QLParser.qaccount "Expenses:Recreation:Hobby" (Account ["Expenses"; "Recreation"; "Hobby"])
 
 [<Fact>]
-let ``qcommodity parses string literals`` () =
+let ``Commodity: string literals`` () =
     test QLParser.qcommodity "\"Vanguard SP500\"" (Commodity "Vanguard SP500")
 
 [<Fact>]
-let ``qcommodity parses words`` () =
+let ``Commodity: words`` () =
     test QLParser.qcommodity "EUR" (Commodity "EUR")
 
 [<Fact>]
-let ``qamount parses numbers`` =
+let ``Amount: numbers`` =
     test QLParser.qamount "EUR 100.00" (Amount (Commodity "EUR", 100.00))
 
 [<Fact>]
-let ``qamount parses expressions`` =
+let ``Amount: expressions`` =
     test QLParser.qamount "{total}" (AmountExpression (Commodity "EUR", Variable "total"))
 
 [<Fact>]
-let ``qtransaction expression`` () =
+let ``Transactions: expression`` () =
     test QLParser.qtransaction "Expenses:Living:Food EUR {total - 5.25}" (
         Trx (
             Account ["Expenses";"Living";"Food"],
@@ -78,22 +98,22 @@ let ``qtransaction expression`` () =
         ))
 
 [<Fact>]
-let ``qtransaction amount`` () =
+let ``Transactions: amount`` () =
     test QLParser.qtransaction "Expenses:Living:Food EUR 13.37" (
         Trx (
             Account ["Expenses";"Living";"Food"],
             Some <| Amount (Commodity "EUR", 13.37)))
 
 [<Fact>]
-let ``qtransaction just account`` () =
+let ``Transactions: just account`` () =
     test QLParser.qtransaction "Expenses" (Trx (Account ["Expenses"], None))
 
 [<Fact>]
-let ``empty qposting`` () =
+let ``Posting: empty`` () =
     test QLParser.qposting "Posting { }" (Posting [])
 
 [<Fact>]
-let ``qposting with two transactions`` () =
+let ``Posting: two transactions`` () =
     let posting = 
         "Posting {
             Expenses:Rent    EUR {total}
@@ -107,23 +127,23 @@ let ``qposting with two transactions`` () =
     ])
 
 [<Fact>]
-let ``qcolumnIdentifier parses words starting with a capital letter`` () =
+let ``Columns: words starting with a capital letter`` () =
     test QLParser.qcolumnIdentifier "Creditor" (Column "Creditor")
 
 [<Fact>]
-let ``qfilter parses <column> <op> <expr>`` () =
+let ``Filters: <column> <op> <expr>`` () =
     test QLParser.qfilter "Creditor matches /some regex/" (
         Matches (Column "Creditor", Regex "some regex")
     )
 
 [<Fact>]
-let ``qpayee parses # <words>`` () =
+let ``Payee: # <words>`` () =
     let payee = "Some long string"
     test QLParser.qpayee (sprintf "# %s" payee) (Payee payee)
 
 [<Fact>]
-let ``qdescription parses an entire description`` () =
-    let description = """# Full description test
+let ``Query: <payee> <filters> <posting>`` () =
+    let query = """# Full description test
             Creditor = "NL"
             Amount >= 50.00
 
@@ -133,10 +153,10 @@ let ``qdescription parses an entire description`` () =
                 Expenses:Development
             }
             """
-    test QLParser.qdescription description (
-        Description (
+    test QLParser.qquery query (
+        Query (
             Payee "Full description test", [
-                Equals (Column "Creditor", String "NL")
+                EqualTo (Column "Creditor", String "NL")
                 GreaterThanOrEqualTo (Column "Amount", Number 50.0)]
             , Posting [
                 Trx (
@@ -152,3 +172,33 @@ let ``qdescription parses an entire description`` () =
                 Trx (
                     Account ["Expenses"; "Development"],
                     None)]))
+
+[<Fact>]
+let ``Program: multiple queries`` () =
+    let program = """# First query
+        Creditor = "NL"
+
+        posting {
+            Test:Account
+        }
+
+    # Second query
+        Creditor = "BE"
+
+        posting {
+            Assets:Checking
+        }
+    """
+    test QLParser.qprogram program (Program [
+        Query (
+            Payee "First query"
+            , [EqualTo (Column "Creditor", String "NL")]
+            , Posting ([Trx (Account ["Test"; "Account"], None)])
+        )
+
+        Query (
+            Payee "Second query"
+            , [EqualTo (Column "Creditor", String "BE")]
+            , Posting ([Trx (Account ["Assets"; "Checking"], None)])
+        )
+    ])

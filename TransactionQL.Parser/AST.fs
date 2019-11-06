@@ -25,24 +25,14 @@
 
     type Column = Column of string
 
-    type BooleanOperator =
-        | Equals
-        | NotEquals
-        | GreaterThan
-        | GreaterThanOrEqualTo
-        | LessThan
-        | LessThanOrEqualTo
-        | Substring
-        | Matches
-
     type FilterAtom =
         | Regex of string
         | String of string
         | Number of float
 
     type Filter =
-        | Equals                of Column * FilterAtom
-        | NotEquals             of Column * FilterAtom
+        | EqualTo               of Column * FilterAtom
+        | NotEqualTo            of Column * FilterAtom
         | GreaterThan           of Column * FilterAtom
         | GreaterThanOrEqualTo  of Column * FilterAtom
         | LessThan              of Column * FilterAtom
@@ -52,5 +42,6 @@
 
     type Payee = Payee of string
 
-    type Description = Description of Payee * Filter list * Posting
+    type Query = Query of Payee * Filter list * Posting
 
+    type Program = Program of Query list

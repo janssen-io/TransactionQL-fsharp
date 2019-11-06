@@ -45,8 +45,8 @@
     let qregex = regexLiteral |>> Regex
 
     let qboolop =
-        let qequals = stringReturn "=" Equals
-        let qnotEqual = stringReturn "/=" NotEquals
+        let qequals = stringReturn "=" EqualTo
+        let qnotEqual = stringReturn "/=" NotEqualTo
         let qlte = stringReturn "<=" LessThanOrEqualTo
         let qgte = stringReturn ">=" GreaterThanOrEqualTo
         let qlt = stringReturn "<" LessThan
@@ -124,9 +124,12 @@
         >>. manySatisfy (not << isNewline << string)
         |>> Payee
 
-    let qdescription =
+    let qquery =
         let payee = qpayee .>> newline
         let filters = many (between spaces spaces1 qfilter)
         let posting = between spaces spaces qposting
-        pipe3 payee filters posting (curry3 Description)
+        pipe3 payee filters posting (curry3 Query)
+
+    let qprogram =
+        many qquery |>> Program
 
