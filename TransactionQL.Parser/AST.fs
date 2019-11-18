@@ -1,10 +1,7 @@
 ﻿module AST
-    // TODO: shouldn't binary operators contain their left/right hand sides
-    //       as child nodes?
     type Expression =
         | Variable of string
         | ExprNum of float
-        | Brackets of Expression
         | Add of Expression * Expression
         | Subtract of Expression * Expression
         | Divide of Expression * Expression
@@ -18,27 +15,24 @@
         | Amount of Commodity * float
         | AmountExpression of Commodity * Expression
 
-    type Transaction =
-        | Trx of Account * Amount option
+    type Transaction = | Trx of Account * Amount option
 
     type Posting = Posting of Transaction list
 
     type Column = Column of string
 
     type FilterAtom =
-        | Regex of string
+        | RegExp of string
         | String of string
         | Number of float
 
-    type Filter =
-        | EqualTo               of Column * FilterAtom
-        | NotEqualTo            of Column * FilterAtom
-        | GreaterThan           of Column * FilterAtom
-        | GreaterThanOrEqualTo  of Column * FilterAtom
-        | LessThan              of Column * FilterAtom
-        | LessThanOrEqualTo     of Column * FilterAtom
-        | Substring             of Column * FilterAtom
-        | Matches               of Column * FilterAtom
+    type FilterOperator = 
+        | EqualTo       | NotEqualTo
+        | GreaterThan   | GreaterThanOrEqualTo
+        | LessThan      | LessThanOrEqualTo
+        | Contains      | Matches
+
+    type Filter = Filter of Column * FilterOperator * FilterAtom
 
     type Payee = Payee of string
 

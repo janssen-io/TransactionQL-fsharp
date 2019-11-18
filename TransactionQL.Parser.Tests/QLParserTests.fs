@@ -1,4 +1,4 @@
-module Tests
+module QLParserTests
 
 open Xunit
 open FParsec
@@ -30,7 +30,7 @@ let ``String: "quoted strings"`` () =
 let ``Regex: /regular expressions/`` () =
     let txt = @"/(a|b)*[^a-z]\/?$select=\{\}{2,}\*\?\+\(\)/"
     let expected = @"(a|b)*[^a-z]/?$select=\{\}{2,}\*\?\+\(\)"
-    test QLParser.qregex txt (Regex expected)
+    test QLParser.qregex txt (RegExp expected)
 
 [<Fact>]
 let ``Expressions: simple`` () =
@@ -80,12 +80,12 @@ let ``Commodity: words`` () =
     test QLParser.qcommodity "EUR" (Commodity "EUR")
 
 [<Fact>]
-let ``Amount: numbers`` =
+let ``Amount: numbers`` () =
     test QLParser.qamount "EUR 100.00" (Amount (Commodity "EUR", 100.00))
 
 [<Fact>]
-let ``Amount: expressions`` =
-    test QLParser.qamount "{total}" (AmountExpression (Commodity "EUR", Variable "total"))
+let ``Amount: expressions`` () =
+    test QLParser.qamount "EUR {total}" (AmountExpression (Commodity "EUR", Variable "total"))
 
 [<Fact>]
 let ``Transactions: expression`` () =
@@ -133,7 +133,10 @@ let ``Columns: words starting with a capital letter`` () =
 [<Fact>]
 let ``Filters: <column> <op> <expr>`` () =
     test QLParser.qfilter "Creditor matches /some regex/" (
-        Matches (Column "Creditor", Regex "some regex")
+        Filter (Column "Creditor", Matches,  RegExp "some regex")
+    )
+    test QLParser.qfilter "Creditor = 3.0" (
+        Filter (Column "Creditor", EqualTo,  Number 3.0)
     )
 
 [<Fact>]
@@ -156,8 +159,8 @@ let ``Query: <payee> <filters> <posting>`` () =
     test QLParser.qquery query (
         Query (
             Payee "Full description test", [
-                EqualTo (Column "Creditor", String "NL")
-                GreaterThanOrEqualTo (Column "Amount", Number 50.0)]
+                Filter (Column "Creditor", EqualTo, String "NL")
+                Filter (Column "Amount", GreaterThanOrEqualTo,  Number 50.0)]
             , Posting [
                 Trx (
                     Account ["Assets"; "TestAccount"],
@@ -192,13 +195,13 @@ let ``Program: multiple queries`` () =
     test QLParser.qprogram program (Program [
         Query (
             Payee "First query"
-            , [EqualTo (Column "Creditor", String "NL")]
+            , [Filter (Column "Creditor", EqualTo,  String "NL")]
             , Posting ([Trx (Account ["Test"; "Account"], None)])
         )
 
         Query (
             Payee "Second query"
-            , [EqualTo (Column "Creditor", String "BE")]
+            , [Filter (Column "Creditor", EqualTo,  String "BE")]
             , Posting ([Trx (Account ["Assets"; "Checking"], None)])
         )
     ])

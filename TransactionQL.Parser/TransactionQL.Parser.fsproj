@@ -5,9 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Interpretation.fs" />
     <Compile Include="AST.fs" />
+    <Compile Include="QLInterpreter.fs" />
     <Compile Include="QLParser.fs" />
   </ItemGroup>
+
+  <ItemGroup />
 
   <ItemGroup>
     <PackageReference Include="FParsec" Version="1.0.3" />

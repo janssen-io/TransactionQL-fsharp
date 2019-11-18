@@ -5,9 +5,15 @@ VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionQL", "TransactionQL\TransactionQL.csproj", "{1A483F67-A44C-470D-9A41-7D70E19891C8}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TransactionQL.Parser", "TransactionQL.Parser\TransactionQL.Parser.fsproj", "{5E741343-6C90-480E-BA15-D7267A9482D4}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Parser", "TransactionQL.Parser\TransactionQL.Parser.fsproj", "{5E741343-6C90-480E-BA15-D7267A9482D4}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TransactionQL.Parser.Tests", "TransactionQL.Parser.Tests\TransactionQL.Parser.Tests.fsproj", "{67D7EF7D-6D2E-4B04-9860-C3D7A7A3F970}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Parser.Tests", "TransactionQL.Parser.Tests\TransactionQL.Parser.Tests.fsproj", "{67D7EF7D-6D2E-4B04-9860-C3D7A7A3F970}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{722E35DF-E970-48AF-A7BA-5CF86EAF9670}"
+	ProjectSection(SolutionItems) = preProject
+		azure-pipelines.yml = azure-pipelines.yml
+		readme.md = readme.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

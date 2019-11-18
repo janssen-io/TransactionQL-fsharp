@@ -5,12 +5,11 @@
     let curry2 f a b = f (a, b)
     let curry3 f a b c = f (a, b, c)
 
-    let str = pstring
     let pword =
         let islower x = List.contains x ['a' .. 'z']
         let isupper x = List.contains x ['A' .. 'Z']
         let isdigit x = List.contains x ['0' .. '9']
-        many1Satisfy (fun c -> islower c || isupper c || isdigit c)
+        many1SatisfyL (fun c -> islower c || isupper c || isdigit c) "word (a-Z0-9)"
 
     let qnumber = pfloat |>> Number
 
@@ -31,18 +30,18 @@
               | c   -> string c // every other char is mapped to itself
 
     let escapedBetween (betweenChar:char) escape =
-        let escapedCharSnippet = str "\\" >>. escape
+        let escapedCharSnippet = pstring "\\" >>. escape
         let normalCharSnippet  = manySatisfy (fun c -> c <> betweenChar && c <> '\\')
 
         let surrounder = betweenChar.ToString()
-        between (str surrounder) (str surrounder)
+        between (pstring surrounder) (pstring surrounder)
                 (stringsSepBy normalCharSnippet escapedCharSnippet)
 
     let stringLiteral = escapedBetween '"' stringEscape
-    let qstring = stringLiteral |>> String
+    let qstring = stringLiteral <?> "String literal" |>> String
 
     let regexLiteral : Parser<string, unit> = escapedBetween '/' regexEscape
-    let qregex = regexLiteral |>> Regex
+    let qregex = regexLiteral <?> "Regular expression" |>> RegExp
 
     let qboolop =
         let qequals = stringReturn "=" EqualTo
@@ -51,9 +50,9 @@
         let qgte = stringReturn ">=" GreaterThanOrEqualTo
         let qlt = stringReturn "<" LessThan
         let qgt = stringReturn ">" GreaterThan
-        let qcontains = stringReturn "contains" Substring
+        let qcontains = stringReturn "contains" Contains
         let qmatches = stringReturn "matches" Matches
-        choice [ qnotEqual; qequals; qgte; qgt; qlte; qlt; qcontains; qmatches; ];
+        choice [ qnotEqual; qequals; qgte; qgt; qlte; qlt; qcontains; qmatches]
 
     let qexpression =
         let opp = OperatorPrecedenceParser<Expression, unit, unit> ()
@@ -73,10 +72,8 @@
         opp.ExpressionParser
         |> between (pchar '{') (pchar '}')
 
-    let paccount =
-        sepBy1 (pword) (pstring ":")
-
-    let qaccount = paccount |>> Account
+    let qaccount =
+        sepBy1 (pword) (pstring ":") |>> Account
 
     let qcommodity =
         choice [stringLiteral; pword] |>> Commodity
@@ -89,7 +86,6 @@
             | expression -> AmountExpression (commodity, expression)
             )
 
-    // TODO: how to handle ws more gracefully
     let qtransaction =
         let withExpr =
             pipe2 (qaccount .>> spaces1) qamount
@@ -99,12 +95,11 @@
         (attempt withExpr) <|> withoutExpr
 
     let qposting =
-        let transactions = many (qtransaction .>> spaces)
+        let transaction = spaces >>. qtransaction .>> newline
         pstringCI "posting"
         >>. spaces
-        >>. between
-            (pchar '{' >>. spaces) (spaces .>> pchar '}')
-            transactions |>> Posting
+        >>. pchar '{' .>> spaces
+        >>. manyTill transaction (attempt (spaces >>. pchar '}')) |>> Posting
 
     let qcolumnIdentifier =
         (anyOf ['A' .. 'Z'])
@@ -116,7 +111,7 @@
         let poperator = qboolop .>> spaces
         let patom = choice [qnumber;qstring;qregex]
         pipe3 pcolumn poperator patom
-        <| (fun col op atom -> op (col, atom))
+        <| (fun col op atom -> Filter (col, op, atom))
 
     let qpayee : Parser<Payee, unit> =
         let isNewline = fun c -> List.contains c ["\n"; "\r"]
@@ -131,5 +126,5 @@
         pipe3 payee filters posting (curry3 Query)
 
     let qprogram =
-        many qquery |>> Program
+        many (qquery .>> spaces) |>> Program
 
