@@ -90,6 +90,38 @@ let ``Conditions: regular expressions are case sensitive`` () =
     Assert.False(evalFilter' (env', Filter (Column "Creditor", Matches, (RegExp "^val.*"))))
 
 [<Fact>]
+let ``Conditions: or groups`` () =
+    let env' = { env with Row = Map.ofList [("A", "1"); ("B", "5")] }
+    Assert.True(evalFilter' (env', OrGroup [
+        Filter (Column "A", EqualTo, Number 0.0)
+        Filter (Column "B", EqualTo, Number 5.0)
+    ]))
+
+    Assert.False(evalFilter' (env', OrGroup [
+        Filter (Column "A", EqualTo, Number 2.0)
+        Filter (Column "B", EqualTo, Number 2.0)
+    ]))
+
+[<Fact>]
+let ``Conditions: nested or groups`` () =
+    let env' = { env with Row = Map.ofList [("A", "1"); ("B", "5")] }
+    Assert.True(evalFilter' (env', OrGroup [
+        Filter (Column "A", EqualTo, Number 0.0)
+        OrGroup [
+            Filter (Column "A", EqualTo, Number 1.0)
+            Filter (Column "B", EqualTo, Number 2.0)
+        ]
+    ]))
+
+    Assert.False(evalFilter' (env', OrGroup [
+        Filter (Column "A", EqualTo, Number 2.0)
+        OrGroup [
+            Filter (Column "A", EqualTo, Number 3.0)
+            Filter (Column "B", EqualTo, Number 2.0)
+        ]
+    ]))
+
+[<Fact>]
 let ``Inference: number column - greaterthan`` () =
     let env' = { env with Row = Map.ofList [("Amount","5")] }
     Assert.True(evalFilter' (env', Filter (Column "Amount", GreaterThan, (Number 2.0))))

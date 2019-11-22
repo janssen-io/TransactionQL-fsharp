@@ -140,6 +140,16 @@ let ``Filters: <column> <op> <expr>`` () =
     )
 
 [<Fact>]
+let ``Filters: or groups`` () =
+    test QLParser.qfilter ("A = 1.0\n or B = 2.0\n or C = 3.0") (OrGroup [
+            Filter (Column "A", EqualTo, Number 1.0)
+            OrGroup [
+                Filter (Column "B", EqualTo, Number 2.0)
+                Filter (Column "C", EqualTo, Number 3.0)
+            ]
+        ])
+
+[<Fact>]
 let ``Payee: # <words>`` () =
     let payee = "Some long string"
     test QLParser.qpayee (sprintf "# %s" payee) (Payee payee)
@@ -188,6 +198,11 @@ let ``Program: multiple queries`` () =
     # Second query
         Creditor = "BE"
 
+        A = 5.0
+        or B = 2.0
+
+        C = 1.0
+
         posting {
             Assets:Checking
         }
@@ -201,7 +216,14 @@ let ``Program: multiple queries`` () =
 
         Query (
             Payee "Second query"
-            , [Filter (Column "Creditor", EqualTo,  String "BE")]
+            , [
+                Filter (Column "Creditor", EqualTo,  String "BE")
+                OrGroup [
+                    Filter (Column "A", EqualTo, Number 5.0)
+                    Filter (Column "B", EqualTo, Number 2.0)
+                ]
+                Filter (Column "C", EqualTo, Number 1.0)
+            ]
             , Posting ([Trx (Account ["Assets"; "Checking"], None)])
         )
     ])

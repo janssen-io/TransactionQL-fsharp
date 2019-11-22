@@ -83,16 +83,20 @@ let rec evalNumber number column op =
     | LessThanOrEqualTo         -> value <= number
     | _ -> failwith (sprintf "Operator '%A' is not supported for numbers." op)
 
-let rec evalFilter env (Filter (Column col, op, atom)) =
-    let value = Map.find col env.Row
-    let evalType = match atom with
-                    | String text -> evalString text
-                    | Number number -> evalNumber number
-                    | RegExp regex -> evalRegex regex
+let rec evalFilter env filter =
+    match filter with
+    | (Filter (Column col, op, atom)) ->
+        let value = Map.find col env.Row
+        let evalType =
+            match atom with
+            | String text -> evalString text
+            | Number number -> evalNumber number
+            | RegExp regex -> evalRegex regex
 
-    evalType value op
-    |> fun b -> Interpretation (env, b)
+        Interpretation (env, evalType value op)
+    | OrGroup filters -> Interpretation.fold evalFilter (||) (Interpretation (env, false)) filters
     
+// TODO: make date format configurable
 let evalQuery env (Query (Payee payee, filters, posting)) =
     let (Interpretation (envFilter, isMatch)) =
         Interpretation.fold evalFilter (&&) (Interpretation (env, true)) filters
@@ -115,4 +119,3 @@ let rec evalProgram env (Program queries) =
             evalProgram env' (Program qs)
     | [] ->
         Interpretation (env, [])
-    //Interpretation.fold evalQuery (@) (Interpretation (env, [])) queries

@@ -102,16 +102,23 @@
         >>. manyTill transaction (attempt (spaces >>. pchar '}')) |>> Posting
 
     let qcolumnIdentifier =
-        (anyOf ['A' .. 'Z'])
-        .>>. pword
-        |>> fun (first, rest) -> Column (string first + rest)
+        attempt ((anyOf ['A' .. 'Z']) .>>. pword |>> fun (first, rest) -> Column (string first + rest))
+        <|>
+        ((anyOf ['A' .. 'Z']) |>> (string >> Column))
 
-    let qfilter =
+    let qfilter : Parser<Filter, unit> =
         let pcolumn = qcolumnIdentifier .>> spaces
         let poperator = qboolop .>> spaces
         let patom = choice [qnumber;qstring;qregex]
-        pipe3 pcolumn poperator patom
-        <| (fun col op atom -> Filter (col, op, atom))
+        let pfilter =
+            pipe3 pcolumn poperator patom
+            <| (fun col op atom -> Filter (col, op, atom))
+
+        let por = spaces >>. pstring "or" .>> spaces
+        let orGroup, orGroupRef = createParserForwardedToRef ()
+
+        orGroupRef := (attempt <| pipe3 pfilter por orGroup (fun f _ g -> OrGroup [f; g])) <|> pfilter
+        orGroup
 
     let qpayee : Parser<Payee, unit> =
         let isNewline = fun c -> List.contains c ["\n"; "\r"]

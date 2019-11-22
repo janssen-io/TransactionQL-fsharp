@@ -32,7 +32,9 @@
         | LessThan      | LessThanOrEqualTo
         | Contains      | Matches
 
-    type Filter = Filter of Column * FilterOperator * FilterAtom
+    type Filter =
+        | Filter of Column * FilterOperator * FilterAtom
+        | OrGroup of Filter list
 
     type Payee = Payee of string
 
