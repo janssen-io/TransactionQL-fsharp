@@ -48,8 +48,10 @@ filter, it will generate a posting. Filters consist of three parts:
 
 ```
 # Rent                               ; Payee line
-    Creditor = "NL20INGB0001234567"  ; Condition
-    Amount > 1000.00                 ; Condition
+    Receiver = "NL20INGB0001234567"  ; Condition
+    
+    Amount > 1000.00                 ; Condition group
+    or Amount < 100.00
 
     Posting {                        ; Posting expression
         Expenses:Rent    € {Amount}
@@ -66,15 +68,20 @@ After the payee line, there must be one or more conditions. These conditions are
 used to match the filter to a specific bank transaction. If all conditions are
 met, a posting will be generated according to the _posting expression_.
 
+Conditions are always conjunctions (all conditions must be true), but may
+contains disjunctions (any condition must be true) by using `or <condition>`.
+
 #### Properties
 To distinguish transactions, the following properties of a bank transaction can
-be used in conditions.
+be used in conditions. 
 
-##### Creditor
+NB: This can change between different implementations of a transaction reader.
+
+##### Receiver
 The bank account of the person or company that you paid to. For example your
 landlord for rent or the supermarket for groceries.
 
-##### Debtor
+##### Sender
 The bank account from which the commodity was paid.
 
 ##### Amount
@@ -107,7 +114,7 @@ closing curly brace (`}`). To make sure the amount can be split over several
 accounts, you can use variables and basic arithmetic in _amount expressions_.
 
 #### Amount expressions
-An amount expression is always written between curl braces (`{`, `}`). To
+An amount expression is always written between parentheses (`(`, `)`). To
 capture the amount of the transaction, you can use the variable `amount`. As you
 write transactions, the remaining sum is stored in the variable `remainder`.
 
@@ -115,9 +122,9 @@ write transactions, the remaining sum is stored in the variable `remainder`.
 always be equal to `500`. The variable `remainder` will update as follows:
 
 ```
-Expenses:Transport   € {total / 2}      ; remainder is updated to 250
-Expenses:Rent        € {remainder - 10} ; remainder is updated to  10
-Expenses:Maintenance € {remainder}      ; remainder is updated to   0
+Expenses:Transport   € (total / 2)      ; remainder is updated to 250
+Expenses:Rent        € (remainder - 10) ; remainder is updated to  10
+Expenses:Maintenance € (remainder)      ; remainder is updated to   0
 ```
 
 Which in turn generates the following transactions:
