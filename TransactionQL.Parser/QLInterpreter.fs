@@ -1,121 +1,129 @@
-﻿module QLInterpreter
+﻿namespace TransactionQL.Parser
 
-open AST
-open Interpretation
+open System.Globalization
 
-let rec eval (env : Env) (expr : Expression)  =
-    let rec eval' e =
-        let arithmetic op (l, r) = op (eval' l) (eval' r)
-        match e with
-        | Variable var -> 
-            if env.Variables.ContainsKey var then
-                Map.find var env.Variables
-            else
-                failwith <| sprintf "Unknown variable '%s'" var
-        | ExprNum number  -> number
-        | Add (l, r)       -> arithmetic (+) (l, r)
-        | Subtract (l, r) -> arithmetic (-) (l, r)
-        | Multiply (l, r) -> arithmetic (*) (l, r)
-        | Divide (l, r)   -> arithmetic (/) (l, r)
+module QLInterpreter = 
 
-    eval' expr
-    |> fun n -> Interpretation (env, n)
+    open AST
+    open Interpretation
 
-let generatePostingLine env (Trx (Account accounts, am)) =
-    let remainder = Map.find "remainder" env.Variables
+    type Header = Header of System.DateTime * string
+    type Line = Line of Account * (Commodity * float) option
+    type Entry = Entry of Header * Line list
 
-    let getCommodity amount =
-        match amount with
-        | Amount (Commodity c, _) -> c
-        | AmountExpression (Commodity c, _) -> c
+    let rec eval (env : Env) (expr : Expression)  =
+        let rec eval' e =
+            let arithmetic op (l, r) = op (eval' l) (eval' r)
+            match e with
+            | Variable var -> 
+                if env.Variables.ContainsKey var then
+                    Map.find var env.Variables
+                else
+                    failwith <| sprintf "Unknown variable '%s'" var
+            | ExprNum number  -> number
+            | Add (l, r)      -> arithmetic (+) (l, r)
+            | Subtract (l, r) -> arithmetic (-) (l, r)
+            | Multiply (l, r) -> arithmetic (*) (l, r)
+            | Divide (l, r)   -> arithmetic (/) (l, r)
 
-    let evalAmount amount =
-        match amount with
-        | Amount (Commodity _, f) -> f
-        | AmountExpression (Commodity _, e) -> 
-            Interpretation.result (eval env e)
+        eval' expr
+        |> fun n -> Interpretation (env, n)
 
-    let commodity = Option.map getCommodity am
-    let amount = Option.map evalAmount am
-    let accountString = String.concat ":" accounts
+    let generatePostingLine env (Trx (Account accounts, am)) =
+        let remainder = Map.find "remainder" env.Variables
 
-    match commodity, amount with
-    | Some c, Some f ->
-        let vars = Map.add "remainder" (remainder + f) env.Variables
-        { env with Variables = vars }, (sprintf "%s  %s %.2f" accountString c f)
-    | _ ->
-        let vars = Map.add "remainder" 0.0 env.Variables
-        { env with Variables = vars }, accountString
-    |> Interpretation
+        let getCommodity amount =
+            match amount with
+            | Amount (Commodity c, _) -> c
+            | AmountExpression (Commodity c, _) -> c
 
-let generatePosting env (Posting p) =
-    let rec gen env posting acc =
-        match posting with
-        | [] -> Interpretation (env, acc)
-        | x :: xs -> 
-            let (Interpretation (newEnv, line)) = generatePostingLine env x
-            gen newEnv xs (line :: acc)
+        let evalAmount amount =
+            match amount with
+            | Amount (Commodity _, f) -> f
+            | AmountExpression (Commodity _, e) -> 
+                Interpretation.result (eval env e)
 
-    let envWithRemainder = { env with Variables = Map.add "remainder" 0.0 env.Variables }
-    let (Interpretation (env', lines)) = gen envWithRemainder p []
-    Interpretation (env', List.rev lines)
+        let commodity = Option.map getCommodity am
+        let amount = Option.map evalAmount am
 
-let rec evalString text (column:string) op =
-    match op with
-    | EqualTo -> column = text
-    | NotEqualTo -> not <| evalString text column EqualTo
-    | Contains -> column.Contains text
-    | _ -> failwith (sprintf "Operator '%A' is not supported for strings." op)
+        match commodity, amount with
+        | Some c, Some f ->
+            let vars = Map.add "remainder" (remainder + f) env.Variables
+            { env with Variables = vars }, Line (Account accounts, Some (Commodity c, f))
+        | _ ->
+            let vars = Map.add "remainder" 0.0 env.Variables // update remainder to 0
+            { env with Variables = vars }, Line (Account accounts, None)
+        |> Interpretation
 
-let evalRegex regex column op =
-    match op with
-    | Matches -> System.Text.RegularExpressions.Regex(regex).IsMatch(column)
-    | _ -> failwith (sprintf "Operator '%A' is not supported for regular expressions." op)
+    let generatePosting env (Posting p) =
+        let rec gen env posting acc =
+            match posting with
+            | [] -> Interpretation (env, acc)
+            | x :: xs -> 
+                let (Interpretation (newEnv, line)) = generatePostingLine env x
+                gen newEnv xs (line :: acc)
 
-let rec evalNumber number column op =
-    let value = float column
-    match op with
-    | EqualTo                   -> number = value
-    | NotEqualTo                -> not <| evalNumber number column EqualTo
-    | GreaterThan               -> value > number
-    | GreaterThanOrEqualTo      -> value >= number
-    | LessThan                  -> value < number
-    | LessThanOrEqualTo         -> value <= number
-    | _ -> failwith (sprintf "Operator '%A' is not supported for numbers." op)
+        let envWithRemainder = { env with Variables = Map.add "remainder" 0.0 env.Variables }
+        let (Interpretation (env', lines)) = gen envWithRemainder p []
+        Interpretation (env', List.rev lines)
 
-let rec evalFilter env filter =
-    match filter with
-    | (Filter (Column col, op, atom)) ->
-        let value = Map.find col env.Row
-        let evalType =
-            match atom with
-            | String text -> evalString text
-            | Number number -> evalNumber number
-            | RegExp regex -> evalRegex regex
+    let rec evalString text (column:string) op =
+        match op with
+        | EqualTo -> column = text
+        | NotEqualTo -> not <| evalString text column EqualTo
+        | Contains -> column.Contains text
+        | _ -> failwith (sprintf "Operator '%A' is not supported for strings." op)
 
-        Interpretation (env, evalType value op)
-    | OrGroup filters -> Interpretation.fold evalFilter (||) (Interpretation (env, false)) filters
-    
-// TODO: make date format configurable
-let evalQuery env (Query (Payee payee, filters, posting)) =
-    let (Interpretation (envFilter, isMatch)) =
-        Interpretation.fold evalFilter (&&) (Interpretation (env, true)) filters
-    if isMatch then
-        let total = float <| Map.find "Amount" envFilter.Row
-        let envTotal = { envFilter with Variables = Map.add "total" total envFilter.Variables }
-        let header = sprintf "%s %s" (Map.find "Date" envTotal.Row) payee
-        let (Interpretation (envPosting, postingLines)) = generatePosting envTotal posting
-        Interpretation (envPosting, header :: postingLines @ [""])
-    else
-        Interpretation (envFilter, [])
+    let evalRegex regex column op =
+        match op with
+        | Matches -> System.Text.RegularExpressions.Regex(regex).IsMatch(column)
+        | _ -> failwith (sprintf "Operator '%A' is not supported for regular expressions." op)
 
-let rec evalProgram env (Program queries) =
-    match queries with
-    | (q :: qs) -> 
-        let (Interpretation (env', lines)) = evalQuery env q
-        if (lines.Length > 0) then
-            Interpretation (env', lines)
+    let rec evalNumber number column op =
+        let value = float column
+        match op with
+        | EqualTo                   -> number = value
+        | NotEqualTo                -> not <| evalNumber number column EqualTo
+        | GreaterThan               -> value > number
+        | GreaterThanOrEqualTo      -> value >= number
+        | LessThan                  -> value < number
+        | LessThanOrEqualTo         -> value <= number
+        | _ -> failwith (sprintf "Operator '%A' is not supported for numbers." op)
+
+    let rec evalFilter env filter =
+        match filter with
+        | (Filter (Column col, op, atom)) ->
+            let value = Map.find col env.Row
+            let evalType =
+                match atom with
+                | String text -> evalString text
+                | Number number -> evalNumber number
+                | RegExp regex -> evalRegex regex
+            Interpretation (env, evalType value op)
+
+        | OrGroup filters -> Interpretation.fold evalFilter (||) (Interpretation (env, false)) filters
+        
+    // TODO: make date format configurable
+    let evalQuery env (Query (Payee payee, filters, posting)) =
+        let (Interpretation (envFilter, isMatch)) =
+            Interpretation.fold evalFilter (&&) (Interpretation (env, true)) filters
+        if isMatch then
+            let total = float <| Map.find "Amount" envFilter.Row
+            let envTotal = { envFilter with Variables = Map.add "total" total envFilter.Variables }
+            let (Interpretation (envPosting, postingLines)) = generatePosting envTotal posting
+            let date = System.DateTime.ParseExact(Map.find "Date" env.Row, "yyyy/MM/dd", CultureInfo.InvariantCulture)
+            let header = Header (date, payee)
+            Interpretation (envPosting, Entry (header, postingLines) |> Some)
         else
-            evalProgram env' (Program qs)
-    | [] ->
-        Interpretation (env, [])
+            Interpretation (envFilter, None)
+
+    let rec evalProgram env (Program queries) =
+        match queries with
+        | (q :: qs) -> 
+            let (Interpretation (env', entry)) = evalQuery env q
+            match entry with
+            | Some entry ->
+                Interpretation (env', Some entry)
+            | None ->
+                evalProgram env' (Program qs)
+        | [] -> Interpretation (env, None)

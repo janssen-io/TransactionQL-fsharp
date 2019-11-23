@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="QLInterpreterTests.fs" />
-    <Compile Include="QLParserTests.fs" />
+    <Compile Include="FormatterTests.fs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TransactionQL.Console\TransactionQL.Console.fsproj" />
     <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
   </ItemGroup>
 

@@ -7,8 +7,8 @@
   <ItemGroup>
     <Compile Include="Interpretation.fs" />
     <Compile Include="AST.fs" />
-    <Compile Include="QLInterpreter.fs" />
     <Compile Include="QLParser.fs" />
+    <Compile Include="QLInterpreter.fs" />
   </ItemGroup>
 
   <ItemGroup />

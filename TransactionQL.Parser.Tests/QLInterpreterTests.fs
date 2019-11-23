@@ -1,5 +1,7 @@
 ﻿module QLInterpreterTests
 
+open System
+open TransactionQL.Parser
 open Interpretation
 open QLInterpreter
 open AST
@@ -10,6 +12,14 @@ let uncurry f (a, b) = f a b
 
 let eval' = uncurry eval >> Interpretation.result
 let evalFilter' = uncurry evalFilter >> Interpretation.result
+
+let testAmount (Line (Account _, amount)) expectedAmount =
+    match expectedAmount with
+    | None -> Assert.Equal(None, amount)
+    | Some f -> 
+        let (Commodity _, f') = Option.get amount
+        Assert.Equal(f, f')
+        
 
 [<Fact>]
 let ``Expressions: variables`` () =
@@ -155,24 +165,24 @@ let ``Inference: number column - notequalto`` () =
 let ``Posting lines: No amount`` () =
     let env' = { env with Variables = Map.add "remainder" 10.00 env.Variables }
     let transaction = Trx (Account ["Expenses"; "Food"], None)
-    let (Interpretation (updatedEnv, line)) = generatePostingLine env' transaction
-    Assert.Equal("Expenses:Food", line)
+    let (Interpretation (updatedEnv, Line (_, amount))) = generatePostingLine env' transaction
+    Assert.Equal(None, amount)
     Assert.Equal(0.0, Map.find "remainder" updatedEnv.Variables)
 
 [<Fact>]
 let ``Posting lines: with amount`` () =
     let env' = { env with Variables = Map.add "remainder" 20.00 env.Variables }
     let transaction = Trx (Account ["Expenses"; "Food"], Some <| Amount (Commodity "€", 5.00))
-    let (Interpretation (updatedEnv, line)) = generatePostingLine env' transaction
-    Assert.Equal("Expenses:Food  € 5.00", line)
+    let (Interpretation (updatedEnv, Line (_, amount))) = generatePostingLine env' transaction
+    Assert.Equal(Some (Commodity "€", 5.0), amount)
     Assert.Equal(25.0, Map.find "remainder" updatedEnv.Variables)
 
 [<Fact>]
 let ``Posting lines: with amount expression`` () =
     let env' = { env with Variables = Map.add "remainder" 10.00 env.Variables }
     let transaction = Trx (Account ["Expenses"; "Food"], Some <| AmountExpression (Commodity "€", ExprNum 20.00))
-    let (Interpretation (updatedEnv, line)) = generatePostingLine env' transaction
-    Assert.Equal("Expenses:Food  € 20.00", line)
+    let (Interpretation (updatedEnv, Line (_, amount))) = generatePostingLine env' transaction
+    Assert.Equal(Some (Commodity "€", 20.0), amount)
     Assert.Equal(30.0, Map.find "remainder" updatedEnv.Variables)
 
 [<Fact>]
@@ -203,9 +213,9 @@ let ``Posting: updates remainder between lines`` () =
     let (Interpretation (newEnv, lines)) = generatePosting env' transactions
     Assert.Equal(3, lines.Length)
     Assert.Equal(0.0, Map.find "remainder" newEnv.Variables)
-    Assert.EndsWith(" 50.00", lines.[0])
-    Assert.EndsWith("-30.00", lines.[1])
-    Assert.EndsWith("-20.00", lines.[2])
+    testAmount lines.[0] (Some 50.0)
+    testAmount lines.[1] (Some -30.0)
+    testAmount lines.[2] (Some -20.0)
 
 [<Fact>]
 let ``Query: given a matching row, a posting is generated`` () = 
@@ -220,8 +230,11 @@ let ``Query: given a matching row, a posting is generated`` () =
         )
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
     let env' = { env with Row = row }
-    let (Interpretation (_, lines)) = evalQuery env' ql
-    Assert.Equal(4, lines.Length)
+    let (Interpretation (_, entry)) = evalQuery env' ql
+    Assert.NotEqual(None, entry)
+
+    let (Entry (Header (_,_), lines)) = Option.get entry
+    Assert.Equal(2, lines.Length)
 
 [<Fact>]
 let ``Query: given a row that does not match, no posting is generated`` () =
@@ -236,8 +249,8 @@ let ``Query: given a row that does not match, no posting is generated`` () =
         )
     let row = Map.ofList [ ("Amount", "-10.00"); ("Date", "2019/06/01") ]
     let env' = { env with Row = row }
-    let (Interpretation (_, lines)) = evalQuery env' ql
-    Assert.Equal(0, lines.Length)
+    let (Interpretation (_, entry)) = evalQuery env' ql
+    Assert.Equal(None, entry)
 
 [<Fact>]
 let ``Program: multiple matching queries only applies the first match`` () =
@@ -265,13 +278,13 @@ let ``Program: multiple matching queries only applies the first match`` () =
             )
         ]
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
-    let (Interpretation (_, lines)) = evalProgram { env with Row = row } program
-    Assert.Equal(4, lines.Length)
+    let (Interpretation (_, entry)) = evalProgram { env with Row = row } program
+    Assert.NotEqual(None, entry)
 
-    Assert.Equal("2019/06/01 first payee", lines.[0])
-    Assert.Equal("Expenses:Misc  € 10.00", lines.[1])
-    Assert.Equal("Assets:Checking  € -10.00", lines.[2])
-    Assert.Equal("", lines.[3]);
+    let (Entry (Header (date, title), lines)) = Option.get entry
+    Assert.Equal(new DateTime(2019, 6, 1), date)
+    Assert.Equal("first payee", title)
+    Assert.Equal(2, lines.Length)
 
 [<Fact>]
 let ``Program: multiple queries only applies the match`` () =
@@ -299,17 +312,16 @@ let ``Program: multiple queries only applies the match`` () =
             )
         ]
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
-    let (Interpretation (_, lines)) = evalProgram { env with Row = row } program
-    Assert.Equal(4, lines.Length)
+    let (Interpretation (_, entry)) = evalProgram { env with Row = row } program
 
-    Assert.Equal("2019/06/01 second payee", lines.[0])
-    Assert.Equal("Expenses:Subscription  € 10.00", lines.[1])
-    Assert.Equal("Assets:Savings", lines.[2])
-    Assert.Equal("", lines.[3]);
+    let (Entry (Header (date, title), lines)) = Option.get entry
+    Assert.Equal(new DateTime(2019, 6, 1), date)
+    Assert.Equal("second payee", title)
+    Assert.Equal(2, lines.Length)
 
 [<Fact>]
 let ``Program: no matches`` () =
     let program = Program [ ]
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
-    let (Interpretation (_, lines)) = evalProgram { env with Row = row } program
-    Assert.Equal(0, lines.Length)
+    let (Interpretation (_, entry)) = evalProgram { env with Row = row } program
+    Assert.Equal(None, entry)

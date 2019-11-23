@@ -1,4 +1,6 @@
-﻿module QLParser
+﻿namespace TransactionQL.Parser
+
+module QLParser = 
     open FParsec
     open AST
 
@@ -70,7 +72,7 @@
         parenRef := between (pchar '(') (pchar ')') opp.ExpressionParser .>> ws
 
         opp.ExpressionParser
-        |> between (pchar '{') (pchar '}')
+        |> between (pchar '(') (pchar ')')
 
     let qaccount =
         sepBy1 (pword) (pstring ":") |>> Account
@@ -134,4 +136,6 @@
 
     let qprogram =
         many (qquery .>> spaces) |>> Program
+
+    let parse = run qprogram
 

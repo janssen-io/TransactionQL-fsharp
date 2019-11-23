@@ -3,7 +3,8 @@ module QLParserTests
 open Xunit
 open FParsec
 open System
-open AST
+open TransactionQL.Parser.AST
+open TransactionQL.Parser
 
 let test<'T> parser txt (expected:'T) =
     match run parser txt with
@@ -34,18 +35,18 @@ let ``Regex: /regular expressions/`` () =
 
 [<Fact>]
 let ``Expressions: simple`` () =
-    test QLParser.qexpression "{total/2}" (
+    test QLParser.qexpression "(total/2)" (
         Divide (Variable "total", ExprNum 2.0)
     )
 
 [<Fact>]
 let ``Expressions: atoms`` () =
-    test QLParser.qexpression "{total}" (Variable "total")
-    test QLParser.qexpression "{13.37}" (ExprNum 13.37)
+    test QLParser.qexpression "(total)" (Variable "total")
+    test QLParser.qexpression "(13.37)" (ExprNum 13.37)
 
 [<Fact>]
 let ``Expressions: nested`` () =
-    test QLParser.qexpression "{(5 + (total - ((1 / 2) * remainder)))}" (
+    test QLParser.qexpression "((5 + (total - ((1 / 2) * remainder))))" (
         Add (
             ExprNum 5.0,
             Subtract (
@@ -60,12 +61,12 @@ let ``Expressions: nested`` () =
 
 [<Fact>]
 let ``Expressions: precedence`` () =
-    parseEquals QLParser.qexpression "{5 + 2 * 3}" "{5 + (2 * 3)}"
-    parseEquals QLParser.qexpression "{5 * 2 + 3}" "{(5 * 2) + 3}"
+    parseEquals QLParser.qexpression "(5 + 2 * 3)" "(5 + (2 * 3))"
+    parseEquals QLParser.qexpression "(5 * 2 + 3)" "((5 * 2) + 3)"
 
 [<Fact>]
 let ``Expressions: subtraction is left associative`` () =
-    parseEquals QLParser.qexpression "{5 - 2 - 3}" "{(5 - 2) - 3}"
+    parseEquals QLParser.qexpression "(5 - 2 - 3)" "((5 - 2) - 3)"
 
 [<Fact>]
 let ``Accounts: words separated by colons`` () =
@@ -85,11 +86,11 @@ let ``Amount: numbers`` () =
 
 [<Fact>]
 let ``Amount: expressions`` () =
-    test QLParser.qamount "EUR {total}" (AmountExpression (Commodity "EUR", Variable "total"))
+    test QLParser.qamount "EUR (total)" (AmountExpression (Commodity "EUR", Variable "total"))
 
 [<Fact>]
 let ``Transactions: expression`` () =
-    test QLParser.qtransaction "Expenses:Living:Food EUR {total - 5.25}" (
+    test QLParser.qtransaction "Expenses:Living:Food EUR (total - 5.25)" (
         Trx (
             Account ["Expenses";"Living";"Food"],
             Some <| AmountExpression (
@@ -116,7 +117,7 @@ let ``Posting: empty`` () =
 let ``Posting: two transactions`` () =
     let posting = 
         "Posting {
-            Expenses:Rent    EUR {total}
+            Expenses:Rent    EUR (total)
             Expenses:Rent    EUR 5.00
             Assets:Checking
         }"
@@ -161,8 +162,8 @@ let ``Query: <payee> <filters> <posting>`` () =
             Amount >= 50.00
 
             posting {
-                Assets:TestAccount  EUR {total / 2}
-                Assets:TestSavings  EUR {remainder}
+                Assets:TestAccount  EUR (total / 2)
+                Assets:TestSavings  EUR (remainder)
                 Expenses:Development
             }
             """

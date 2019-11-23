@@ -1,4 +1,6 @@
-﻿module AST
+﻿namespace TransactionQL.Parser
+
+module AST =
     type Expression =
         | Variable of string
         | ExprNum of float
@@ -15,7 +17,7 @@
         | Amount of Commodity * float
         | AmountExpression of Commodity * Expression
 
-    type Transaction = | Trx of Account * Amount option
+    type Transaction = Trx of Account * Amount option
 
     type Posting = Posting of Transaction list
 

@@ -1,21 +1,23 @@
-﻿module Interpretation
+﻿namespace TransactionQL.Parser
 
-type Env = { 
-    Variables: Map<string, float>
-    Row: Map<string, string> }
+module Interpretation = 
 
-type Interpretation<'a> = Interpretation of Env * 'a
+    type Env = { 
+        Variables: Map<string, float>
+        Row: Map<string, string> }
 
-let result (Interpretation (_, r)) = r
+    type Interpretation<'a> = Interpretation of Env * 'a
 
-let fold
-    (eval: (Env -> 'c -> Interpretation<'b>))
-    (folder: ('a -> 'b -> 'a))
-    (seed: Interpretation<'a>)
-    (list: List<'c>)
-    : Interpretation<'a> =
-        List.fold (fun (Interpretation (currentEnv, currentResult)) currentT -> 
-            let (Interpretation (newEnv, newResult)) = eval currentEnv currentT
-            Interpretation (newEnv, folder currentResult newResult)
-        ) seed list
+    let result (Interpretation (_, r)) = r
+
+    let fold
+        (eval: (Env -> 'c -> Interpretation<'b>))
+        (folder: ('a -> 'b -> 'a))
+        (seed: Interpretation<'a>)
+        (list: List<'c>)
+        : Interpretation<'a> =
+            List.fold (fun (Interpretation (currentEnv, currentResult)) currentT -> 
+                let (Interpretation (newEnv, newResult)) = eval currentEnv currentT
+                Interpretation (newEnv, folder currentResult newResult)
+            ) seed list
 
