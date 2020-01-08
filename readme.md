@@ -54,7 +54,7 @@ filter, it will generate a posting. Filters consist of three parts:
     or Amount < 100.00
 
     Posting {                        ; Posting expression
-        Expenses:Rent    € {Amount}
+        Expenses:Rent    € (total)
         Assets:Checking
     }
 ```
@@ -115,10 +115,10 @@ accounts, you can use variables and basic arithmetic in _amount expressions_.
 
 #### Amount expressions
 An amount expression is always written between parentheses (`(`, `)`). To
-capture the amount of the transaction, you can use the variable `amount`. As you
+capture the amount of the transaction, you can use the variable `total`. As you
 write transactions, the remaining sum is stored in the variable `remainder`.
 
-**Example:** say we have a transaction for €500, then the variable `amount` will
+**Example:** say we have a transaction for €500, then the variable `total` will
 always be equal to `500`. The variable `remainder` will update as follows:
 
 ```
