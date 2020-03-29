@@ -103,19 +103,23 @@ module QLInterpreter =
 
         | OrGroup filters -> Interpretation.fold evalFilter (||) (Interpretation (env, false)) filters
         
-    // TODO: make date format configurable
     let evalQuery env (Query (Payee payee, filters, posting)) =
         let (Interpretation (envFilter, isMatch)) =
             Interpretation.fold evalFilter (&&) (Interpretation (env, true)) filters
-        if isMatch then
+        if not <| isMatch then
+            Interpretation (envFilter, None)
+        else
             let total = float <| Map.find "Amount" envFilter.Row
-            let envTotal = { envFilter with Variables = Map.add "total" total envFilter.Variables }
+            let envTotal = 
+                { envFilter with 
+                    Variables = 
+                        envFilter.Variables
+                        |> Map.add "amount" total
+                        |> Map.add "total" (abs total)  }
             let (Interpretation (envPosting, postingLines)) = generatePosting envTotal posting
-            let date = System.DateTime.ParseExact(Map.find "Date" env.Row, "yyyy/MM/dd", CultureInfo.InvariantCulture)
+            let date = System.DateTime.ParseExact(Map.find "Date" env.Row, env.DateFormat, CultureInfo.InvariantCulture)
             let header = Header (date, payee)
             Interpretation (envPosting, Entry (header, postingLines) |> Some)
-        else
-            Interpretation (envFilter, None)
 
     let rec evalProgram env (Program queries) =
         match queries with

@@ -9,7 +9,10 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Parser.Tests"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{722E35DF-E970-48AF-A7BA-5CF86EAF9670}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		azure-pipelines.yml = azure-pipelines.yml
+		publish.bat = publish.bat
+		publish.sh = publish.sh
 		readme.md = readme.md
 		tql.vim = tql.vim
 	EndProjectSection
@@ -18,7 +21,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Input", "Tran
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Console", "TransactionQL.Console\TransactionQL.Console.fsproj", "{4A1E69DA-C6CC-48B8-88F3-B62B2AE34485}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TransactionQL.Console.Tests", "TransactionQL.Console.Tests\TransactionQL.Console.Tests.fsproj", "{F43A5F1B-1EB4-45B7-9C79-92F3DD31EEE1}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Console.Tests", "TransactionQL.Console.Tests\TransactionQL.Console.Tests.fsproj", "{F43A5F1B-1EB4-45B7-9C79-92F3DD31EEE1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

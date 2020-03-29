@@ -7,7 +7,7 @@ open QLInterpreter
 open AST
 open Xunit
 
-let env = { Variables = Map.ofList []; Row = Map.ofList [] }
+let env = { Variables = Map.ofList []; Row = Map.ofList []; DateFormat = "yyyy/MM/dd" }
 let uncurry f (a, b) = f a b
 
 let eval' = uncurry eval >> Interpretation.result
@@ -20,7 +20,6 @@ let testAmount (Line (Account _, amount)) expectedAmount =
         let (Commodity _, f') = Option.get amount
         Assert.Equal(f, f')
         
-
 [<Fact>]
 let ``Expressions: variables`` () =
     let variables = Map.ofList [("total", 50.00)]
