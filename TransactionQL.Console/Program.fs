@@ -10,12 +10,18 @@ module Program =
     open Interpretation
     open Format
 
+    type AddDescriptionFlag =
+        | Always
+        | Never
+        | OnlyOnMissing
+
     type Arguments =
         | [<MainCommand; ExactlyOnce; Last>]Files of ``transactions.csv``:string * ``filter.tql``:string
-        | Date of format:string
-        | Precision of int
-        | Comment of chars:string
-        | Converter of TransactionQL.Input.Input.Converter
+        | [<AltCommandLine("-d")>]Date of format:string
+        | [<AltCommandLine("-p")>]Precision of int
+        | [<AltCommandLine("-c")>]Comment of chars:string
+        | [<AltCommandLine("-m")>]Converter of TransactionQL.Input.Input.Converter
+        | [<AltCommandLine("--desc")>]AddDescription of AddDescriptionFlag
     with
         interface IArgParserTemplate with
             member s.Usage =
@@ -25,17 +31,25 @@ module Program =
                 | Precision _ -> "the precision of the amounts (default: 2)"
                 | Comment _ -> "the character(s) to use for single line comments (default: '; ')"
                 | Converter _ -> "the type of converter used to read transactions (default: ING)"
+                | AddDescription _ -> "add the transaction's description below the header (default: always)"
 
     type Options = {
         Format : Format
         TrxFile : string
         FilterFile : string
         Reader : IConverter
+        AddDescription: AddDescriptionFlag
     }
 
     let query options =
         let transactions = options.Reader.Read options.TrxFile
         let filter = QLParser.parse ((new StreamReader(options.FilterFile)).ReadToEnd ())
+        let (sprintEntryDescription, sprintMissingDescription) =
+            match options.AddDescription with
+            | Always -> (List.map <| Formatter.commentLine options.Format), (List.map <| Formatter.commentLine options.Format)
+            | Never -> (fun _ -> []), (fun _ -> [])
+            | OnlyOnMissing -> (fun _ -> []), (List.map <| Formatter.commentLine options.Format)
+
         match filter with
         | Success(parsedFilter, _, _) ->
             transactions
@@ -44,8 +58,10 @@ module Program =
             |> Seq.map (
                 fun (Interpretation (env, entry)) ->
                     match entry with
-                    | Some entry -> Formatter.sprintPosting options.Format entry id
-                    | None -> (options.Reader.Map >> Formatter.sprintMissingPosting options.Format) env.Row
+                    | Some entry -> 
+                        Formatter.sprintPosting options.Format sprintEntryDescription id entry
+                    | None -> 
+                        (options.Reader.Map >> Formatter.sprintMissingPosting options.Format sprintMissingDescription) env.Row
             )
             |> Seq.map (fun lines -> String.Join(Environment.NewLine, lines))
             |> Seq.sortBy (
@@ -71,11 +87,17 @@ module Program =
             | Converter c -> 
                 match c with
                 | ING -> mapArgs { options with Reader = new ING () } args'
+            | AddDescription wd -> mapArgs {options with AddDescription = wd } args'
            
     [<EntryPoint>]
     let main argv =
         let format = Format.ledger
-        let defaultOpts = { Format = format; TrxFile = ""; FilterFile = ""; Reader = new ING () }
+        let defaultOpts = 
+            { Format = format
+              TrxFile = ""
+              FilterFile = ""
+              Reader = new ING ()
+              AddDescription = Always }
         let argParser = ArgumentParser.Create<Arguments>(programName = "tql")
 
         try

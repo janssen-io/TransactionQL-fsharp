@@ -9,7 +9,10 @@ module QLInterpreter =
 
     type Header = Header of System.DateTime * string
     type Line = Line of Account * (Commodity * float) option
-    type Entry = Entry of Header * Line list
+    type Entry = // Entry of Header * Line list
+        { Header: Header
+          Lines: Line list
+          Comments: string list }
 
     let rec eval (env : Env) (expr : Expression)  =
         let rec eval' e =
@@ -117,9 +120,15 @@ module QLInterpreter =
                         |> Map.add "amount" total
                         |> Map.add "total" (abs total)  }
             let (Interpretation (envPosting, postingLines)) = generatePosting envTotal posting
+
             let date = System.DateTime.ParseExact(Map.find "Date" env.Row, env.DateFormat, CultureInfo.InvariantCulture)
             let header = Header (date, payee)
-            Interpretation (envPosting, Entry (header, postingLines) |> Some)
+            let comments = 
+                [ if Map.containsKey "Description" envFilter.Row
+                  then Map.find "Description" envFilter.Row ]
+
+            Interpretation (envPosting, Some { Header = header; Lines = postingLines; Comments = comments })
+
 
     let rec evalProgram env (Program queries) =
         match queries with

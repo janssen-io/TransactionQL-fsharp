@@ -22,6 +22,8 @@ module Formatter =
     let sprintHeader format (Header (date, payee)) =
         sprintf "%s %s" (date.ToString format.Date) payee
 
+    let commentLine format = sprintf "%s%s" format.Comment
+
     let sprintLine format floatWidth (Line (Account accountParts, amount)) =
         let account = String.Join (":", accountParts)
         let numOfSpaces = Math.Max(0, 43 - account.Length)
@@ -32,19 +34,24 @@ module Formatter =
         | None -> account
         |> sprintf "    %s" // indent lines
 
-    let sprintPosting format (Entry (header, lines)) (lineModifier : string list -> string list) =
+    let sprintPosting format sprintDescription (modifyLine : string -> string) entry =
+        let { Header = header; Lines = lines; Comments = comments } = entry
         let floatWidth = 
             lines
-            |> List.map (fun (Line (Account _, a)) -> 
-                match a with
-                | Some (Commodity _, f) -> (sprintf "%.*f" format.Precision f).Length
+            |> List.map (fun (Line (Account _, amount)) -> 
+                match amount with
+                | Some (Commodity _, number) -> (sprintf "%.*f" format.Precision number).Length
                 | None -> 0)
             |> List.max
 
-        (sprintHeader format header) :: (List.map (sprintLine format floatWidth) lines)
-        |> lineModifier
+        let headerLine = sprintHeader format header
+        let commentLines = sprintDescription comments
+        let transactions = List.map (sprintLine format floatWidth) lines
+
+        headerLine :: commentLines @ transactions
+        |> List.map modifyLine
         |> fun ls -> String.Join(Environment.NewLine, ls)
 
-    let sprintMissingPosting format entry = 
-        sprintPosting format entry (List.map (fun line -> format.Comment + line))
+    let sprintMissingPosting format sprintDescription = 
+        sprintPosting format sprintDescription (commentLine format)
 

@@ -2,9 +2,11 @@
 
 module Interpretation = 
 
+    type Row = Map<string, string>
+
     type Env = { 
         Variables: Map<string, float>
-        Row: Map<string, string>
+        Row: Row
         DateFormat: string }
 
     type Interpretation<'a> = Interpretation of Env * 'a

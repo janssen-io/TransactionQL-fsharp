@@ -49,21 +49,27 @@ let ``Line: prints the float with the given precision`` () =
 
 [<Fact>]
 let ``Posting: prints header and lines on separate lines`` () =
-    let posting = Entry (Header (new DateTime(2019, 1, 1), "Payee"), [
-        Line (Account ["A"; "B"], Some (Commodity "€", 10.00))
-        Line (Account ["C"; "D"], None)
-    ])
-    let result = Formatter.sprintPosting { Date = "yyyy-MM-dd"; Precision = 2; Comment = "# " } posting id
+    let posting = 
+        { Header = Header (new DateTime(2019, 1, 1), "Payee")
+          Lines = [
+              Line (Account ["A"; "B"], Some (Commodity "€", 10.00))
+              Line (Account ["C"; "D"], None)
+          ]
+          Comments = [] }
+    let result = Formatter.sprintPosting { Date = "yyyy-MM-dd"; Precision = 2; Comment = "# " } (fun _ -> []) id posting
     let lines = result.Split(Environment.NewLine)
     Assert.Equal(3, lines.Length)
 
 [<Fact>]
 let ``Posting: aligns amounts to the right`` () =
-    let posting = Entry (Header (new DateTime(2019, 1, 1), "Payee"), [
-        Line (Account ["Assets"; "Checking"], Some (Commodity "€", 10.))
-        Line (Account ["Expenses"; "Vacation"], Some (Commodity "$", -1000.))
-    ])
-    let result = Formatter.sprintPosting { Date = "yyyy-MM-dd"; Precision = 2; Comment = "# " } posting id
+    let posting =
+        { Header = Header (new DateTime(2019, 1, 1), "Payee")
+          Lines = [
+              Line (Account ["Assets"; "Checking"], Some (Commodity "€", 10.))
+              Line (Account ["Expenses"; "Vacation"], Some (Commodity "$", -1000.))
+          ]
+          Comments = [] }
+    let result = Formatter.sprintPosting { Date = "yyyy-MM-dd"; Precision = 2; Comment = "# " } (fun _ -> []) id posting
     let lines = result.Split(Environment.NewLine)
     Assert.Equal(lines.[1].Length, lines.[2].Length)
     Assert.EndsWith("   10.00", lines.[1])
@@ -71,11 +77,35 @@ let ``Posting: aligns amounts to the right`` () =
 
 [<Fact>]
 let ``Missing posting: adds comment before each line`` () =
-    let posting = Entry (Header (new DateTime(2019, 1, 1), "Payee"), [
-        Line (Account ["A"; "B"], Some (Commodity "€", 10.00))
-        Line (Account ["C"; "D"], None)
-    ])
+    let posting = 
+        { Header = Header (new DateTime(2019, 1, 1), "Payee")
+          Lines = [
+              Line (Account ["A"; "B"], Some (Commodity "€", 10.00))
+              Line (Account ["C"; "D"], None)
+          ]
+          Comments = [] }
     let format : Format = { Date = "yyyy-MM-dd"; Precision = 2; Comment = "# " }
-    let result = Formatter.sprintMissingPosting format posting
+    let result = Formatter.sprintMissingPosting format (fun _ -> []) posting
     let lines = result.Split(Environment.NewLine)
     Array.map (fun l -> Assert.StartsWith(format.Comment, l)) lines
+
+[<Fact>]
+let ``Comments: comments are added between the header and transactions`` () =
+    let posting = 
+        { Header = Header (new DateTime(2019, 1, 1), "Payee")
+          Lines = [
+              Line (Account ["A"; "B"], Some (Commodity "€", 10.00))
+              Line (Account ["C"; "D"], None)
+          ]
+          Comments = 
+            [ "Two lines"
+              "Of comments" ] }
+    let format : Format = { Date = "yyyy-MM-dd"; Precision = 2; Comment = "# " }
+    let result = Formatter.sprintPosting format (fun _ -> []) id posting
+    let lines = result.Split(Environment.NewLine)
+
+    let expected = 
+        [|"# Two lines"
+          "# Of comments" |]
+    expected = ((Array.tail >> Array.take 2) lines)
+

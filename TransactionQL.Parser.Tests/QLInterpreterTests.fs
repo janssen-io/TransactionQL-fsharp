@@ -232,7 +232,7 @@ let ``Query: given a matching row, a posting is generated`` () =
     let (Interpretation (_, entry)) = evalQuery env' ql
     Assert.NotEqual(None, entry)
 
-    let (Entry (Header (_,_), lines)) = Option.get entry
+    let ({ Header = Header _; Lines = lines; Comments = _ }) = Option.get entry
     Assert.Equal(2, lines.Length)
 
 [<Fact>]
@@ -280,7 +280,7 @@ let ``Program: multiple matching queries only applies the first match`` () =
     let (Interpretation (_, entry)) = evalProgram { env with Row = row } program
     Assert.NotEqual(None, entry)
 
-    let (Entry (Header (date, title), lines)) = Option.get entry
+    let ({ Header = Header (date, title); Lines = lines; Comments = _ }) = Option.get entry
     Assert.Equal(new DateTime(2019, 6, 1), date)
     Assert.Equal("first payee", title)
     Assert.Equal(2, lines.Length)
@@ -313,7 +313,7 @@ let ``Program: multiple queries only applies the match`` () =
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
     let (Interpretation (_, entry)) = evalProgram { env with Row = row } program
 
-    let (Entry (Header (date, title), lines)) = Option.get entry
+    let ({ Header = Header (date, title); Lines = lines; Comments = _ }) = Option.get entry
     Assert.Equal(new DateTime(2019, 6, 1), date)
     Assert.Equal("second payee", title)
     Assert.Equal(2, lines.Length)

@@ -6,12 +6,13 @@ open System.Globalization
 open FSharp.Data
 open TransactionQL.Parser.AST
 open TransactionQL.Parser.QLInterpreter
-
+open TransactionQL.Parser.Interpretation
 
 module Input =
+
     type IConverter =
-        abstract member Read : string -> seq<Map<string, string>>
-        abstract member Map : Map<string, string> -> Entry
+        abstract member Read : string -> seq<Row>
+        abstract member Map : Row -> Entry
         abstract member DateFormat : string
 
     type Converter =
@@ -26,13 +27,14 @@ module Input =
                 trxs.Rows
                 |> Seq.map (fun row ->
                     Map.ofList [
-                        ("Sender",    if row.``Af Bij`` = "Af" then row.Rekening else row.Tegenrekening)
-                        ("Receiver",      if row.``Af Bij`` = "Af" then row.Tegenrekening else row.Rekening)
+                        ("Sender",      if row.``Af Bij`` = "Af" then row.Rekening else row.Tegenrekening)
+                        ("Receiver",    if row.``Af Bij`` = "Af" then row.Tegenrekening else row.Rekening)
                         ("Amount",      row.``Bedrag (EUR)``.Replace(",", ".")
                                         |> fun amount ->
-                                                if row.``Af Bij`` = "Af"
-                                                then sprintf "-%s" amount
-                                                else amount)
+                                           if row.``Af Bij`` = "Af"
+                                           then sprintf "-%s" amount
+                                           else amount)
+                        ("Total",       row.``Bedrag (EUR)``.Replace(",", "."))
                         ("Date",        row.Datum.Insert(4, "/").Insert(7, "/"))
                         ("Description", row.Mededelingen)
                         ("Name",        row.``Naam / Omschrijving``)
@@ -40,12 +42,17 @@ module Input =
                 )
 
             member this.Map row =
-                let r col = Map.find col row
-                Entry (
-                    Header (
-                        DateTime.ParseExact(r "Date", "yyyy/MM/dd", CultureInfo.InvariantCulture),
-                        r "Name"
-                    ), [
-                        Line (Account [r "Sender"], Some (Commodity "EUR", float (r "Amount")))      
-                        Line (Account [r "Receiver"], None)
-                    ])
+                let fromRow col = Map.find col row
+                {
+                    Header = 
+                        Header (
+                            DateTime.ParseExact(fromRow "Date", "yyyy/MM/dd", CultureInfo.InvariantCulture),
+                            fromRow "Name"
+                        )
+                    Lines = [
+                        Line (Account [fromRow "Sender"], Some (Commodity "EUR", float (fromRow "Amount")))      
+                        Line (Account [fromRow "Receiver"], None)
+                    ]
+                    Comments = 
+                        [ fromRow "Description" ]
+                }

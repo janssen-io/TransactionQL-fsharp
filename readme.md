@@ -135,3 +135,9 @@ Expenses:Rent        € 240.00
 Expenses:Maintenance €  10.00
 ```
 
+The variable `amount` contains the actual transferred amount from the perspective of your account.
+That is, when you transfer money it is negative, when you receive money it is positive.
+
+## Command line interface
+For more information about the command line interface, run it with the `--help` flag.
+
