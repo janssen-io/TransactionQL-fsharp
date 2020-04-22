@@ -6,20 +6,12 @@ open System.Globalization
 open FSharp.Data
 open TransactionQL.Parser.AST
 open TransactionQL.Parser.QLInterpreter
-open TransactionQL.Parser.Interpretation
+open TransactionQL.Input.Converters
 
-module Input =
-
-    type IConverter =
-        abstract member Read : string -> seq<Row>
-        abstract member Map : Row -> Entry
-        abstract member DateFormat : string
-
-    type Converter =
-        | ING
+module ING =
 
     type IngTransactions = CsvProvider<"ing.csv">
-    type ING () =
+    type IngReader () =
         interface IConverter with
             member this.DateFormat = "yyyy/MM/dd"
             member this.Read fname =

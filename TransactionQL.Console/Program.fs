@@ -1,10 +1,13 @@
 ﻿namespace TransactionQL.Console
 
+
 module Program =
     open Argu
     open System
-    open TransactionQL.Input.Input
+    open TransactionQL.Input.ING
+    open TransactionQL.Input.Bunq
     open TransactionQL.Parser
+    open TransactionQL.Input.Converters
     open System.IO
     open FParsec
     open Interpretation
@@ -20,7 +23,7 @@ module Program =
         | [<AltCommandLine("-d")>]Date of format:string
         | [<AltCommandLine("-p")>]Precision of int
         | [<AltCommandLine("-c")>]Comment of chars:string
-        | [<AltCommandLine("-m")>]Converter of TransactionQL.Input.Input.Converter
+        | [<AltCommandLine("-m")>]Converter of Converter
         | [<AltCommandLine("--desc")>]AddDescription of AddDescriptionFlag
     with
         interface IArgParserTemplate with
@@ -86,7 +89,8 @@ module Program =
             | Comment c -> mapArgs { options with Format = { options.Format with Comment = c }} args'
             | Converter c -> 
                 match c with
-                | ING -> mapArgs { options with Reader = new ING () } args'
+                | ING -> mapArgs { options with Reader = new IngReader () } args'
+                | Bunq -> mapArgs { options with Reader = new BunqReader () } args'
             | AddDescription wd -> mapArgs {options with AddDescription = wd } args'
            
     [<EntryPoint>]
@@ -96,7 +100,7 @@ module Program =
             { Format = format
               TrxFile = ""
               FilterFile = ""
-              Reader = new ING ()
+              Reader = new IngReader ()
               AddDescription = Always }
         let argParser = ArgumentParser.Create<Arguments>(programName = "tql")
 
