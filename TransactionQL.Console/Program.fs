@@ -1,13 +1,13 @@
 ﻿namespace TransactionQL.Console
 
+open TransactionQL.Input
 
 module Program =
     open Argu
     open System
-    open TransactionQL.Input.ING
-    open TransactionQL.Input.Bunq
     open TransactionQL.Parser
     open TransactionQL.Input.Converters
+    open TransactionQL.Input.DummyReader
     open System.IO
     open FParsec
     open Interpretation
@@ -23,7 +23,7 @@ module Program =
         | [<AltCommandLine("-d")>]Date of format:string
         | [<AltCommandLine("-p")>]Precision of int
         | [<AltCommandLine("-c")>]Comment of chars:string
-        | [<AltCommandLine("-m")>]Converter of Converter
+        | [<AltCommandLine("-m"); ExactlyOnce>]Converter of string
         | [<AltCommandLine("--desc")>]AddDescription of AddDescriptionFlag
     with
         interface IArgParserTemplate with
@@ -38,69 +38,92 @@ module Program =
 
     type Options = {
         Format : Format
-        TrxFile : string
+        TrxFile : FilePath
         FilterFile : string
         Reader : IConverter
         AddDescription: AddDescriptionFlag
     }
 
-    let query options =
-        let transactions = options.Reader.Read options.TrxFile
-        let filter = QLParser.parse ((new StreamReader(options.FilterFile)).ReadToEnd ())
-        let (sprintEntryDescription, sprintMissingDescription) =
-            match options.AddDescription with
-            | Always -> (List.map <| Formatter.commentLine options.Format), (List.map <| Formatter.commentLine options.Format)
-            | Never -> (fun _ -> []), (fun _ -> [])
-            | OnlyOnMissing -> (fun _ -> []), (List.map <| Formatter.commentLine options.Format)
+    let createAndGetAppDir =
+        let appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+        let dir = Path.Combine(appDir, "tql")
+        Directory.CreateDirectory dir |> ignore
+        dir
 
+    let createAndGetPluginDir =
+        let appDir = createAndGetAppDir
+        let dir = Path.Combine(appDir, "plugins")
+        Directory.CreateDirectory dir |> ignore
+        dir
+
+    let parseFilters options =
+        let filter = QLParser.parse ((new StreamReader(options.FilterFile)).ReadToEnd ())
         match filter with
-        | Success(parsedFilter, _, _) ->
-            transactions
-            |> Seq.map (fun row -> { Variables = Map.empty; Row = row; DateFormat = options.Reader.DateFormat })
-            |> Seq.map (fun env -> QLInterpreter.evalProgram env parsedFilter)
-            |> Seq.map (
-                fun (Interpretation (env, entry)) ->
-                    match entry with
-                    | Some entry -> 
-                        Formatter.sprintPosting options.Format sprintEntryDescription id entry
-                    | None -> 
-                        (options.Reader.Map >> Formatter.sprintMissingPosting options.Format sprintMissingDescription) env.Row
-            )
-            |> Seq.map (fun lines -> String.Join(Environment.NewLine, lines))
-            |> Seq.sortBy (
-                fun line ->
-                    if line.StartsWith options.Format.Comment then
-                        line.Substring(options.Format.Comment.Length) 
-                    else 
-                        line
-            )
-            |> fun lines -> String.Join(Environment.NewLine + Environment.NewLine, lines)
-            |> Console.WriteLine
-        | Failure (error, _, _) -> Console.WriteLine error
+        | Success(parsedFilter, _, _) -> Some parsedFilter
+        | Failure (error, _, _) ->
+            Console.WriteLine error
+            None
+
+    let writeLedger options parsedFilter =
+        let (sprintEntryDescription, sprintMissingDescription) =
+            let noSprint = (fun _ -> [])
+            let sprintDesc = (List.map <| Formatter.commentLine options.Format)
+            match options.AddDescription with
+            | Always -> sprintDesc, sprintDesc 
+            | OnlyOnMissing -> noSprint, sprintDesc
+            | Never -> noSprint, noSprint
+
+        let sprintPosting =
+            fun (Interpretation (env, entry)) ->
+                match entry with
+                | Some entry -> 
+                    Formatter.sprintPosting options.Format sprintEntryDescription id entry
+                | None -> 
+                    (options.Reader.Map >> Formatter.sprintMissingPosting options.Format sprintMissingDescription) env.Row
+
+        options.Reader.Read options.TrxFile
+        |> Seq.map (fun row -> { Variables = Map.empty; Row = row; DateFormat = options.Reader.DateFormat })
+        |> Seq.map (fun env -> QLInterpreter.evalProgram env parsedFilter)
+        |> Seq.map sprintPosting
+        |> Seq.map (fun lines -> String.Join(Environment.NewLine, lines))
+        |> Seq.sortBy (
+            fun line ->
+                if line.StartsWith options.Format.Comment then
+                    line.Substring(options.Format.Comment.Length) 
+                else 
+                    line
+        )
+        |> fun lines -> String.Join(Environment.NewLine + Environment.NewLine, lines)
+        |> Console.WriteLine
 
     let rec mapArgs options (args : Arguments list) = 
         match args with
-        | [] -> options
+        | [] -> Some options
         | (arg::args') ->
             match arg with
-            | Files (t,f) -> mapArgs { options with TrxFile = t; FilterFile = f } args'
-            | Date d -> mapArgs { options with Format = { options.Format with Date = d }} args'
-            | Precision p -> mapArgs { options with Format = { options.Format with Precision = p }} args'
-            | Comment c -> mapArgs { options with Format = { options.Format with Comment = c }} args'
-            | Converter c -> 
-                match c with
-                | ING -> mapArgs { options with Reader = new IngReader () } args'
-                | Bunq -> mapArgs { options with Reader = new BunqReader () } args'
-            | AddDescription wd -> mapArgs {options with AddDescription = wd } args'
+            | Files (t,f) ->
+                mapArgs { options with TrxFile = FilePath t; FilterFile = f } args'
+            | Date d ->
+                mapArgs { options with Format = { options.Format with Date = d }} args'
+            | Precision p -> 
+                mapArgs { options with Format = { options.Format with Precision = p }} args'
+            | Comment c -> 
+                mapArgs { options with Format = { options.Format with Comment = c }} args'
+            | Converter pluginName -> 
+                createAndGetPluginDir
+                |> PluginLoader.load pluginName
+                |> Option.bind (fun plugin -> mapArgs { options with Reader = plugin } args')
+            | AddDescription wd -> 
+                mapArgs {options with AddDescription = wd } args'
            
     [<EntryPoint>]
     let main argv =
         let format = Format.ledger
         let defaultOpts = 
             { Format = format
-              TrxFile = ""
+              TrxFile = FilePath ""
               FilterFile = ""
-              Reader = new IngReader ()
+              Reader = new DummyReader ()
               AddDescription = Always }
         let argParser = ArgumentParser.Create<Arguments>(programName = "tql")
 
@@ -108,8 +131,14 @@ module Program =
             let results = argParser.Parse argv
             let args = results.GetAllResults()
 
-            query <| mapArgs defaultOpts args
-            0
+            let options = mapArgs defaultOpts args
+
+            options
+            |> Option.bind parseFilters 
+            |> Option.map (writeLedger <| Option.get options)
+            |> function
+            | Some _ -> 0
+            | None -> 2
         with 
         | :? ArguException as ex ->
             printfn "%s" ex.Message
