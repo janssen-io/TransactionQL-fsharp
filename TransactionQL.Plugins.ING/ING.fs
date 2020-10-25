@@ -1,4 +1,4 @@
-﻿namespace TransactionQL.Input
+﻿namespace TransactionQL.Plugins
 
 open System
 open System.IO
@@ -10,11 +10,13 @@ open TransactionQL.Input.Converters
 
 module ING =
 
+    let private dateFormat = "yyyy/MM/dd"
+
     type IngTransactions = CsvProvider<"ing.csv">
     type IngReader () =
         interface IConverter with
-            member this.DateFormat = "yyyy/MM/dd"
-            member this.Read fname =
+            member this.DateFormat = dateFormat;
+            member this.Read (FilePath fname) =
                 let trxs = IngTransactions.Load((new StreamReader(fname)))
                 trxs.Rows
                 |> Seq.map (fun row ->
@@ -38,7 +40,7 @@ module ING =
                 {
                     Header = 
                         Header (
-                            DateTime.ParseExact(fromRow "Date", "yyyy/MM/dd", CultureInfo.InvariantCulture),
+                            DateTime.ParseExact(fromRow "Date", dateFormat, CultureInfo.InvariantCulture),
                             fromRow "Name"
                         )
                     Lines = [

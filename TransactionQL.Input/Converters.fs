@@ -5,13 +5,10 @@ open TransactionQL.Parser.Interpretation
 
 module Converters =
 
+    type FilePath = FilePath of string
+
     type IConverter =
-        abstract member Read : string -> seq<Row>
+        abstract member Read : FilePath -> seq<Row>
         abstract member Map : Row -> Entry
         abstract member DateFormat : string
-
-    type Converter =
-        | ING
-        | Bunq
-
 

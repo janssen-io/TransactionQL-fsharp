@@ -1,4 +1,4 @@
-﻿namespace TransactionQL.Input
+﻿namespace TransactionQL.Plugins
 
 open System
 open System.IO
@@ -10,11 +10,13 @@ open TransactionQL.Input.Converters
 
 module Bunq =
 
+    let private dateFormat = "yyyy/MM/dd"
+
     type BunqTransactions = CsvProvider<"bunq.csv">
     type BunqReader () =
         interface IConverter with
-            member this.DateFormat = "yyyy/MM/dd"
-            member this.Read fname =
+            member this.DateFormat = dateFormat
+            member this.Read (FilePath fname) =
                 let trxs = BunqTransactions.Load((new StreamReader(fname)))
                 trxs.Rows
                 |> Seq.map (fun row ->
@@ -33,12 +35,12 @@ module Bunq =
                     ]
                 )
 
-            member this.Map row =
+            member this.Map row = 
                 let fromRow col = Map.find col row
                 {
                     Header = 
                         Header (
-                            DateTime.ParseExact(fromRow "Date", "yyyy/MM/dd", CultureInfo.InvariantCulture),
+                            DateTime.ParseExact(fromRow "Date", dateFormat, CultureInfo.InvariantCulture),
                             fromRow "Name"
                         )
                     Lines = [
