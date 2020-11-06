@@ -2,10 +2,8 @@ name: .NET Core
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
-
+    tags:
+      - 'v*.*.*'
 jobs:
   release:
     name: Release
