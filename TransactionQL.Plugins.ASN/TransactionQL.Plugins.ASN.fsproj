@@ -5,10 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="ing.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Compile Include="ING.fs" />
+    <None Include="ASN.csv" />
+    <Compile Include="ASN.fs" />
   </ItemGroup>
 
   <ItemGroup>

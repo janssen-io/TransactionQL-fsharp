@@ -25,9 +25,11 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Console.Tests
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{B645AC52-7FA5-47ED-8162-E39B705813C6}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TransactionQL.Plugins.Bunq", "TransactionQL.Plugins.Bunq\TransactionQL.Plugins.Bunq.fsproj", "{EA0A782C-D5BF-4DA6-9710-25FDE5123B79}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Plugins.Bunq", "TransactionQL.Plugins.Bunq\TransactionQL.Plugins.Bunq.fsproj", "{EA0A782C-D5BF-4DA6-9710-25FDE5123B79}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TransactionQL.Plugins.ING", "TransactionQL.Plugins.ING\TransactionQL.Plugins.ING.fsproj", "{32027311-05E4-465B-9F5A-F5C59768B99A}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Plugins.ING", "TransactionQL.Plugins.ING\TransactionQL.Plugins.ING.fsproj", "{32027311-05E4-465B-9F5A-F5C59768B99A}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TransactionQL.Plugins.ASN", "TransactionQL.Plugins.ASN\TransactionQL.Plugins.ASN.fsproj", "{F6F92978-83BF-4DB9-B513-2B8ABD22AC5F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{32027311-05E4-465B-9F5A-F5C59768B99A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32027311-05E4-465B-9F5A-F5C59768B99A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32027311-05E4-465B-9F5A-F5C59768B99A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6F92978-83BF-4DB9-B513-2B8ABD22AC5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6F92978-83BF-4DB9-B513-2B8ABD22AC5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6F92978-83BF-4DB9-B513-2B8ABD22AC5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6F92978-83BF-4DB9-B513-2B8ABD22AC5F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,6 +76,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{EA0A782C-D5BF-4DA6-9710-25FDE5123B79} = {B645AC52-7FA5-47ED-8162-E39B705813C6}
 		{32027311-05E4-465B-9F5A-F5C59768B99A} = {B645AC52-7FA5-47ED-8162-E39B705813C6}
+		{F6F92978-83BF-4DB9-B513-2B8ABD22AC5F} = {B645AC52-7FA5-47ED-8162-E39B705813C6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {55AA355A-8CC6-47CA-BEAB-C07FDEFB4BAB}
