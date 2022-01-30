@@ -10,7 +10,7 @@ open TransactionQL.Input.Converters
 
 module ING =
 
-    let private dateFormat = "dd/MM/yyyy"
+    let private dateFormat = "dd-MM-yyyy"
 
     type AsnTransactions = CsvProvider<"ASN.csv">
     type IngReader () =

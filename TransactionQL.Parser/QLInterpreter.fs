@@ -1,6 +1,7 @@
 ﻿namespace TransactionQL.Parser
 
 open System.Globalization
+open System.Text.RegularExpressions
 
 module QLInterpreter = 
 
@@ -79,7 +80,7 @@ module QLInterpreter =
 
     let evalRegex regex column op =
         match op with
-        | Matches -> System.Text.RegularExpressions.Regex(regex).IsMatch(column)
+        | Matches -> Regex(regex, RegexOptions.IgnoreCase).IsMatch(column)
         | _ -> failwith (sprintf "Operator '%A' is not supported for regular expressions." op)
 
     let rec evalNumber number column op =
@@ -96,7 +97,12 @@ module QLInterpreter =
     let rec evalFilter env filter =
         match filter with
         | (Filter (Column col, op, atom)) ->
-            let value = Map.find col env.Row
+            let value = 
+                if Map.containsKey col env.Row then
+                    Map.find col env.Row
+                else 
+                    failwith <| sprintf "Invalid column: '%s'" col
+
             let evalType =
                 match atom with
                 | String text -> evalString text
