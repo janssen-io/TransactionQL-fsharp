@@ -7,6 +7,9 @@ module QLParser =
     let curry2 f a b = f (a, b)
     let curry3 f a b c = f (a, b, c)
 
+    let maybe p = ((attempt >> opt) p) <|> preturn None
+    let either p q = (attempt p) <|> q
+
     let pword =
         let islower x = List.contains x ['a' .. 'z']
         let isupper x = List.contains x ['A' .. 'Z']
@@ -81,27 +84,33 @@ module QLParser =
         choice [stringLiteral; pword] |>> Commodity
 
     let qamount =
-        let pamount = (pfloat |>> ExprNum) <|> qexpression
+        let pamount = either (pfloat |>> ExprNum) qexpression
         pipe2 (qcommodity .>> spaces1) pamount (fun commodity amount ->
             match amount with
             | ExprNum f -> Amount (commodity, f)
             | expression -> AmountExpression (commodity, expression)
             )
 
+    let qtag: Parser<string, unit> = pstring "; " >>. manySatisfy (fun c -> c <> '\n')
+
     let qtransaction =
-        let withExpr =
-            pipe2 (qaccount .>> spaces1) qamount
-                (fun account amount -> Trx (account, Some amount))
-        let withoutExpr = qaccount |>> (fun a -> Trx (a, None))
-        //qaccount .>>. opt (attempt qamount) |>> fun (acc, amOpt) -> Trx (acc, amOpt) // <-- why doesn't this als work?
-        (attempt withExpr) <|> withoutExpr
+        let maybeTag = maybe (spaces1 >>. qtag) 
+        let maybeAmount = maybe (spaces1 >>. qamount)
+        pipe3 qaccount maybeAmount maybeTag (fun account amount tag -> 
+            { Account = account; Amount = amount; Tag = tag}
+        )
+
+    let qnote = pstringCI "note " >>. manySatisfy (fun c -> c <> '\n')
 
     let qposting =
         let transaction = spaces >>. qtransaction .>> newline
+        let note = spaces >>. qnote
         pstringCI "posting"
         >>. spaces
         >>. pchar '{' .>> spaces
-        >>. manyTill transaction (attempt (spaces >>. pchar '}')) |>> Posting
+        >>. maybe note
+        .>>. manyTill transaction (spaces >>? pchar '}')
+        |>> (fun (note, trx) -> Posting (note, trx))
 
     let qcolumnIdentifier =
         attempt ((anyOf ['A' .. 'Z']) .>>. pword |>> fun (first, rest) -> Column (string first + rest))

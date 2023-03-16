@@ -11,6 +11,8 @@ let test<'T> parser txt (expected:'T) =
     | Success(actual, _, _) -> Assert.Equal(expected, actual)
     | Failure(msg, _, _) -> Assert.True(false, msg)
 
+let trx (accounts, amount) = { Account = accounts; Amount = amount; Tag = None }
+
 let parseEquals<'T> (parser : Parser<'T, unit>) a b =
     let parsedA = run parser a
     let parsedB = run parser b
@@ -91,7 +93,7 @@ let ``Amount: expressions`` () =
 [<Fact>]
 let ``Transactions: expression`` () =
     test QLParser.qtransaction "Expenses:Living:Food EUR (total - 5.25)" (
-        Trx (
+        trx (
             Account ["Expenses";"Living";"Food"],
             Some <| AmountExpression (
                 Commodity "EUR",
@@ -101,17 +103,43 @@ let ``Transactions: expression`` () =
 [<Fact>]
 let ``Transactions: amount`` () =
     test QLParser.qtransaction "Expenses:Living:Food EUR 13.37" (
-        Trx (
+        trx (
             Account ["Expenses";"Living";"Food"],
             Some <| Amount (Commodity "EUR", 13.37)))
 
 [<Fact>]
 let ``Transactions: just account`` () =
-    test QLParser.qtransaction "Expenses" (Trx (Account ["Expenses"], None))
+    test QLParser.qtransaction "Expenses" (trx (Account ["Expenses"], None))
+
+[<Fact>]
+let ``Transactions: amount with tag`` () =
+    test QLParser.qtransaction "Expenses:Living:Food EUR 13.37 ; Key: value" {
+            Account = Account ["Expenses";"Living";"Food"]
+            Amount = Amount (Commodity "EUR", 13.37) |> Some
+            Tag = "Key: value" |> Some
+        }
+
+[<Fact>]
+let ``Transactions: just account with tag`` () =
+    test QLParser.qtransaction "Expenses:Living:Food ; Key: value" {
+            Account = Account ["Expenses";"Living";"Food"]
+            Amount = None
+            Tag = "Key: value" |> Some
+        }
 
 [<Fact>]
 let ``Posting: empty`` () =
-    test QLParser.qposting "Posting { }" (Posting [])
+    test QLParser.qposting "Posting { }" (Posting (None, []))
+
+[<Fact>]
+let ``Posting: transaction with a note`` () =
+    let posting =
+        "Posting {
+            note Test-Note
+            Expenses:Test   EUR 10.00
+            Assets:Checking
+        }"
+    test QLParser.qposting "Posting { }" (Posting (None, []))
 
 [<Fact>]
 let ``Posting: two transactions`` () =
@@ -121,11 +149,11 @@ let ``Posting: two transactions`` () =
             Expenses:Rent    EUR 5.00
             Assets:Checking
         }"
-    test QLParser.qposting posting (Posting [
-        Trx (Account ["Expenses"; "Rent"], Some <| AmountExpression (Commodity "EUR", Variable "total"))
-        Trx (Account ["Expenses"; "Rent"], Some <| Amount (Commodity "EUR", 5.0))
-        Trx (Account ["Assets"; "Checking"], None)
-    ])
+    test QLParser.qposting posting (Posting (None, [
+        trx (Account ["Expenses"; "Rent"], Some <| AmountExpression (Commodity "EUR", Variable "total"))
+        trx (Account ["Expenses"; "Rent"], Some <| Amount (Commodity "EUR", 5.0))
+        trx (Account ["Assets"; "Checking"], None)
+    ]))
 
 [<Fact>]
 let ``Columns: words starting with a capital letter`` () =
@@ -172,20 +200,20 @@ let ``Query: <payee> <filters> <posting>`` () =
             Payee "Full description test", [
                 Filter (Column "Creditor", EqualTo, String "NL")
                 Filter (Column "Amount", GreaterThanOrEqualTo,  Number 50.0)]
-            , Posting [
-                Trx (
+            , Posting (None, [
+                trx (
                     Account ["Assets"; "TestAccount"],
                     Some <| AmountExpression (
                         Commodity "EUR",
                         Divide (Variable "total", ExprNum 2.0)))
-                Trx (
+                trx (
                     Account ["Assets"; "TestSavings"],
                     Some <| AmountExpression (
                         Commodity "EUR",
                         Variable "remainder"))
-                Trx (
+                trx (
                     Account ["Expenses"; "Development"],
-                    None)]))
+                    None)])))
 
 [<Fact>]
 let ``Program: multiple queries`` () =
@@ -212,7 +240,7 @@ let ``Program: multiple queries`` () =
         Query (
             Payee "First query"
             , [Filter (Column "Creditor", EqualTo,  String "NL")]
-            , Posting ([Trx (Account ["Test"; "Account"], None)])
+            , Posting (None, [trx (Account ["Test"; "Account"], None)])
         )
 
         Query (
@@ -225,6 +253,6 @@ let ``Program: multiple queries`` () =
                 ]
                 Filter (Column "C", EqualTo, Number 1.0)
             ]
-            , Posting ([Trx (Account ["Assets"; "Checking"], None)])
+            , Posting (None, [trx (Account ["Assets"; "Checking"], None)])
         )
     ])

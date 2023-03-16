@@ -44,9 +44,16 @@ module ING =
                             fromRow "Name"
                         )
                     Lines = [
-                        Line (Account [fromRow "Receiver"], Some (Commodity "EUR", float (fromRow "Total")))
-                        Line (Account [fromRow "Sender"], None)
+                        { 
+                            Account = Account [fromRow "Receiver"]
+                            Amount = (Commodity "EUR", float (fromRow "Total")) |> Some
+                            Tag = None
+                        }
+                        { 
+                            Account = Account [fromRow "Sender"]
+                            Amount = None
+                            Tag = None
+                        }
                     ]
-                    Comments = 
-                        [ fromRow "Description" ]
+                    Comments = [ fromRow "Description" ]
                 }

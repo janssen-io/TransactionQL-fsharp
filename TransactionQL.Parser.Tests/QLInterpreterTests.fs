@@ -13,7 +13,9 @@ let uncurry f (a, b) = f a b
 let eval' = uncurry eval >> Interpretation.result
 let evalFilter' = uncurry evalFilter >> Interpretation.result
 
-let testAmount (Line (Account _, amount)) expectedAmount =
+let trx (accounts, amount) = { Account = accounts; Amount = amount; Tag = None }
+
+let testAmount ({Amount = amount} : Line) expectedAmount =
     match expectedAmount with
     | None -> Assert.Equal(None, amount)
     | Some f -> 
@@ -94,9 +96,14 @@ let ``Conditions: regular expressions`` () =
     Assert.True(evalFilter' (env', Filter (Column "Creditor", Matches, (RegExp "^(v|V)al.*"))))
 
 [<Fact>]
-let ``Conditions: regular expressions are case sensitive`` () =
+let ``Conditions: regular expressions are case insensitive`` () =
     let env' = { env with Row = Map.ofList [("Creditor","Value")] }
-    Assert.False(evalFilter' (env', Filter (Column "Creditor", Matches, (RegExp "^val.*"))))
+    Assert.True(evalFilter' (env', Filter (Column "Creditor", Matches, (RegExp "^val.*"))))
+
+[<Fact>]
+let ``Conditions: regular expressions `` () =
+    let env' = { env with Row = Map.ofList [("Creditor","Value")] }
+    Assert.False(evalFilter' (env', Filter (Column "Creditor", Matches, (RegExp "^fail.*"))))
 
 [<Fact>]
 let ``Conditions: or groups`` () =
@@ -163,33 +170,33 @@ let ``Inference: number column - notequalto`` () =
 [<Fact>]
 let ``Posting lines: No amount`` () =
     let env' = { env with Variables = Map.add "remainder" 10.00 env.Variables }
-    let transaction = Trx (Account ["Expenses"; "Food"], None)
-    let (Interpretation (updatedEnv, Line (_, amount))) = generatePostingLine env' transaction
+    let transaction = { Account = Account ["Expenses"; "Food"]; Amount = None; Tag = None }
+    let (Interpretation (updatedEnv, ({ Amount = amount } : Line))) = generatePostingLine env' transaction
     Assert.Equal(None, amount)
     Assert.Equal(0.0, Map.find "remainder" updatedEnv.Variables)
 
 [<Fact>]
 let ``Posting lines: with amount`` () =
     let env' = { env with Variables = Map.add "remainder" 20.00 env.Variables }
-    let transaction = Trx (Account ["Expenses"; "Food"], Some <| Amount (Commodity "€", 5.00))
-    let (Interpretation (updatedEnv, Line (_, amount))) = generatePostingLine env' transaction
+    let transaction = { Account = Account ["Expenses"; "Food"]; Amount = Some <| Amount (Commodity "€", 5.00); Tag = None }
+    let (Interpretation (updatedEnv, ({ Amount = amount } : Line))) = generatePostingLine env' transaction
     Assert.Equal(Some (Commodity "€", 5.0), amount)
     Assert.Equal(25.0, Map.find "remainder" updatedEnv.Variables)
 
 [<Fact>]
 let ``Posting lines: with amount expression`` () =
     let env' = { env with Variables = Map.add "remainder" 10.00 env.Variables }
-    let transaction = Trx (Account ["Expenses"; "Food"], Some <| AmountExpression (Commodity "€", ExprNum 20.00))
-    let (Interpretation (updatedEnv, Line (_, amount))) = generatePostingLine env' transaction
+    let transaction = { Account = Account ["Expenses"; "Food"]; Amount = Some <| AmountExpression (Commodity "€", ExprNum 20.00); Tag = None }
+    let (Interpretation (updatedEnv, ({ Amount = amount } : Line))) = generatePostingLine env' transaction
     Assert.Equal(Some (Commodity "€", 20.0), amount)
     Assert.Equal(30.0, Map.find "remainder" updatedEnv.Variables)
 
 [<Fact>]
 let ``Posting: multiple lines`` () =
     let env' = { env with Variables = Map.add "remainder" 0.00 env.Variables }
-    let transactions = Posting [
-        Trx (Account ["Expenses"; "Food"], Some <| AmountExpression (Commodity "€", ExprNum 20.00))
-        Trx (Account ["Assets"; "Checking"], None)
+    let transactions = [
+        trx (Account ["Expenses"; "Food"], Some <| AmountExpression (Commodity "€", ExprNum 20.00))
+        trx (Account ["Assets"; "Checking"], None)
     ]
     let (Interpretation (_, lines)) = generatePosting env' transactions
     Assert.Equal(2, lines.Length)
@@ -201,12 +208,12 @@ let ``Posting: updates remainder between lines`` () =
             Variables = Map.ofList [
                 ("remainder", 0.00)
         ]}
-    let transactions = Posting [
-        Trx (Account ["Expenses"; "Food"], Some <| 
+    let transactions = [
+        trx (Account ["Expenses"; "Food"], Some <| 
             Amount (Commodity "€", 50.00))
-        Trx (Account ["Assets"; "Receivables"], Some <|
+        trx (Account ["Assets"; "Receivables"], Some <|
             AmountExpression (Commodity "€", Subtract (ExprNum 20.00, Variable "remainder")))
-        Trx (Account ["Assets"; "Checking"], Some <|
+        trx (Account ["Assets"; "Checking"], Some <|
             AmountExpression (Commodity "€", Multiply (ExprNum -1.0, Variable "remainder")))
     ]
     let (Interpretation (newEnv, lines)) = generatePosting env' transactions
@@ -222,10 +229,10 @@ let ``Query: given a matching row, a posting is generated`` () =
         Query (
             Payee "a payee",
             [Filter (Column "Amount", GreaterThan, Number 0.00)],
-            Posting [
-                Trx (Account ["Expenses"; "Misc"], Some <| AmountExpression (Commodity "€", Variable "total"))
-                Trx (Account ["Assets"; "Checking"], None)
-            ]
+            Posting (None, [
+                trx (Account ["Expenses"; "Misc"], Some <| AmountExpression (Commodity "€", Variable "total"))
+                trx (Account ["Assets"; "Checking"], None)
+            ])
         )
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
     let env' = { env with Row = row }
@@ -241,10 +248,10 @@ let ``Query: given a row that does not match, no posting is generated`` () =
         Query (
             Payee "a payee",
             [Filter (Column "Amount", GreaterThan, Number 0.00)],
-            Posting [
-                Trx (Account ["Expenses"; "Misc"], Some <| AmountExpression (Commodity "€", Variable "total"))
-                Trx (Account ["Assets"; "Checking"], None)
-            ]
+            Posting (None, [
+                trx (Account ["Expenses"; "Misc"], Some <| AmountExpression (Commodity "€", Variable "total"))
+                trx (Account ["Assets"; "Checking"], None)
+            ])
         )
     let row = Map.ofList [ ("Amount", "-10.00"); ("Date", "2019/06/01") ]
     let env' = { env with Row = row }
@@ -258,22 +265,22 @@ let ``Program: multiple matching queries only applies the first match`` () =
             Query (
                 Payee "first payee",
                 [Filter (Column "Amount", GreaterThan, Number 0.00)],
-                Posting [
-                    Trx (Account ["Expenses"; "Misc"], Some <| AmountExpression (Commodity "€", Variable "total"))
-                    Trx (Account ["Assets"; "Checking"], Some <| AmountExpression (
+                Posting (None,[
+                    trx (Account ["Expenses"; "Misc"], Some <| AmountExpression (Commodity "€", Variable "total"))
+                    trx (Account ["Assets"; "Checking"], Some <| AmountExpression (
                             Commodity "€",
                             Multiply (ExprNum -1.0, Variable "remainder")
                         )
                     )
-                ]
+                ])
             )
             Query (
                 Payee "second payee",
                 [Filter (Column "Amount", GreaterThan, Number 0.00)],
-                Posting [
-                    Trx (Account ["Expenses"; "Subscription"], Some <| AmountExpression (Commodity "€", Variable "total"))
-                    Trx (Account ["Assets"; "Savings"], None)
-                ]
+                Posting (None, [
+                    trx (Account ["Expenses"; "Subscription"], Some <| AmountExpression (Commodity "€", Variable "total"))
+                    trx (Account ["Assets"; "Savings"], None)
+                ])
             )
         ]
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
@@ -292,22 +299,22 @@ let ``Program: multiple queries only applies the match`` () =
             Query (
                 Payee "first payee",
                 [Filter (Column "Amount", LessThan, Number 0.00)],
-                Posting [
-                    Trx (Account ["Expenses"; "Misc"], Some <| AmountExpression (Commodity "€", Variable "total"))
-                    Trx (Account ["Assets"; "Checking"], Some <| AmountExpression (
+                Posting (None, [
+                    trx (Account ["Expenses"; "Misc"], Some <| AmountExpression (Commodity "€", Variable "total"))
+                    trx (Account ["Assets"; "Checking"], Some <| AmountExpression (
                             Commodity "€",
                             Multiply (ExprNum -1.0, Variable "remainder")
                         )
                     )
-                ]
+                ])
             )
             Query (
                 Payee "second payee",
                 [Filter (Column "Amount", GreaterThan, Number 0.00)],
-                Posting [
-                    Trx (Account ["Expenses"; "Subscription"], Some <| AmountExpression (Commodity "€", Variable "total"))
-                    Trx (Account ["Assets"; "Savings"], None)
-                ]
+                Posting (None, [
+                    trx (Account ["Expenses"; "Subscription"], Some <| AmountExpression (Commodity "€", Variable "total"))
+                    trx (Account ["Assets"; "Savings"], None)
+                ])
             )
         ]
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
@@ -324,3 +331,56 @@ let ``Program: no matches`` () =
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
     let (Interpretation (_, entry)) = evalProgram { env with Row = row } program
     Assert.Equal(None, entry)
+
+[<Fact>]
+let ``Program: notes are added to the comments`` () =
+    let program = 
+        Program [
+            Query (
+                Payee "second payee",
+                [Filter (Column "Amount", GreaterThan, Number 0.00)],
+                Posting ("this is a note" |> Some, [
+                    trx (Account ["Expenses"; "Subscription"], Some <| AmountExpression (Commodity "€", Variable "total"))
+                    trx (Account ["Assets"; "Savings"], None)
+                ])
+            )
+        ]
+    let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
+    let (Interpretation (_, entry)) = evalProgram { env with Row = row } program
+
+    let ({ Header = Header _; Lines = _; Comments = comments }) = Option.get entry
+    Assert.Equal(1, comments.Length)
+    Assert.Equal("this is a note", comments.[0])
+
+[<Fact>]
+let ``Program: tags are added to the posting line`` () =
+    let program = 
+        Program [
+            Query (
+                Payee "second payee",
+                [Filter (Column "Amount", GreaterThan, Number 0.00)],
+                Posting ("this is a note" |> Some, [
+                    {
+                        Account = Account ["Expenses"; "Subscription"]
+                        Amount = (Some << AmountExpression) (Commodity "€", Variable "total")
+                        Tag = Some "My: FirstTag"
+                    }
+                    {
+                        Account = Account ["Assets"; "Savings"]
+                        Amount = None
+                        Tag = Some "My: OtherTag"
+                    }
+                ])
+            )
+        ]
+    let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
+    let (Interpretation (_, entry)) = evalProgram { env with Row = row } program
+
+    let ({ Header = Header _; Lines = lines; Comments = _ }) = Option.get entry
+    let containsTag expectedTag ({ Tag = tag }: Line) = Assert.Equal(expectedTag, tag)
+    Assert.Collection(
+        lines, 
+        containsTag (Some "My: FirstTag"),
+        containsTag (Some "My: OtherTag")
+    )
+

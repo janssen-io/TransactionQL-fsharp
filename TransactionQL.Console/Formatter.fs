@@ -24,21 +24,25 @@ module Formatter =
 
     let commentLine format = sprintf "%s%s" format.Comment
 
-    let sprintLine format floatWidth (Line (Account accountParts, amount)) =
+    let sprintLine format floatWidth ({ Account = Account accountParts; Amount = amount; Tag = tag } : Line) =
         let account = String.Join (":", accountParts)
         let numOfSpaces = Math.Max(0, 43 - account.Length)
-        match amount with
-        | Some (Commodity commodity, sum) ->
-            // Accounts and commodities should be separated by atleast two spaces
-            sprintf "%s  %*s %*.*f" account numOfSpaces commodity floatWidth format.Precision sum
-        | None -> account
+        let line = 
+            match amount with
+            | Some (Commodity commodity, sum) ->
+                // Accounts and commodities must be separated by atleast two spaces
+                sprintf "%s  %*s %*.*f" account numOfSpaces commodity floatWidth format.Precision sum
+            | None -> account
+        match tag with
+        | Some text -> sprintf "%s  ; %s" line text
+        | None -> line
         |> sprintf "    %s" // indent lines
 
     let sprintPosting format sprintDescription (modifyLine : string -> string) entry =
         let { Header = header; Lines = lines; Comments = comments } = entry
         let floatWidth = 
             lines
-            |> List.map (fun (Line (Account _, amount)) -> 
+            |> List.map (fun ({ Amount = amount }: Line) -> 
                 match amount with
                 | Some (Commodity _, number) -> (sprintf "%.*f" format.Precision number).Length
                 | None -> 0)

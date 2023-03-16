@@ -17,9 +17,12 @@ module AST =
         | Amount of Commodity * float
         | AmountExpression of Commodity * Expression
 
-    type Transaction = Trx of Account * Amount option
+    type Transaction = { 
+        Account: Account
+        Amount: Amount option
+        Tag: string option }
 
-    type Posting = Posting of Transaction list
+    type Posting = Posting of string option * Transaction list
 
     type Column = Column of string
 

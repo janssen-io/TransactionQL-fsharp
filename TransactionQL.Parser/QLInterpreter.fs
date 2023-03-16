@@ -9,11 +9,12 @@ module QLInterpreter =
     open Interpretation
 
     type Header = Header of System.DateTime * string
-    type Line = Line of Account * (Commodity * float) option
+    type Line = { Account: Account; Amount: (Commodity * float) option; Tag: string option}
     type Entry = // Entry of Header * Line list
         { Header: Header
           Lines: Line list
-          Comments: string list }
+          Comments: string list
+        }
 
     let rec eval (env : Env) (expr : Expression)  =
         let rec eval' e =
@@ -33,7 +34,8 @@ module QLInterpreter =
         eval' expr
         |> fun n -> Interpretation (env, n)
 
-    let generatePostingLine env (Trx (Account accounts, am)) =
+
+    let generatePostingLine env ({ Account = accounts; Amount = amount; Tag = tag } : Transaction) =
         let remainder = Map.find "remainder" env.Variables
 
         let getCommodity amount =
@@ -47,19 +49,27 @@ module QLInterpreter =
             | AmountExpression (Commodity _, e) -> 
                 Interpretation.result (eval env e)
 
-        let commodity = Option.map getCommodity am
-        let amount = Option.map evalAmount am
+        let commodity = Option.map getCommodity amount
+        let amount = Option.map evalAmount amount
 
         match commodity, amount with
         | Some c, Some f ->
             let vars = Map.add "remainder" (remainder + f) env.Variables
-            { env with Variables = vars }, Line (Account accounts, Some (Commodity c, f))
+            { env with Variables = vars }, {
+                    Account = accounts
+                    Amount = Some (Commodity c, f)
+                    Tag = tag
+                }
         | _ ->
             let vars = Map.add "remainder" 0.0 env.Variables // update remainder to 0
-            { env with Variables = vars }, Line (Account accounts, None)
+            { env with Variables = vars }, {
+                Account = accounts
+                Amount = None
+                Tag = tag
+            }
         |> Interpretation
 
-    let generatePosting env (Posting p) =
+    let generatePosting env transactions =
         let rec gen env posting acc =
             match posting with
             | [] -> Interpretation (env, acc)
@@ -68,7 +78,7 @@ module QLInterpreter =
                 gen newEnv xs (line :: acc)
 
         let envWithRemainder = { env with Variables = Map.add "remainder" 0.0 env.Variables }
-        let (Interpretation (env', lines)) = gen envWithRemainder p []
+        let (Interpretation (env', lines)) = gen envWithRemainder transactions []
         Interpretation (env', List.rev lines)
 
     let rec evalString text (column:string) op =
@@ -125,7 +135,6 @@ module QLInterpreter =
                         envFilter.Variables
                         |> Map.add "amount" total
                         |> Map.add "total" (abs total)  }
-            let (Interpretation (envPosting, postingLines)) = generatePosting envTotal posting
 
             let date = System.DateTime.ParseExact(Map.find "Date" env.Row, env.DateFormat, CultureInfo.InvariantCulture)
             let header = Header (date, payee)
@@ -133,7 +142,15 @@ module QLInterpreter =
                 [ if Map.containsKey "Description" envFilter.Row
                   then Map.find "Description" envFilter.Row ]
 
-            Interpretation (envPosting, Some { Header = header; Lines = postingLines; Comments = comments })
+            let (Posting (note, transactions)) = posting
+            let (Interpretation (envPosting, postingLines)) = generatePosting envTotal transactions
+
+            let newComments = 
+                match note with
+                | Some n -> n :: comments
+                | None -> comments
+
+            Interpretation (envPosting, Some { Header = header; Lines = postingLines; Comments = newComments })
 
 
     let rec evalProgram env (Program queries) =
