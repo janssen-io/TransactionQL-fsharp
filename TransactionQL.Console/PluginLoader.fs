@@ -2,7 +2,6 @@
 
 open System
 open System.IO
-open System.Reflection
 open TransactionQL.Input.Converters
 open System.Runtime.Loader
 

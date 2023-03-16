@@ -1,7 +1,6 @@
 ﻿namespace TransactionQL.Plugins
 
 open System
-open System.IO
 open System.Globalization
 open FSharp.Data
 open TransactionQL.Parser.AST
@@ -16,16 +15,17 @@ module ING =
     type IngReader () =
         interface IConverter with
             member this.DateFormat = dateFormat;
-            member this.Read (FilePath fname) =
-                let trxs = IngTransactions.Load((new StreamReader(fname)))
+            member this.Read csvStream =
+                let trxs = IngTransactions.Load(csvStream)
                 trxs.Rows
                 |> Seq.map (fun row ->
+                    let isSent = row.``Af Bij`` = "Af"
                     Map.ofList [
-                        ("Sender",      if row.``Af Bij`` = "Af" then row.Rekening else row.Tegenrekening)
-                        ("Receiver",    if row.``Af Bij`` = "Af" then row.Tegenrekening else row.Rekening)
+                        ("Sender",      if isSent then row.Rekening else row.Tegenrekening)
+                        ("Receiver",    if isSent then row.Tegenrekening else row.Rekening)
                         ("Amount",      row.``Bedrag (EUR)``.Replace(",", ".")
                                         |> fun amount ->
-                                           if row.``Af Bij`` = "Af"
+                                           if isSent
                                            then sprintf "-%s" amount
                                            else amount)
                         ("Total",       row.``Bedrag (EUR)``.Replace(",", "."))
@@ -44,8 +44,8 @@ module ING =
                             fromRow "Name"
                         )
                     Lines = [
-                        Line (Account [fromRow "Sender"], Some (Commodity "EUR", float (fromRow "Amount")))      
-                        Line (Account [fromRow "Receiver"], None)
+                        Line (Account [fromRow "Receiver"], Some (Commodity "EUR", float (fromRow "Total")))
+                        Line (Account [fromRow "Sender"], None)
                     ]
                     Comments = 
                         [ fromRow "Description" ]

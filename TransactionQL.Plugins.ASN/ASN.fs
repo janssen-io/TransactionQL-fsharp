@@ -1,24 +1,25 @@
 ﻿namespace TransactionQL.Plugins
 
 open System
-open System.IO
 open System.Globalization
 open FSharp.Data
 open TransactionQL.Parser.AST
 open TransactionQL.Parser.QLInterpreter
 open TransactionQL.Input.Converters
 
-module ING =
+module ASN =
 
     let private dateFormat = "dd-MM-yyyy"
 
     type AsnTransactions = CsvProvider<"ASN.csv">
-    type IngReader () =
+
+    type AsnReader () =
         interface IConverter with
             member this.DateFormat = dateFormat;
-            member this.Read (FilePath fname) =
-                let trxs = AsnTransactions.Load((new StreamReader(fname)))
-                trxs.Rows
+            member this.Read csvStream =
+                let rows = csvStream.ReadToEnd()
+                let trxs = AsnTransactions.ParseRows(rows)
+                trxs
                 |> Seq.map (fun row ->
                     let amount = Decimal.Parse(row.Transactiebedrag, NumberStyles.AllowLeadingSign ||| NumberStyles.AllowDecimalPoint)
                     let isSent = amount < 0m
@@ -42,8 +43,8 @@ module ING =
                             fromRow "Name"
                         )
                     Lines = [
-                        Line (Account [fromRow "Sender"], Some (Commodity "EUR", float (fromRow "Amount")))      
-                        Line (Account [fromRow "Receiver"], None)
+                        Line (Account [fromRow "Receiver"], Some (Commodity "EUR", float (fromRow "Total")))
+                        Line (Account [fromRow "Sender"], None)
                     ]
                     Comments = 
                         [ fromRow "Description" ]

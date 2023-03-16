@@ -1,7 +1,6 @@
 ﻿namespace TransactionQL.Plugins
 
 open System
-open System.IO
 open System.Globalization
 open FSharp.Data
 open TransactionQL.Parser.AST
@@ -16,8 +15,8 @@ module Bunq =
     type BunqReader () =
         interface IConverter with
             member this.DateFormat = dateFormat
-            member this.Read (FilePath fname) =
-                let trxs = BunqTransactions.Load((new StreamReader(fname)))
+            member this.Read csvStream =
+                let trxs = BunqTransactions.Load(csvStream)
                 trxs.Rows
                 |> Seq.map (fun row ->
                     let isSent = row.Amount.[0] = '-'
@@ -44,8 +43,8 @@ module Bunq =
                             fromRow "Name"
                         )
                     Lines = [
-                        Line (Account [fromRow "Sender"], Some ((fromRow >> Commodity) "Currency", (fromRow >> float) "Amount"))      
-                        Line (Account [fromRow "Receiver"], None)
+                        Line (Account [fromRow "Receiver"], Some ((fromRow >> Commodity) "Currency", (fromRow >> float) "Total"))
+                        Line (Account [fromRow "Sender"], None)
                     ]
                     Comments = 
                         [ fromRow "Description" ]

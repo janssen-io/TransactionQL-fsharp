@@ -1,6 +1,6 @@
 ﻿namespace TransactionQL.Console
 
-open TransactionQL.Input
+open System.Globalization
 
 module Program =
     open Argu
@@ -18,32 +18,6 @@ module Program =
         | Never
         | OnlyOnMissing
 
-    type Arguments =
-        | [<MainCommand; ExactlyOnce; Last>]Files of ``transactions.csv``:string * ``filter.tql``:string
-        | [<AltCommandLine("-d")>]Date of format:string
-        | [<AltCommandLine("-p")>]Precision of int
-        | [<AltCommandLine("-c")>]Comment of chars:string
-        | [<AltCommandLine("-m"); ExactlyOnce>]Converter of string
-        | [<AltCommandLine("--desc")>]AddDescription of AddDescriptionFlag
-    with
-        interface IArgParserTemplate with
-            member s.Usage =
-                match s with
-                | Files (_, _) -> "the paths to the transactions and filter files"
-                | Date _ -> "the date output format (default: yyyy/MM/dd)"
-                | Precision _ -> "the precision of the amounts (default: 2)"
-                | Comment _ -> "the character(s) to use for single line comments (default: '; ')"
-                | Converter _ -> "the type of converter used to read transactions (default: ING)"
-                | AddDescription _ -> "add the transaction's description below the header (default: always)"
-
-    type Options = {
-        Format : Format
-        TrxFile : FilePath
-        FilterFile : string
-        Reader : IConverter
-        AddDescription: AddDescriptionFlag
-    }
-
     let createAndGetAppDir =
         let appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
         let dir = Path.Combine(appDir, "tql")
@@ -56,6 +30,47 @@ module Program =
         Directory.CreateDirectory dir |> ignore
         dir
 
+    type Options = {
+        Format : Format
+        TrxFile : FilePath
+        FilterFile : string
+        Reader : IConverter
+        HasHeader: bool
+        Locale: string
+        AddDescription: AddDescriptionFlag
+    }
+
+    let defaultOpts = 
+        { Format = Format.ledger
+          TrxFile = FilePath ""
+          FilterFile = ""
+          Reader = new DummyReader ()
+          HasHeader = true
+          Locale = "en_US"
+          AddDescription = Always }
+
+    type Arguments =
+        | [<MainCommand; ExactlyOnce; Last>]Files of ``transactions.csv``:string * ``filter.tql``:string
+        | [<AltCommandLine("-d")>]Date of format:string
+        | [<AltCommandLine("-p")>]Precision of int
+        | [<AltCommandLine("-c")>]Comment of chars:string
+        | [<AltCommandLine("-m"); ExactlyOnce>]Converter of string
+        | [<AltCommandLine("-h")>]HasHeader of bool
+        | [<AltCommandLine("-l")>]Locale of string
+        | [<AltCommandLine("--desc")>]AddDescription of AddDescriptionFlag
+    with
+        interface IArgParserTemplate with
+            member s.Usage =
+                match s with
+                | Files (_, _) -> "the paths to the transactions and filter files"
+                | Date _ -> sprintf "the date output format (default: %s)" defaultOpts.Format.Date
+                | Precision _ -> sprintf "the precision of the amounts (default: %d)" defaultOpts.Format.Precision
+                | Comment _ -> sprintf "the character(s) to use for single line comments (default: '%s')" defaultOpts.Format.Comment
+                | Converter _ -> sprintf "the type of converter used to read transactions. Converters are installed in: %s" createAndGetPluginDir
+                | HasHeader _ -> sprintf "whether the transaction file contains a column header (default: %b)" defaultOpts.HasHeader
+                | Locale _ -> sprintf "the locale used to parse decimal values (default: %s)" defaultOpts.Locale
+                | AddDescription _ -> sprintf "add the transaction's description below the header (default: %A)" defaultOpts.AddDescription
+
     let parseFilters options =
         let filter = QLParser.parse ((new StreamReader(options.FilterFile)).ReadToEnd ())
         match filter with
@@ -65,6 +80,7 @@ module Program =
             None
 
     let writeLedger options parsedFilter =
+        CultureInfo.CurrentCulture <- CultureInfo.CreateSpecificCulture(options.Locale)
         let (sprintEntryDescription, sprintMissingDescription) =
             let noSprint = (fun _ -> [])
             let sprintDesc = (List.map <| Formatter.commentLine options.Format)
@@ -81,18 +97,15 @@ module Program =
                 | None -> 
                     (options.Reader.Map >> Formatter.sprintMissingPosting options.Format sprintMissingDescription) env.Row
 
-        options.Reader.Read options.TrxFile
+        let (FilePath csvFile) = options.TrxFile
+        use csvStream = new StreamReader(csvFile)
+        if (options.HasHeader) then csvStream.ReadLine () |> ignore
+
+        options.Reader.Read csvStream
         |> Seq.map (fun row -> { Variables = Map.empty; Row = row; DateFormat = options.Reader.DateFormat })
         |> Seq.map (fun env -> QLInterpreter.evalProgram env parsedFilter)
         |> Seq.map sprintPosting
         |> Seq.map (fun lines -> String.Join(Environment.NewLine, lines))
-        |> Seq.sortBy (
-            fun line ->
-                if line.StartsWith options.Format.Comment then
-                    line.Substring(options.Format.Comment.Length) 
-                else 
-                    line
-        )
         |> fun lines -> String.Join(Environment.NewLine + Environment.NewLine, lines)
         |> Console.WriteLine
 
@@ -113,24 +126,20 @@ module Program =
                 createAndGetPluginDir
                 |> PluginLoader.load pluginName
                 |> Option.bind (fun plugin -> mapArgs { options with Reader = plugin } args')
+            | HasHeader h ->
+                mapArgs { options with HasHeader = h } args'
+            | Locale l ->
+                mapArgs { options with Locale = l } args'
             | AddDescription wd -> 
                 mapArgs {options with AddDescription = wd } args'
            
     [<EntryPoint>]
     let main argv =
-        let format = Format.ledger
-        let defaultOpts = 
-            { Format = format
-              TrxFile = FilePath ""
-              FilterFile = ""
-              Reader = new DummyReader ()
-              AddDescription = Always }
         let argParser = ArgumentParser.Create<Arguments>(programName = "tql")
 
         try
             let results = argParser.Parse argv
             let args = results.GetAllResults()
-
             let options = mapArgs defaultOpts args
 
             options
@@ -144,7 +153,8 @@ module Program =
             printfn "%s" ex.Message
             1
         | ex ->
-#if DEBUG
             printfn "Error: %s" ex.Message
+#if DEBUG
+            raise ex
 #endif
             2
