@@ -23,4 +23,9 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-preview5" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.6.1" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
+  </ItemGroup>
 </Project>

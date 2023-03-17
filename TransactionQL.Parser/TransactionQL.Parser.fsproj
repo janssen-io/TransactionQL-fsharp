@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,12 +9,15 @@
     <Compile Include="AST.fs" />
     <Compile Include="QLParser.fs" />
     <Compile Include="QLInterpreter.fs" />
+    <Compile Include="API.fs" />
   </ItemGroup>
-
-  <ItemGroup />
 
   <ItemGroup>
     <PackageReference Include="FParsec" Version="1.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TransactionQL.Shared\TransactionQL.Shared.fsproj" />
   </ItemGroup>
 
 </Project>

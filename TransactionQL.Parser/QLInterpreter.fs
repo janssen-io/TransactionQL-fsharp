@@ -88,7 +88,7 @@ module QLInterpreter =
         | Contains -> column.Contains text
         | _ -> failwith (sprintf "Operator '%A' is not supported for strings." op)
 
-    let evalRegex regex column op =
+    let evalRegex regex (column:string) op =
         match op with
         | Matches -> Regex(regex, RegexOptions.IgnoreCase).IsMatch(column)
         | _ -> failwith (sprintf "Operator '%A' is not supported for regular expressions." op)

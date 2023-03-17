@@ -7,10 +7,10 @@
         x:Class="TransactionQL.DesktopApp.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="TransactionQL.DesktopApp"
+        Title="TransactionQL Desktop"
         Background="Transparent"
         TransparencyLevelHint="AcrylicBlur"
-        ExtendClientAreaToDecorationsHint="True">
+        ExtendClientAreaToDecorationsHint="False">
 
   <Design.DataContext>
     <!-- This only sets the DataContext for the previewer in an IDE,
@@ -33,9 +33,23 @@
       </ExperimentalAcrylicBorder.Material>
     </ExperimentalAcrylicBorder>
     <Panel Margin="40">
-      <Button Command="{Binding OpenWorkspaceCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">
+      <!--<Button Command="{Binding OpenWorkspaceCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">
         <PathIcon Data="{StaticResource folder_open_regular}" />
-      </Button>
+      </Button>-->
+      <StackPanel Orientation="Horizontal"
+                  HorizontalAlignment="Right"
+                  VerticalAlignment="Top">
+        <Button Command="{Binding OpenFiltersCommand}">
+          Open Filters
+        </Button>
+        <Button Command="{Binding OpenTransactionsCommand}">
+          Open Transactions
+        </Button>
+      </StackPanel>
+      <StackPanel Orientation="Vertical">
+        <TextBlock Text="{Binding FilterPath}"></TextBlock>
+        <TextBlock Text="{Binding TransactionPath}"></TextBlock>
+      </StackPanel>
     </Panel>
   </Panel>
 </Window>

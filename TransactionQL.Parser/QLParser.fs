@@ -146,5 +146,5 @@ module QLParser =
     let qprogram =
         many (qquery .>> spaces) |>> Program
 
-    let parse = run qprogram
+    let parse = run qprogram 
 
