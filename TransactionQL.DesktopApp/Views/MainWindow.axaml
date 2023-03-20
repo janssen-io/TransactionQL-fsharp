@@ -49,6 +49,10 @@
       <StackPanel Orientation="Vertical">
         <TextBlock Text="{Binding FilterPath}"></TextBlock>
         <TextBlock Text="{Binding TransactionPath}"></TextBlock>
+        <TextBlock Text="{Binding Title}"></TextBlock>
+        <TextBlock Text="{Binding Date}"></TextBlock>
+        <TextBlock Text="{Binding Description}"></TextBlock>
+        <TextBlock Text="{Binding Amount}"></TextBlock>
       </StackPanel>
     </Panel>
   </Panel>

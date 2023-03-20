@@ -14,25 +14,25 @@ module ASN =
     type AsnTransactions = CsvProvider<"ASN.csv">
 
     type AsnReader () =
+        let toMap (row: AsnTransactions.Row) = 
+            let amount = Decimal.Parse(row.Transactiebedrag, NumberStyles.AllowLeadingSign ||| NumberStyles.AllowDecimalPoint)
+            let isSent = amount < 0m
+            Map.ofList [
+                ("Sender",      if isSent then row.Opdrachtgeversrekening else row.Tegenrekeningsnummer)
+                ("Receiver",    if isSent then row.Tegenrekeningsnummer else row.Opdrachtgeversrekening)
+                ("Amount",      string amount)
+                ("Total",       (string <| Math.Abs amount))
+                ("Date",        row.Boekingsdatum)
+                ("Description", row.Omschrijving)
+                ("Name",        row.``Naam Tegenrekening``)
+            ]
+
         interface IConverter with
             member this.DateFormat = dateFormat;
-            member this.Read csvStream =
-                let rows = csvStream.ReadToEnd()
-                let trxs = AsnTransactions.ParseRows(rows)
-                trxs
-                |> Seq.map (fun row ->
-                    let amount = Decimal.Parse(row.Transactiebedrag, NumberStyles.AllowLeadingSign ||| NumberStyles.AllowDecimalPoint)
-                    let isSent = amount < 0m
-                    Map.ofList [
-                        ("Sender",      if isSent then row.Opdrachtgeversrekening else row.Tegenrekeningsnummer)
-                        ("Receiver",    if isSent then row.Tegenrekeningsnummer else row.Opdrachtgeversrekening)
-                        ("Amount",      string amount)
-                        ("Total",       (string <| Math.Abs amount))
-                        ("Date",        row.Boekingsdatum)
-                        ("Description", row.Omschrijving)
-                        ("Name",        row.``Naam Tegenrekening``)
-                    ]
-                )
+            member this.Read lines =
+                lines
+                |> AsnTransactions.ParseRows
+                |> Array.map toMap
 
             member this.Map row =
                 let fromRow col = Map.find col row

@@ -1,22 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Formatter.fs" />
-    <Compile Include="Program.fs" />
+    <Compile Include="API.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Argu" Version="6.0.0" />
+    <PackageReference Include="FParsec" Version="1.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
     <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
+    <ProjectReference Include="..\TransactionQL.Shared\TransactionQL.Shared.fsproj" />
   </ItemGroup>
 
 </Project>

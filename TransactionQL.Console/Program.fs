@@ -1,11 +1,13 @@
 ﻿namespace TransactionQL.Console
 
-open System.Globalization
 
 module Program =
     open Argu
     open System
+    open System.Globalization
+    open TransactionQL.Shared.Configuration
     open TransactionQL.Parser
+    open TransactionQL.Input
     open TransactionQL.Input.Converters
     open TransactionQL.Input.DummyReader
     open System.IO
@@ -17,18 +19,6 @@ module Program =
         | Always
         | Never
         | OnlyOnMissing
-
-    let createAndGetAppDir =
-        let appDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-        let dir = Path.Combine(appDir, "tql")
-        Directory.CreateDirectory dir |> ignore
-        dir
-
-    let createAndGetPluginDir =
-        let appDir = createAndGetAppDir
-        let dir = Path.Combine(appDir, "plugins")
-        Directory.CreateDirectory dir |> ignore
-        dir
 
     type Options = {
         Format : Format
@@ -79,7 +69,7 @@ module Program =
             Console.WriteLine error
             None
 
-    let writeLedger options parsedFilter =
+    let writeLedger options parsedFilters =
         CultureInfo.CurrentCulture <- CultureInfo.CreateSpecificCulture(options.Locale)
         let (sprintEntryDescription, sprintMissingDescription) =
             let noSprint = (fun _ -> [])
@@ -101,9 +91,10 @@ module Program =
         use csvStream = new StreamReader(csvFile)
         if (options.HasHeader) then csvStream.ReadLine () |> ignore
 
-        options.Reader.Read csvStream
+        csvStream.ReadToEnd()
+        |> options.Reader.Read
         |> Seq.map (fun row -> { Variables = Map.empty; Row = row; DateFormat = options.Reader.DateFormat })
-        |> Seq.map (fun env -> QLInterpreter.evalProgram env parsedFilter)
+        |> Seq.map (fun env -> QLInterpreter.evalProgram env parsedFilters)
         |> Seq.map sprintPosting
         |> Seq.map (fun lines -> String.Join(Environment.NewLine, lines))
         |> fun lines -> String.Join(Environment.NewLine + Environment.NewLine, lines)

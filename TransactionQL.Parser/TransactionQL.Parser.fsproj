@@ -9,11 +9,10 @@
     <Compile Include="AST.fs" />
     <Compile Include="QLParser.fs" />
     <Compile Include="QLInterpreter.fs" />
-    <Compile Include="API.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FParsec" Version="1.0.3" />
+    <PackageReference Include="FParsec" Version="1.1.1" />
   </ItemGroup>
 
   <ItemGroup>

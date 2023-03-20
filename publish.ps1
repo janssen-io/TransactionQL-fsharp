@@ -14,13 +14,13 @@ New-Item -Path $pluginDir -ItemType Directory -ErrorAction SilentlyContinue
 Write-Host "Installing TQL to $appDir"
 
 Write-Host "- tql.exe"
-Copy-Item -Path ".\TransactionQL.Console\bin\$configuration\net6.0\win-x64\publish\TransactionQL.Console.exe" -Destination "$appDir\tql.exe" -Force
+Copy-Item -Path ".\TransactionQL.Console\bin\$configuration\net7.0\win-x64\publish\TransactionQL.Console.exe" -Destination "$appDir\tql.exe" -Force
 
 Write-Host "- plugins/ing"
-Copy-Item -Path ".\TransactionQL.Plugins.ING\bin\$configuration\net6.0\win-x64\publish\TransactionQL.Plugins.ING.dll" -Destination "$pluginDir\ing" -Force
+Copy-Item -Path ".\TransactionQL.Plugins.ING\bin\$configuration\net7.0\win-x64\publish\TransactionQL.Plugins.ING.dll" -Destination "$pluginDir\ing.dll" -Force
 
 Write-Host "- plugins/asn"
-Copy-Item -Path ".\TransactionQL.Plugins.ASN\bin\$configuration\net6.0\win-x64\publish\TransactionQL.Plugins.ASN.dll" -Destination "$pluginDir\asn" -Force
+Copy-Item -Path ".\TransactionQL.Plugins.ASN\bin\$configuration\net7.0\win-x64\publish\TransactionQL.Plugins.ASN.dll" -Destination "$pluginDir\asn.dll" -Force
 
 Write-Host "- plugins/bunq"
-Copy-Item -Path ".\TransactionQL.Plugins.Bunq\bin\$configuration\net6.0\win-x64\publish\TransactionQL.Plugins.Bunq.dll" -Destination "$pluginDir\bunq" -Force
+Copy-Item -Path ".\TransactionQL.Plugins.Bunq\bin\$configuration\net7.0\win-x64\publish\TransactionQL.Plugins.Bunq.dll" -Destination "$pluginDir\bunq.dll" -Force

@@ -7,6 +7,7 @@
   <ItemGroup>
     <Compile Include="Converters.fs" />
     <Compile Include="DummyReader.fs" />
+    <Compile Include="PluginLoader.fs" />
   </ItemGroup>
 
   <ItemGroup>

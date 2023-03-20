@@ -216,8 +216,8 @@ let ``Query: <payee> <filters> <posting>`` () =
                     None)])))
 
 [<Fact>]
-let ``Program: multiple queries`` () =
-    let program = """# First query
+let ``Queries: multiple queries`` () =
+    let queries = """# First query
         Creditor = "NL"
 
         posting {
@@ -236,7 +236,7 @@ let ``Program: multiple queries`` () =
             Assets:Checking
         }
     """
-    test QLParser.qprogram program (Program [
+    test QLParser.qprogram queries ([
         Query (
             Payee "First query"
             , [Filter (Column "Creditor", EqualTo,  String "NL")]

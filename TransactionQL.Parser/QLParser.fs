@@ -144,7 +144,7 @@ module QLParser =
         pipe3 payee filters posting (curry3 Query)
 
     let qprogram =
-        many (qquery .>> spaces) |>> Program
+        many (qquery .>> spaces)
 
     let parse = run qprogram 
 

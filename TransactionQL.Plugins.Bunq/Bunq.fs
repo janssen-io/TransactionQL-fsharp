@@ -13,26 +13,27 @@ module Bunq =
 
     type BunqTransactions = CsvProvider<"bunq.csv">
     type BunqReader () =
+        let toMap (row: BunqTransactions.Row) = 
+            let isSent = row.Amount.[0] = '-'
+            Map.ofList [
+                ("Sender",      if isSent then row.Account else row.CounterParty)
+                ("Receiver",    if isSent then row.CounterParty else row.Account)
+                ("Amount",      row.Amount.Replace(",", "."))
+                ("Total",       if isSent
+                                then row.Amount.Substring(1)
+                                else row.Amount)
+                ("Date",        row.CreatedAt)
+                ("Description", row.Description)
+                ("Name",        row.CounterPartyName)
+                ("Currency",    row.Currency)
+            ]
+
         interface IConverter with
             member this.DateFormat = dateFormat
-            member this.Read csvStream =
-                let trxs = BunqTransactions.Load(csvStream)
-                trxs.Rows
-                |> Seq.map (fun row ->
-                    let isSent = row.Amount.[0] = '-'
-                    Map.ofList [
-                        ("Sender",      if isSent then row.Account else row.CounterParty)
-                        ("Receiver",    if isSent then row.CounterParty else row.Account)
-                        ("Amount",      row.Amount.Replace(",", "."))
-                        ("Total",       if isSent
-                                        then row.Amount.Substring(1)
-                                        else row.Amount)
-                        ("Date",        row.CreatedAt)
-                        ("Description", row.Description)
-                        ("Name",        row.CounterPartyName)
-                        ("Currency",    row.Currency)
-                    ]
-                )
+            member this.Read lines =
+                lines
+                |> BunqTransactions.ParseRows
+                |> Array.map toMap
 
             member this.Map row = 
                 let fromRow col = Map.find col row

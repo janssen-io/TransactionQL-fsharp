@@ -259,9 +259,9 @@ let ``Query: given a row that does not match, no posting is generated`` () =
     Assert.Equal(None, entry)
 
 [<Fact>]
-let ``Program: multiple matching queries only applies the first match`` () =
-    let program = 
-        Program [
+let ``Queries: multiple matching queries only applies the first match`` () =
+    let queries = 
+        [
             Query (
                 Payee "first payee",
                 [Filter (Column "Amount", GreaterThan, Number 0.00)],
@@ -284,7 +284,7 @@ let ``Program: multiple matching queries only applies the first match`` () =
             )
         ]
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
-    let (Interpretation (_, entry)) = evalProgram { env with Row = row } program
+    let (Interpretation (_, entry)) = evalProgram { env with Row = row } queries
     Assert.NotEqual(None, entry)
 
     let ({ Header = Header (date, title); Lines = lines; Comments = _ }) = Option.get entry
@@ -293,9 +293,9 @@ let ``Program: multiple matching queries only applies the first match`` () =
     Assert.Equal(2, lines.Length)
 
 [<Fact>]
-let ``Program: multiple queries only applies the match`` () =
-    let program = 
-        Program [
+let ``Queries: multiple queries only applies the match`` () =
+    let queries = 
+        [
             Query (
                 Payee "first payee",
                 [Filter (Column "Amount", LessThan, Number 0.00)],
@@ -318,7 +318,7 @@ let ``Program: multiple queries only applies the match`` () =
             )
         ]
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
-    let (Interpretation (_, entry)) = evalProgram { env with Row = row } program
+    let (Interpretation (_, entry)) = evalProgram { env with Row = row } queries
 
     let ({ Header = Header (date, title); Lines = lines; Comments = _ }) = Option.get entry
     Assert.Equal(new DateTime(2019, 6, 1), date)
@@ -326,16 +326,16 @@ let ``Program: multiple queries only applies the match`` () =
     Assert.Equal(2, lines.Length)
 
 [<Fact>]
-let ``Program: no matches`` () =
-    let program = Program [ ]
+let ``Queries: no matches`` () =
+    let queries = [ ]
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
-    let (Interpretation (_, entry)) = evalProgram { env with Row = row } program
+    let (Interpretation (_, entry)) = evalProgram { env with Row = row } queries
     Assert.Equal(None, entry)
 
 [<Fact>]
-let ``Program: notes are added to the comments`` () =
-    let program = 
-        Program [
+let ``Queries: notes are added to the comments`` () =
+    let queries = 
+        [
             Query (
                 Payee "second payee",
                 [Filter (Column "Amount", GreaterThan, Number 0.00)],
@@ -346,16 +346,16 @@ let ``Program: notes are added to the comments`` () =
             )
         ]
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
-    let (Interpretation (_, entry)) = evalProgram { env with Row = row } program
+    let (Interpretation (_, entry)) = evalProgram { env with Row = row } queries
 
     let ({ Header = Header _; Lines = _; Comments = comments }) = Option.get entry
     Assert.Equal(1, comments.Length)
     Assert.Equal("this is a note", comments.[0])
 
 [<Fact>]
-let ``Program: tags are added to the posting line`` () =
-    let program = 
-        Program [
+let ``Queries: tags are added to the posting line`` () =
+    let queries = 
+        [
             Query (
                 Payee "second payee",
                 [Filter (Column "Amount", GreaterThan, Number 0.00)],
@@ -374,7 +374,7 @@ let ``Program: tags are added to the posting line`` () =
             )
         ]
     let row = Map.ofList [ ("Amount", "10.00"); ("Date", "2019/06/01") ]
-    let (Interpretation (_, entry)) = evalProgram { env with Row = row } program
+    let (Interpretation (_, entry)) = evalProgram { env with Row = row } queries
 
     let ({ Header = Header _; Lines = lines; Comments = _ }) = Option.get entry
     let containsTag expectedTag ({ Tag = tag }: Line) = Assert.Equal(expectedTag, tag)

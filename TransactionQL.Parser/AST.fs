@@ -44,5 +44,3 @@ module AST =
     type Payee = Payee of string
 
     type Query = Query of Payee * Filter list * Posting
-
-    type Program = Program of Query list

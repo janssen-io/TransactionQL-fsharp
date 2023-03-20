@@ -26,6 +26,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
+    <ProjectReference Include="..\TransactionQL.CsharpApi\TransactionQL.CsharpApi.fsproj" />
+    <ProjectReference Include="..\TransactionQL.Shared\TransactionQL.Shared.fsproj" />
   </ItemGroup>
 </Project>

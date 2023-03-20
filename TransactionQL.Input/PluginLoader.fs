@@ -1,4 +1,4 @@
-﻿namespace TransactionQL.Console
+﻿namespace TransactionQL.Input
 
 open System
 open System.IO

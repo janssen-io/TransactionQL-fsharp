@@ -2,14 +2,14 @@
 
 open TransactionQL.Parser.QLInterpreter
 open TransactionQL.Parser.Interpretation
-open System.IO
 
 module Converters =
 
     type FilePath = FilePath of string
 
     type IConverter =
-        abstract member Read : StreamReader -> seq<Row>
+        // Read takes the lines and parses them. This interface does not know whether we deal with single or multi-line transactions.
+        abstract member Read : string -> Row array
         abstract member Map : Row -> Entry
         abstract member DateFormat : string
 

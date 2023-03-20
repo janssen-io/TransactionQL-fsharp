@@ -153,7 +153,7 @@ module QLInterpreter =
             Interpretation (envPosting, Some { Header = header; Lines = postingLines; Comments = newComments })
 
 
-    let rec evalProgram env (Program queries) =
+    let rec evalProgram env queries =
         match queries with
         | (q :: qs) -> 
             let (Interpretation (env', entry)) = evalQuery env q
@@ -161,5 +161,5 @@ module QLInterpreter =
             | Some entry ->
                 Interpretation (env', Some entry)
             | None ->
-                evalProgram env' (Program qs)
+                evalProgram env' qs
         | [] -> Interpretation (env, None)
