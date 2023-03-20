@@ -29,4 +29,11 @@
     <ProjectReference Include="..\TransactionQL.CsharpApi\TransactionQL.CsharpApi.fsproj" />
     <ProjectReference Include="..\TransactionQL.Shared\TransactionQL.Shared.fsproj" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <Compile Update="Views\PaymentDetails.axaml.cs">
+      <DependentUpon>PaymentDetails.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

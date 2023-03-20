@@ -16,8 +16,9 @@ namespace TransactionQL.DesktopApp.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private readonly Window _parent;
+        private readonly Window? _parent;
 
+        public MainWindowViewModel() { }
         public MainWindowViewModel(Window parent)
         {
             _parent = parent;
@@ -42,36 +43,13 @@ namespace TransactionQL.DesktopApp.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _transactionPath, value);
         }
 
-        #region: card
-        private string _title = "";
-        public string Title
-        {
-            get => _title;
-            private set => this.RaiseAndSetIfChanged(ref _title, value);
-        }
 
-        private decimal _amount = 0m;
-        public decimal Amount
+        private PaymentDetailsViewModel _paymentDetails = new PaymentDetailsViewModel("", DateTime.MinValue, "", 0m);
+        public PaymentDetailsViewModel Details
         {
-            get => _amount;
-            private set => this.RaiseAndSetIfChanged(ref _amount, value);
+            get => _paymentDetails;
+            private set => this.RaiseAndSetIfChanged(ref _paymentDetails, value);
         }
-
-
-        private string _description = "";
-        public string Description
-        {
-            get => _description;
-            private set => this.RaiseAndSetIfChanged(ref _description, value);
-        }
-
-        private DateTime _date = DateTime.MinValue;
-        public DateTime Date
-        {
-            get => _date;
-            private set => this.RaiseAndSetIfChanged(ref _date, value);
-        }
-        #endregion: card
 
         private async void OpenFilters()
         {
@@ -141,11 +119,12 @@ namespace TransactionQL.DesktopApp.ViewModels
             CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
             // TODO: if contains header, then skip first line --> move to TransactionQL.Application project (also move C# api there)
             var rows = reader.Read(txt.ReadToEnd());
-            this.Title = rows.First()["Name"]; // TODO: Define type for use in UI?
-            this.Description = rows.First()["Description"];
-            this.Date = DateTime.ParseExact(rows.First()["Date"], reader.DateFormat, CultureInfo.InvariantCulture);
-            this.Amount = Decimal.Parse(rows.First()["Amount"], NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
+            var title = rows.First()["Name"]; // TODO: Define type for use in UI?
+            var description = rows.First()["Description"];
+            var date = DateTime.ParseExact(rows.First()["Date"], reader.DateFormat, CultureInfo.InvariantCulture);
+            var amount = Decimal.Parse(rows.First()["Amount"], NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
 
+            this.Details = new PaymentDetailsViewModel(title, date, description, amount);
 
             // TODO: 
             // - Show first transaction

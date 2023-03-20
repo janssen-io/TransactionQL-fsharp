@@ -1,6 +1,7 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
+        xmlns:v="using:TransactionQL.DesktopApp.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -27,7 +28,7 @@
       <ExperimentalAcrylicBorder.Material>
         <ExperimentalAcrylicMaterial
             BackgroundSource="Digger"
-            TintColor="Black"
+            TintColor="#78b591"
             TintOpacity="1"
             MaterialOpacity="0.65" />
       </ExperimentalAcrylicBorder.Material>
@@ -49,10 +50,7 @@
       <StackPanel Orientation="Vertical">
         <TextBlock Text="{Binding FilterPath}"></TextBlock>
         <TextBlock Text="{Binding TransactionPath}"></TextBlock>
-        <TextBlock Text="{Binding Title}"></TextBlock>
-        <TextBlock Text="{Binding Date}"></TextBlock>
-        <TextBlock Text="{Binding Description}"></TextBlock>
-        <TextBlock Text="{Binding Amount}"></TextBlock>
+        <v:PaymentDetails DataContext="{Binding Details}"></v:PaymentDetails>
       </StackPanel>
     </Panel>
   </Panel>

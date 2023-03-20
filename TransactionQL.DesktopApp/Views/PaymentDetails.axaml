@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TransactionQL.DesktopApp.Views.PaymentDetails"
+             x:DataType="vm:PaymentDetailsViewModel"
+             >
+  <Border CornerRadius="10"
+          ClipToBounds="True">
+    <StackPanel Orientation="Vertical"
+                Background="Black"
+              >
+      <TextBlock Text="{Binding Title}"></TextBlock>
+      <TextBlock Text="{Binding Date}"></TextBlock>
+      <TextBlock Text="{Binding Description}"></TextBlock>
+      <TextBlock Text="{Binding Amount}"></TextBlock>
+    </StackPanel>
+  </Border>
+</UserControl>
