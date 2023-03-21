@@ -29,8 +29,8 @@
         <ExperimentalAcrylicMaterial
             BackgroundSource="Digger"
             TintColor="#78b591"
-            TintOpacity="1"
-            MaterialOpacity="0.65" />
+            TintOpacity="0.8"
+            MaterialOpacity="0.1" />
       </ExperimentalAcrylicBorder.Material>
     </ExperimentalAcrylicBorder>
     <Panel Margin="40">

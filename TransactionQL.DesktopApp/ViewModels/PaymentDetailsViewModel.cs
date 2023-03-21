@@ -17,8 +17,13 @@ namespace TransactionQL.DesktopApp.ViewModels
         public decimal Amount
         {
             get => _amount;
-            private set => this.RaiseAndSetIfChanged(ref _amount, value);
+            private set {
+                this.RaiseAndSetIfChanged(ref _amount, value);
+                this.RaisePropertyChanged(nameof(IsNegativeAmount));
+            }
         }
+
+        public bool IsNegativeAmount => Amount < 0;
 
 
         private string _description = "";

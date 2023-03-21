@@ -3,19 +3,52 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="450"
+             Width="500"
              x:Class="TransactionQL.DesktopApp.Views.PaymentDetails"
-             x:DataType="vm:PaymentDetailsViewModel"
-             >
-  <Border CornerRadius="10"
-          ClipToBounds="True">
-    <StackPanel Orientation="Vertical"
-                Background="Black"
-              >
-      <TextBlock Text="{Binding Title}"></TextBlock>
-      <TextBlock Text="{Binding Date}"></TextBlock>
-      <TextBlock Text="{Binding Description}"></TextBlock>
-      <TextBlock Text="{Binding Amount}"></TextBlock>
-    </StackPanel>
+             x:DataType="vm:PaymentDetailsViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.h1">
+      <Setter Property="FontSize" Value="24" />
+      <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
+    <Style Selector="TextBlock.h2">
+      <Setter Property="FontSize" Value="20" />
+      <Setter Property="FontWeight" Value="Regular" />
+      <Setter Property="Foreground" Value="Green" />
+    </Style>
+
+    <Style Selector="TextBlock.subtitle">
+      <Setter Property="Foreground" Value="#888888" />
+    </Style>
+
+    <Style Selector="TextBlock.p">
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Margin" Value="0,25,0,0" />
+      <Setter Property="LineHeight" Value="25" />
+    </Style>
+
+    <Style Selector="TextBlock.Negative">
+      <Setter Property="Foreground" Value="Red" />
+    </Style>
+  </UserControl.Styles>
+
+  <Border CornerRadius="10" ClipToBounds="True">
+    <Border Padding="20" Background="White">
+      <RelativePanel Background="White">
+        <TextBlock x:Name="Title" Text="Vve 1234" Classes="h1" />
+        <TextBlock Text="{Binding Date, StringFormat='{}{0:yyyy-MM-dd}'}"
+                   Classes="subtitle"
+                   x:Name="Date" RelativePanel.Below="Title" />
+        <TextBlock Text="KENMERK 486417 Pakketpremie Beste-in-1 Pakket Verzamelnr. 03206138 Vvd. 01-02-2023"
+                   Classes="p"
+                   x:Name="Description" RelativePanel.Below="Date" />
+        <TextBlock Text="-133.70" 
+                   Classes="h2" Classes.Negative="{Binding IsNegativeAmount}"
+                   x:Name="Amount" RelativePanel.AlignRightWithPanel="True" />
+                   
+      </RelativePanel>
+    </Border>
   </Border>
 </UserControl>
