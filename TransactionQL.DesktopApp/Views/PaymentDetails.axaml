@@ -3,10 +3,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
+             xmlns:dd="using:TransactionQL.DesktopApp"
              mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="450"
              Width="500"
              x:Class="TransactionQL.DesktopApp.Views.PaymentDetails"
-             x:DataType="vm:PaymentDetailsViewModel">
+             x:DataType="vm:PaymentDetailsViewModel"
+             d:DataContext="{x:Static dd:DesignData.PaymentDetails}">
   <UserControl.Styles>
     <Style Selector="TextBlock.h1">
       <Setter Property="FontSize" Value="24" />
@@ -34,21 +36,25 @@
     </Style>
   </UserControl.Styles>
 
-  <Border CornerRadius="10" ClipToBounds="True">
-    <Border Padding="20" Background="White">
-      <RelativePanel Background="White">
-        <TextBlock x:Name="Title" Text="Vve 1234" Classes="h1" />
-        <TextBlock Text="{Binding Date, StringFormat='{}{0:yyyy-MM-dd}'}"
-                   Classes="subtitle"
-                   x:Name="Date" RelativePanel.Below="Title" />
-        <TextBlock Text="KENMERK 486417 Pakketpremie Beste-in-1 Pakket Verzamelnr. 03206138 Vvd. 01-02-2023"
-                   Classes="p"
-                   x:Name="Description" RelativePanel.Below="Date" />
-        <TextBlock Text="-133.70" 
-                   Classes="h2" Classes.Negative="{Binding IsNegativeAmount}"
-                   x:Name="Amount" RelativePanel.AlignRightWithPanel="True" />
-                   
-      </RelativePanel>
+  <StackPanel Orientation="Vertical">
+    <Border CornerRadius="10" ClipToBounds="True">
+      <Border Padding="20" Background="White">
+        <RelativePanel Background="White">
+          <TextBlock x:Name="Title" Text="{Binding Title}" Classes="h1" />
+          <TextBlock Text="{Binding Date, StringFormat='{}{0:yyyy-MM-dd}'}"
+                     Classes="subtitle"
+                     x:Name="Date" RelativePanel.Below="Title" />
+          <TextBlock Text="{Binding Description}"
+                     Classes="p"
+                     x:Name="Description" RelativePanel.Below="Date" />
+          <TextBlock Text="{Binding Amount}"
+                     Classes="h2" Classes.Negative="{Binding IsNegativeAmount}"
+                     x:Name="Amount" RelativePanel.AlignRightWithPanel="True" />
+        </RelativePanel>
+      </Border>
     </Border>
-  </Border>
+    <Grid>
+      <DataGrid Items="{Binding Transactions}"></DataGrid>
+  </Grid>
+  </StackPanel>
 </UserControl>

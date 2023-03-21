@@ -48,7 +48,7 @@ namespace TransactionQL.DesktopApp.ViewModels
         public PaymentDetailsViewModel Details
         {
             get => _paymentDetails;
-            private set => this.RaiseAndSetIfChanged(ref _paymentDetails, value);
+            internal set => this.RaiseAndSetIfChanged(ref _paymentDetails, value);
         }
 
         private async void OpenFilters()
