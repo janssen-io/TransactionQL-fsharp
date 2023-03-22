@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
              xmlns:dd="using:TransactionQL.DesktopApp"
-             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="450"
+             xmlns:views="clr-namespace:TransactionQL.DesktopApp.Views"
+             mc:Ignorable="d"
              Width="500"
              x:Class="TransactionQL.DesktopApp.Views.PaymentDetails"
              x:DataType="vm:PaymentDetailsViewModel"
@@ -53,8 +54,33 @@
         </RelativePanel>
       </Border>
     </Border>
-    <Grid>
-      <DataGrid Items="{Binding Transactions}"></DataGrid>
-  </Grid>
+    <DataGrid
+      Margin="0,25,0,0"
+      AutoGenerateColumns="False" Items="{Binding Transactions}">
+      <DataGrid.Columns>
+          <DataGridTemplateColumn Header="Account" 
+                          Width="7*">
+          <DataGridTemplateColumn.CellTemplate>
+                <DataTemplate>
+                    <!-- Temporarily disable bindings for the AutoCompleteBox, because otherwise Avalonia cannot find 'ValidAccounts' on DataContext
+                    As the type is seen as System.Object -->
+                  <AutoCompleteBox
+                    x:CompileBindings="False"
+                    SelectedItem="{Binding Account}"
+                    Items="{Binding 
+                      Path=DataContext.ValidAccounts,
+                      RelativeSource={RelativeSource FindAncestor, AncestorType=views:PaymentDetails}}"
+                     />
+                </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+      </DataGridTemplateColumn>
+      <DataGridTextColumn Header="Cur." 
+                          Binding="{Binding Currency}" 
+                          Width="2*" />
+      <DataGridTextColumn Header="Amount" 
+                          Binding="{Binding Amount}" 
+                          Width="2*" />
+      </DataGrid.Columns>
+    </DataGrid>
   </StackPanel>
 </UserControl>

@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace TransactionQL.DesktopApp.ViewModels
 {
@@ -42,10 +43,14 @@ namespace TransactionQL.DesktopApp.ViewModels
         }
         #endregion properties
 
-        public List<Transaction> Transactions { get; set; } = new List<Transaction>
+        public ObservableCollection<Transaction> Transactions { get; set; } = new()
         {
-            new Transaction { Account = "Assets:Checking", Currency = "EUR", Amount = -127.11m },
-            new Transaction { Account = "Expenses:Living:Utilities" },
+            new Transaction { Account = "Assets:Checking", Currency = "€", Amount = 5m }
+        };
+        public ObservableCollection<string> ValidAccounts { get; set; } = new()
+        {
+            "Assets:Checking",
+            "Expenses:Living:Utilities",
         };
 
         public PaymentDetailsViewModel(string title, DateTime date, string description, decimal amount)
@@ -54,6 +59,9 @@ namespace TransactionQL.DesktopApp.ViewModels
             Date = date;
             Description = description;
             Amount = amount;
+            
+            this.ValidAccounts.Add("Test");
+            this.ValidAccounts.Add("Test2");
         }
     }
 

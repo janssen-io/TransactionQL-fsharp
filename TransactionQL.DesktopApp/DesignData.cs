@@ -13,12 +13,19 @@ namespace TransactionQL.DesktopApp
             title: "Green Energy",
             date: new DateTime(2023, 03, 14),
             description: "Payment Note 32458 Electricity Bill 03206138 01-02-2023",
-            amount: -133.70m);
+            amount: -133.70m)
+        {
+            Transactions = new()
+            {
+                new Transaction { Account = "Assets:Checking", Currency = "EUR", Amount = -127.11m },
+                new Transaction { Account = "Expenses:Living:Utilities" },
+            },
+            ValidAccounts = new() { "Test", "Test2", "Test3" }
+        };
 
         public static readonly MainWindowViewModel MainWindow = new()
         {
             Details = PaymentDetails
         };
-        
     }
 }
