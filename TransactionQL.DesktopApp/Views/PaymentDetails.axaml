@@ -7,6 +7,8 @@
              xmlns:views="clr-namespace:TransactionQL.DesktopApp.Views"
              mc:Ignorable="d"
              Width="500"
+             d:DesignHeight="500"
+             d:Background="Purple"
              x:Class="TransactionQL.DesktopApp.Views.PaymentDetails"
              x:DataType="vm:PaymentDetailsViewModel"
              d:DataContext="{x:Static dd:DesignData.PaymentDetails}">
@@ -38,7 +40,7 @@
   </UserControl.Styles>
 
   <StackPanel Orientation="Vertical">
-    <Border CornerRadius="10" ClipToBounds="True">
+    <Border CornerRadius="10" ClipToBounds="True" Margin="0,10,0,10">
       <Border Padding="20" Background="White">
         <RelativePanel Background="White">
           <TextBlock x:Name="Title" Text="{Binding Title}" Classes="h1" />
@@ -54,8 +56,13 @@
         </RelativePanel>
       </Border>
     </Border>
+    <Border
+      Margin="0,15,0,15"
+      CornerRadius="10"
+      ClipToBounds="True"
+      Background="White"
+      >
     <DataGrid
-      Margin="0,25,0,0"
       AutoGenerateColumns="False" Items="{Binding Transactions}">
       <DataGrid.Columns>
           <DataGridTemplateColumn Header="Account" 
@@ -66,6 +73,7 @@
                     As the type is seen as System.Object -->
                   <AutoCompleteBox
                     x:CompileBindings="False"
+                    BorderBrush="Transparent"
                     SelectedItem="{Binding Account}"
                     TextFilter="{Binding 
                       Path=DataContext.AccountAutoCompletePredicate,
@@ -85,5 +93,6 @@
                           Width="2*" />
       </DataGrid.Columns>
     </DataGrid>
+      </Border>
   </StackPanel>
 </UserControl>
