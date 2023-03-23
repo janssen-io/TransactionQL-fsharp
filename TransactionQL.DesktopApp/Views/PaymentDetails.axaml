@@ -8,7 +8,6 @@
              mc:Ignorable="d"
              Width="500"
              d:DesignHeight="500"
-             d:Background="Purple"
              x:Class="TransactionQL.DesktopApp.Views.PaymentDetails"
              x:DataType="vm:PaymentDetailsViewModel"
              d:DataContext="{x:Static dd:DesignData.PaymentDetails}">
@@ -63,7 +62,13 @@
       Background="White"
       >
     <DataGrid
-      AutoGenerateColumns="False" Items="{Binding Transactions}">
+      AutoGenerateColumns="False"
+      Items="{Binding Transactions}"
+      CanUserReorderColumns="False"
+      CanUserSortColumns="False"
+      GridLinesVisibility="Horizontal"
+      Height="250">
+      
       <DataGrid.Columns>
           <DataGridTemplateColumn Header="Account" 
                           Width="7*">
@@ -75,9 +80,7 @@
                     x:CompileBindings="False"
                     BorderBrush="Transparent"
                     SelectedItem="{Binding Account}"
-                    TextFilter="{Binding 
-                      Path=DataContext.AccountAutoCompletePredicate,
-                      RelativeSource={RelativeSource FindAncestor, AncestorType=views:PaymentDetails}}"
+                    TextFilter="{Binding AccountAutoCompletePredicate}"
                     Items="{Binding 
                       Path=DataContext.ValidAccounts,
                       RelativeSource={RelativeSource FindAncestor, AncestorType=views:PaymentDetails}}"
@@ -94,5 +97,6 @@
       </DataGrid.Columns>
     </DataGrid>
       </Border>
+      <Button Content="Add" Margin="0,0,0,0" Command="{Binding AddTransactionCommand}"/>
   </StackPanel>
 </UserControl>

@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 using Avalonia.Controls;
 
 namespace TransactionQL.DesktopApp.ViewModels
@@ -15,7 +16,7 @@ namespace TransactionQL.DesktopApp.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _title, value);
         }
 
-        private decimal _amount = 0m;
+        private decimal _amount;
         public decimal Amount
         {
             get => _amount;
@@ -54,8 +55,43 @@ namespace TransactionQL.DesktopApp.ViewModels
             "Assets:Checking",
             "Expenses:Living:Utilities",
         };
+        
+        public ICommand AddTransactionCommand { get; }
 
+        public PaymentDetailsViewModel(string title, DateTime date, string description, decimal amount)
+        {
+            Title = title;
+            Date = date;
+            Description = description;
+            Amount = amount;
+            
+            this.ValidAccounts.Add("Test");
+            this.ValidAccounts.Add("Assets:Receivables:Friend1");
+
+            this.AddTransactionCommand = ReactiveCommand.Create(() =>
+            {
+                this.Transactions.Add(Transaction.Empty);
+            });
+        }
+    }
+
+    public class Transaction
+    {
+        public string Account { get; set; } = "";
+        public string? Currency { get; set; }
+        public decimal? Amount { get; set; }
+        
         public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate { get; }
+
+        public Transaction()
+        {
+            this.AccountAutoCompletePredicate = FilterAccounts;
+        }
+
+        public static Transaction Empty => new()
+        {
+            Account = "", Currency = null, Amount = null
+        };
 
         private static bool FilterAccounts(string? searchString, string item)
         {
@@ -71,24 +107,5 @@ namespace TransactionQL.DesktopApp.ViewModels
             // if all the letters of the searchString were found somewhere in the item, then it's a valid item.
             return searchIndex == searchString.Length;
         }
-
-        public PaymentDetailsViewModel(string title, DateTime date, string description, decimal amount)
-        {
-            Title = title;
-            Date = date;
-            Description = description;
-            Amount = amount;
-            
-            this.ValidAccounts.Add("Test");
-            this.ValidAccounts.Add("Assets:Receivables:Friend1");
-            this.AccountAutoCompletePredicate = PaymentDetailsViewModel.FilterAccounts;
-        }
-    }
-
-    public class Transaction
-    {
-        public string Account { get; set; } = "";
-        public string? Currency { get; set; }
-        public decimal? Amount { get; set; }
     }
 }
