@@ -25,7 +25,10 @@ namespace TransactionQL.DesktopApp
 
         public static readonly MainWindowViewModel MainWindow = new()
         {
-            Details = PaymentDetails
+            BankTransactions = new()
+            {
+                 PaymentDetails, PaymentDetails   
+            }
         };
     }
 }

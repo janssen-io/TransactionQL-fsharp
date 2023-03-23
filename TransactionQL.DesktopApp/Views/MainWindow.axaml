@@ -39,11 +39,22 @@
         <Button Command="{Binding OpenTransactionsCommand}">
           Open Transactions
         </Button>
+        <Button Name="CarouselNext">Next</Button>
+        <Button Name="CarouselPrevious">Previous</Button>
       </StackPanel>
       <StackPanel Orientation="Vertical">
         <TextBlock Text="{Binding FilterPath}"></TextBlock>
         <TextBlock Text="{Binding TransactionPath}"></TextBlock>
-        <v:PaymentDetails DataContext="{Binding Details}"></v:PaymentDetails>
+               <Carousel Name="BankTransactionCarousel" Items="{Binding BankTransactions}">
+                 <Carousel.PageTransition>
+                   <PageSlide Duration="0.25" Orientation="Horizontal" />
+                 </Carousel.PageTransition>
+                   <Carousel.ItemTemplate>
+                     <DataTemplate>
+                       <v:PaymentDetails DataContext="{Binding }"></v:PaymentDetails>
+                     </DataTemplate>
+                   </Carousel.ItemTemplate>
+               </Carousel> 
       </StackPanel>
     </Panel>
   </Panel>

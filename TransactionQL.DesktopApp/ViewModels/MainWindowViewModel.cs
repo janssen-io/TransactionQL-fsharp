@@ -3,10 +3,12 @@ using Avalonia.Platform.Storage;
 using DynamicData.Tests;
 using ReactiveUI;
 using System;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
+using Avalonia.LogicalTree;
 using TransactionQL.CsharpApi;
 using TransactionQL.Input;
 using TransactionQL.Parser;
@@ -17,13 +19,16 @@ namespace TransactionQL.DesktopApp.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly Window? _parent;
-
-        public MainWindowViewModel() { }
-        public MainWindowViewModel(Window parent)
+        
+        public MainWindowViewModel()
         {
-            _parent = parent;
             OpenFiltersCommand = ReactiveCommand.Create(OpenFilters);
             OpenTransactionsCommand = ReactiveCommand.Create(OpenTransactions);
+        }
+        
+        public MainWindowViewModel(Window parent) : this()
+        {
+            _parent = parent;
         }
 
         public ICommand OpenFiltersCommand { get; }
@@ -43,13 +48,7 @@ namespace TransactionQL.DesktopApp.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _transactionPath, value);
         }
 
-
-        private PaymentDetailsViewModel _paymentDetails = new PaymentDetailsViewModel("", DateTime.MinValue, "", 0m);
-        public PaymentDetailsViewModel Details
-        {
-            get => _paymentDetails;
-            internal set => this.RaiseAndSetIfChanged(ref _paymentDetails, value);
-        }
+        public ObservableCollection<PaymentDetailsViewModel> BankTransactions { get; set; } = new();
 
         private async void OpenFilters()
         {
@@ -119,12 +118,19 @@ namespace TransactionQL.DesktopApp.ViewModels
             CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
             // TODO: if contains header, then skip first line --> move to TransactionQL.Application project (also move C# api there)
             var rows = reader.Read(txt.ReadToEnd());
-            var title = rows.First()["Name"]; // TODO: Define type for use in UI?
-            var description = rows.First()["Description"];
-            var date = DateTime.ParseExact(rows.First()["Date"], reader.DateFormat, CultureInfo.InvariantCulture);
-            var amount = Decimal.Parse(rows.First()["Amount"], NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
 
-            this.Details = new PaymentDetailsViewModel(title, date, description, amount);
+            this.BankTransactions.Clear();
+
+            foreach (var row in rows)
+            {
+                var title = row["Name"]; // TODO: Define type for use in UI?
+                var description = row["Description"];
+                var date = DateTime.ParseExact(row["Date"], reader.DateFormat, CultureInfo.InvariantCulture);
+                var amount = Decimal.Parse(row["Amount"],
+                    NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
+
+                this.BankTransactions.Add(new PaymentDetailsViewModel(title, date, description, amount));
+            }
 
             // TODO: 
             // - Show first transaction
