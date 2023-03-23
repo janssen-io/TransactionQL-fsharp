@@ -67,6 +67,9 @@
                   <AutoCompleteBox
                     x:CompileBindings="False"
                     SelectedItem="{Binding Account}"
+                    TextFilter="{Binding 
+                      Path=DataContext.AccountAutoCompletePredicate,
+                      RelativeSource={RelativeSource FindAncestor, AncestorType=views:PaymentDetails}}"
                     Items="{Binding 
                       Path=DataContext.ValidAccounts,
                       RelativeSource={RelativeSource FindAncestor, AncestorType=views:PaymentDetails}}"

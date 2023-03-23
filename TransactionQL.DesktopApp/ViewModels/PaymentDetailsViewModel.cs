@@ -1,7 +1,7 @@
 ﻿using ReactiveUI;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Avalonia.Controls;
 
 namespace TransactionQL.DesktopApp.ViewModels
 {
@@ -53,6 +53,23 @@ namespace TransactionQL.DesktopApp.ViewModels
             "Expenses:Living:Utilities",
         };
 
+        public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate { get; }
+
+        private static bool FilterAccounts(string? searchString, string item)
+        {
+            if (searchString is null) return true;
+
+            var searchIndex = 0;
+            for (var itemIndex = 0; itemIndex < item.Length && searchIndex < searchString.Length; itemIndex++)
+            {
+                // Try to find the next letter of the search string in the remainder of the item
+                if (searchString[searchIndex] == item[itemIndex]) searchIndex++;
+            }
+
+            // if all the letters of the searchString were found somewhere in the item, then it's a valid item.
+            return searchIndex == searchString.Length;
+        }
+
         public PaymentDetailsViewModel(string title, DateTime date, string description, decimal amount)
         {
             Title = title;
@@ -61,14 +78,15 @@ namespace TransactionQL.DesktopApp.ViewModels
             Amount = amount;
             
             this.ValidAccounts.Add("Test");
-            this.ValidAccounts.Add("Test2");
+            this.ValidAccounts.Add("Assets:Receivables:Friend1");
+            this.AccountAutoCompletePredicate = PaymentDetailsViewModel.FilterAccounts;
         }
     }
 
     public class Transaction
     {
-        public string Account { get; set; }
-        public string Currency { get; set; }
-        public decimal Amount { get; set; }
+        public string Account { get; set; } = "";
+        public string? Currency { get; set; }
+        public decimal? Amount { get; set; }
     }
 }
