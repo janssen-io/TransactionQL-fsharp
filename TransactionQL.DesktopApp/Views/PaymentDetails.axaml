@@ -11,92 +11,90 @@
              x:Class="TransactionQL.DesktopApp.Views.PaymentDetails"
              x:DataType="vm:PaymentDetailsViewModel"
              d:DataContext="{x:Static dd:DesignData.PaymentDetails}">
-  <UserControl.Styles>
-    <Style Selector="TextBlock.h1">
-      <Setter Property="FontSize" Value="24" />
-      <Setter Property="FontWeight" Value="Bold" />
-    </Style>
+    <UserControl.Styles>
+        <Style Selector="TextBlock.h1">
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
 
-    <Style Selector="TextBlock.h2">
-      <Setter Property="FontSize" Value="20" />
-      <Setter Property="FontWeight" Value="Regular" />
-      <Setter Property="Foreground" Value="Green" />
-    </Style>
+        <Style Selector="TextBlock.h2">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="Regular" />
+            <Setter Property="Foreground" Value="Green" />
+        </Style>
 
-    <Style Selector="TextBlock.subtitle">
-      <Setter Property="Foreground" Value="#888888" />
-    </Style>
+        <Style Selector="TextBlock.subtitle">
+            <Setter Property="Foreground" Value="#888888" />
+        </Style>
 
-    <Style Selector="TextBlock.p">
-      <Setter Property="TextWrapping" Value="Wrap" />
-      <Setter Property="Margin" Value="0,25,0,0" />
-      <Setter Property="LineHeight" Value="25" />
-    </Style>
+        <Style Selector="TextBlock.p">
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,25,0,0" />
+            <Setter Property="LineHeight" Value="25" />
+        </Style>
 
-    <Style Selector="TextBlock.Negative">
-      <Setter Property="Foreground" Value="Red" />
-    </Style>
-  </UserControl.Styles>
+        <Style Selector="TextBlock.Negative">
+            <Setter Property="Foreground" Value="Red" />
+        </Style>
+    </UserControl.Styles>
 
-  <StackPanel Orientation="Vertical">
-    <Border CornerRadius="10" ClipToBounds="True" Margin="0,10,0,10">
-      <Border Padding="20" Background="White">
-        <RelativePanel Background="White">
-          <TextBlock x:Name="Title" Text="{Binding Title}" Classes="h1" />
-          <TextBlock Text="{Binding Date, StringFormat='{}{0:yyyy-MM-dd}'}"
-                     Classes="subtitle"
-                     x:Name="Date" RelativePanel.Below="Title" />
-          <TextBlock Text="{Binding Description}"
-                     Classes="p"
-                     x:Name="Description" RelativePanel.Below="Date" />
-          <TextBlock Text="{Binding Amount}"
-                     Classes="h2" Classes.Negative="{Binding IsNegativeAmount}"
-                     x:Name="Amount" RelativePanel.AlignRightWithPanel="True" />
-        </RelativePanel>
-      </Border>
-    </Border>
-    <Border
-      Margin="0,15,0,15"
-      CornerRadius="10"
-      ClipToBounds="True"
-      Background="White"
-      >
-    <DataGrid
-      AutoGenerateColumns="False"
-      Items="{Binding Transactions}"
-      CanUserReorderColumns="False"
-      CanUserSortColumns="False"
-      GridLinesVisibility="Horizontal"
-      Height="250">
-      
-      <DataGrid.Columns>
-          <DataGridTemplateColumn Header="Account" 
-                          Width="7*">
-          <DataGridTemplateColumn.CellTemplate>
-                <DataTemplate>
-                    <!-- Temporarily disable bindings for the AutoCompleteBox, because otherwise Avalonia cannot find 'ValidAccounts' on DataContext
+    <StackPanel Orientation="Vertical">
+        <Border CornerRadius="10" ClipToBounds="True" Margin="0,10,0,10">
+            <Border Padding="20" Background="White">
+                <RelativePanel Background="White">
+                    <TextBlock x:Name="Title" Text="{Binding Title}" Classes="h1" />
+                    <TextBlock Text="{Binding Date, StringFormat='{}{0:yyyy-MM-dd}'}"
+                               Classes="subtitle"
+                               x:Name="Date" RelativePanel.Below="Title" />
+                    <TextBlock Text="{Binding Description}"
+                               Classes="p"
+                               x:Name="Description" RelativePanel.Below="Date" />
+                    <TextBlock Text="{Binding Amount}"
+                               Classes="h2" Classes.Negative="{Binding IsNegativeAmount}"
+                               x:Name="Amount" RelativePanel.AlignRightWithPanel="True" />
+                </RelativePanel>
+            </Border>
+        </Border>
+        <Border
+            Margin="0,15,0,15"
+            CornerRadius="10"
+            ClipToBounds="True"
+            Background="White">
+            <DataGrid
+                AutoGenerateColumns="False"
+                Items="{Binding Transactions}"
+                CanUserReorderColumns="False"
+                CanUserSortColumns="False"
+                GridLinesVisibility="Horizontal"
+                Height="250">
+
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Account"
+                                            Width="7*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <!-- Temporarily disable bindings for the AutoCompleteBox, because otherwise Avalonia cannot find 'ValidAccounts' on DataContext
                     As the type is seen as System.Object -->
-                  <AutoCompleteBox
-                    x:CompileBindings="False"
-                    BorderBrush="Transparent"
-                    SelectedItem="{Binding Account}"
-                    TextFilter="{Binding AccountAutoCompletePredicate}"
-                    Items="{Binding 
+                                <AutoCompleteBox
+                                    x:CompileBindings="False"
+                                    BorderBrush="Transparent"
+                                    SelectedItem="{Binding Account}"
+                                    TextFilter="{Binding AccountAutoCompletePredicate}"
+                                    Items="{Binding 
                       Path=DataContext.ValidAccounts,
-                      RelativeSource={RelativeSource FindAncestor, AncestorType=views:PaymentDetails}}"
-                     />
-                </DataTemplate>
-          </DataGridTemplateColumn.CellTemplate>
-      </DataGridTemplateColumn>
-      <DataGridTextColumn Header="Cur." 
-                          Binding="{Binding Currency}" 
-                          Width="2*" />
-      <DataGridTextColumn Header="Amount" 
-                          Binding="{Binding Amount}" 
-                          Width="2*" />
-      </DataGrid.Columns>
-    </DataGrid>
-      </Border>
-      <Button Content="Add" Margin="0,0,0,0" Command="{Binding AddTransactionCommand}"/>
-  </StackPanel>
+                      RelativeSource={RelativeSource FindAncestor, AncestorType=views:PaymentDetails}}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Cur."
+                                        Binding="{Binding Currency}"
+                                        Width="2*" />
+                    <DataGridTextColumn Header="Amount"
+                                        Binding="{Binding Amount}"
+                                        Width="2*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+        <Button Content="Add" Margin="0,0,0,0" Command="{Binding AddTransactionCommand}" />
+    </StackPanel>
 </UserControl>

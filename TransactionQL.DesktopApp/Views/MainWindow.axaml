@@ -16,47 +16,46 @@
         DataContext="{x:Static dd:DesignData.MainWindow}">
 
 
-  <Panel>
-    <ExperimentalAcrylicBorder IsHitTestVisible="False">
-      <ExperimentalAcrylicBorder.Material>
-        <ExperimentalAcrylicMaterial
-            BackgroundSource="Digger"
-            TintColor="#78b591"
-            TintOpacity="0.8"
-            MaterialOpacity="0.1" />
-      </ExperimentalAcrylicBorder.Material>
-    </ExperimentalAcrylicBorder>
-    <Panel Margin="40">
-      <!--<Button Command="{Binding OpenWorkspaceCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">
+    <Panel>
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="#78b591"
+                    TintOpacity="0.8"
+                    MaterialOpacity="0.1" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+        <Panel Margin="40">
+            <!--<Button Command="{Binding OpenWorkspaceCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">
         <PathIcon Data="{StaticResource folder_open_regular}" />
       </Button>-->
-      <StackPanel Orientation="Horizontal"
-                  HorizontalAlignment="Right"
-                  VerticalAlignment="Top">
-        <Button Command="{Binding OpenFiltersCommand}">
-          Open Filters
-        </Button>
-        <Button Command="{Binding OpenTransactionsCommand}">
-          Open Transactions
-        </Button>
-        <Button Name="CarouselNext">Next</Button>
-        <Button Name="CarouselPrevious">Previous</Button>
-      </StackPanel>
-      <StackPanel Orientation="Vertical">
-        <TextBlock Text="{Binding FilterPath}"></TextBlock>
-        <TextBlock Text="{Binding TransactionPath}"></TextBlock>
-               <Carousel Name="BankTransactionCarousel" Items="{Binding BankTransactions}">
-                 <Carousel.PageTransition>
-                   <PageSlide Duration="0.25" Orientation="Horizontal" />
-                 </Carousel.PageTransition>
-                   <Carousel.ItemTemplate>
-                     <DataTemplate>
-                       <v:PaymentDetails DataContext="{Binding }"></v:PaymentDetails>
-                     </DataTemplate>
-                   </Carousel.ItemTemplate>
-               </Carousel> 
-      </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top">
+                <Button Command="{Binding OpenFiltersCommand}">
+                    Open Filters
+                </Button>
+                <Button Command="{Binding OpenTransactionsCommand}">
+                    Open Transactions
+                </Button>
+                <Button Name="CarouselNext">Next</Button>
+                <Button Name="CarouselPrevious">Previous</Button>
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding FilterPath}"></TextBlock>
+                <TextBlock Text="{Binding TransactionPath}"></TextBlock>
+                <Carousel Name="BankTransactionCarousel" Items="{Binding BankTransactions}">
+                    <Carousel.PageTransition>
+                        <PageSlide Duration="0.25" Orientation="Horizontal" />
+                    </Carousel.PageTransition>
+                    <Carousel.ItemTemplate>
+                        <DataTemplate>
+                            <v:PaymentDetails DataContext="{Binding }"></v:PaymentDetails>
+                        </DataTemplate>
+                    </Carousel.ItemTemplate>
+                </Carousel>
+            </StackPanel>
+        </Panel>
     </Panel>
-  </Panel>
 </Window>
-

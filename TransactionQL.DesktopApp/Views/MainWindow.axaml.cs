@@ -8,7 +8,7 @@ namespace TransactionQL.DesktopApp.Views
         private Button Next;
         private Button Previous;
         private Carousel BankTransactions;
-        
+
         public MainWindow()
         {
             InitializeComponent();
