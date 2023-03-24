@@ -47,23 +47,29 @@
         <Border CornerRadius="10" ClipToBounds="True" Margin="0,10,0,10">
             <Border Padding="20" Background="White">
                 <RelativePanel Background="White">
-                    <TextBox x:Name="Title" Text="{Binding Title}" Classes="h1" Padding="0,6,6,5" 
-                               RelativePanel.AlignLeftWithPanel="True"
-                               RelativePanel.AlignRightWith="Amount"
-                             />
+                    <TextBox x:Name="Title" Text="{Binding Title}" Classes="h1" Padding="0,6,6,5"
+                             RelativePanel.LeftOf="Currency"
+                             RelativePanel.AlignLeftWithPanel="True" />
+
                     <TextBlock Text="{Binding Date, StringFormat='{}{0:yyyy-MM-dd}'}"
                                Classes="subtitle"
                                x:Name="Date" RelativePanel.Below="Title" />
                     <TextBox Text="{Binding Description}"
-                               Classes="p"
-                               x:Name="Description" RelativePanel.Below="Date" 
-                               AcceptsReturn="True"
-                               TextWrapping="Wrap"
-                               RelativePanel.AlignLeftWithPanel="True"
-                               RelativePanel.AlignRightWithPanel="True"
-                               Padding="0,6,6,5"
-                               />
-                    <TextBlock Text="{Binding Amount}"
+                             Classes="p"
+                             x:Name="Description" RelativePanel.Below="Date"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             RelativePanel.AlignLeftWithPanel="True"
+                             RelativePanel.AlignRightWithPanel="True"
+                             Padding="0,6,6,5" />
+                    <TextBlock x:Name="Currency"
+                               Text="{Binding Currency}"
+                               Classes="subtitle"
+                               RelativePanel.LeftOf="Amount"
+                               TextAlignment="Right"
+                               Margin="0,0,10,0"
+                               MinWidth="50" />
+                    <TextBlock Text="{Binding Amount, StringFormat={}{0:.00}}"
                                Classes="h2" Classes.Negative="{Binding IsNegativeAmount}"
                                x:Name="Amount" RelativePanel.AlignRightWithPanel="True" />
                 </RelativePanel>
@@ -103,9 +109,18 @@
                     <DataGridTextColumn Header="Cur."
                                         Binding="{Binding Currency}"
                                         Width="2*" />
-                    <DataGridTextColumn Header="Amount"
-                                        Binding="{Binding Amount}"
-                                        Width="2*" />
+                    <!-- Seems like a lot of trouble to align the Amounts to the right -->
+                    <DataGridTemplateColumn Header="Amount"
+                                            Width="2*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Amount}"
+                                           Margin="0,0,10,0"
+                                           VerticalAlignment="Center"
+                                           TextAlignment="Right" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
