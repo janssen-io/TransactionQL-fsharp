@@ -13,7 +13,7 @@ namespace TransactionQL.DesktopApp.ViewModels
         public string Title
         {
             get => _title;
-            private set => this.RaiseAndSetIfChanged(ref _title, value);
+            set => this.RaiseAndSetIfChanged(ref _title, value);
         }
 
         private decimal _amount;
@@ -33,7 +33,7 @@ namespace TransactionQL.DesktopApp.ViewModels
         public string Description
         {
             get => _description;
-            private set => this.RaiseAndSetIfChanged(ref _description, value);
+            set => this.RaiseAndSetIfChanged(ref _description, value);
         }
 
         private DateTime _date = DateTime.MinValue;

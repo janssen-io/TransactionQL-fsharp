@@ -12,9 +12,13 @@
              x:DataType="vm:PaymentDetailsViewModel"
              d:DataContext="{x:Static dd:DesignData.PaymentDetails}">
     <UserControl.Styles>
-        <Style Selector="TextBlock.h1">
+        <Style Selector="TextBox.h1">
             <Setter Property="FontSize" Value="24" />
             <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <Style Selector="TextBox:focus Border">
+            <Setter Property="BorderBrush" Value="Transparent" />
         </Style>
 
         <Style Selector="TextBlock.h2">
@@ -27,10 +31,11 @@
             <Setter Property="Foreground" Value="#888888" />
         </Style>
 
-        <Style Selector="TextBlock.p">
+        <Style Selector="TextBox.p">
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Margin" Value="0,25,0,0" />
             <Setter Property="LineHeight" Value="25" />
+            <Setter Property="BorderBrush" Value="Transparent" />
         </Style>
 
         <Style Selector="TextBlock.Negative">
@@ -42,13 +47,22 @@
         <Border CornerRadius="10" ClipToBounds="True" Margin="0,10,0,10">
             <Border Padding="20" Background="White">
                 <RelativePanel Background="White">
-                    <TextBlock x:Name="Title" Text="{Binding Title}" Classes="h1" />
+                    <TextBox x:Name="Title" Text="{Binding Title}" Classes="h1" Padding="0,6,6,5" 
+                               RelativePanel.AlignLeftWithPanel="True"
+                               RelativePanel.AlignRightWith="Amount"
+                             />
                     <TextBlock Text="{Binding Date, StringFormat='{}{0:yyyy-MM-dd}'}"
                                Classes="subtitle"
                                x:Name="Date" RelativePanel.Below="Title" />
-                    <TextBlock Text="{Binding Description}"
+                    <TextBox Text="{Binding Description}"
                                Classes="p"
-                               x:Name="Description" RelativePanel.Below="Date" />
+                               x:Name="Description" RelativePanel.Below="Date" 
+                               AcceptsReturn="True"
+                               TextWrapping="Wrap"
+                               RelativePanel.AlignLeftWithPanel="True"
+                               RelativePanel.AlignRightWithPanel="True"
+                               Padding="0,6,6,5"
+                               />
                     <TextBlock Text="{Binding Amount}"
                                Classes="h2" Classes.Negative="{Binding IsNegativeAmount}"
                                x:Name="Amount" RelativePanel.AlignRightWithPanel="True" />
