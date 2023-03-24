@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="ASN.csv" />
-    <Compile Include="ASN.fs" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Include="ASN.csv"/>
+        <Compile Include="ASN.fs"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
-    <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj"/>
+        <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj"/>
+    </ItemGroup>
 
 </Project>

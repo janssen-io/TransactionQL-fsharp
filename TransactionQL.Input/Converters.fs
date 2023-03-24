@@ -9,7 +9,6 @@ module Converters =
 
     type IConverter =
         // Read takes the lines and parses them. This interface does not know whether we deal with single or multi-line transactions.
-        abstract member Read : string -> Row array
-        abstract member Map : Row -> Entry
-        abstract member DateFormat : string
-
+        abstract member Read: string -> Row array
+        abstract member Map: Row -> Entry
+        abstract member DateFormat: string

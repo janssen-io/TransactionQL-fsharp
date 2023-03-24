@@ -1,23 +1,22 @@
 using Avalonia.Controls;
 using ReactiveUI;
 
-namespace TransactionQL.DesktopApp.Views
+namespace TransactionQL.DesktopApp.Views;
+
+public partial class MainWindow : Window
 {
-    public partial class MainWindow : Window
+    private Button Next;
+    private Button Previous;
+    private Carousel BankTransactions;
+
+    public MainWindow()
     {
-        private Button Next;
-        private Button Previous;
-        private Carousel BankTransactions;
+        InitializeComponent();
+        Next = this.FindControl<Button>("CarouselNext");
+        Previous = this.FindControl<Button>("CarouselPrevious");
+        BankTransactions = this.FindControl<Carousel>("BankTransactionCarousel");
 
-        public MainWindow()
-        {
-            InitializeComponent();
-            this.Next = this.FindControl<Button>("CarouselNext");
-            this.Previous = this.FindControl<Button>("CarouselPrevious");
-            this.BankTransactions = this.FindControl<Carousel>("BankTransactionCarousel");
-
-            this.Next.Command = ReactiveCommand.Create(() => BankTransactions.Next());
-            this.Previous.Command = ReactiveCommand.Create(() => BankTransactions.Previous());
-        }
+        Next.Command = ReactiveCommand.Create(() => BankTransactions.Next());
+        Previous.Command = ReactiveCommand.Create(() => BankTransactions.Previous());
     }
 }

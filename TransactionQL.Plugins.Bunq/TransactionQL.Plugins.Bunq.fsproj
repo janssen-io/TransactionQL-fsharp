@@ -1,21 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="bunq.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Compile Include="Bunq.fs" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Include="bunq.csv">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <Compile Include="Bunq.fs"/>
+    </ItemGroup>
 
-  <ItemGroup />
+    <ItemGroup/>
 
-  <ItemGroup>
-    <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
-    <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj"/>
+        <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj"/>
+    </ItemGroup>
 
 </Project>

@@ -13,46 +13,49 @@ module ASN =
 
     type AsnTransactions = CsvProvider<"ASN.csv">
 
-    type AsnReader () =
-        let toMap (row: AsnTransactions.Row) = 
-            let amount = Decimal.Parse(row.Transactiebedrag, NumberStyles.AllowLeadingSign ||| NumberStyles.AllowDecimalPoint)
+    type AsnReader() =
+        let toMap (row: AsnTransactions.Row) =
+            let amount =
+                Decimal.Parse(row.Transactiebedrag, NumberStyles.AllowLeadingSign ||| NumberStyles.AllowDecimalPoint)
+
             let isSent = amount < 0m
-            Map.ofList [
-                ("Sender",      if isSent then row.Opdrachtgeversrekening else row.Tegenrekeningsnummer)
-                ("Receiver",    if isSent then row.Tegenrekeningsnummer else row.Opdrachtgeversrekening)
-                ("Amount",      string amount)
-                ("Total",       (string <| Math.Abs amount))
-                ("Date",        row.Boekingsdatum)
-                ("Description", row.Omschrijving)
-                ("Name",        row.``Naam Tegenrekening``)
-            ]
+
+            Map.ofList
+                [ ("Sender",
+                   if isSent then
+                       row.Opdrachtgeversrekening
+                   else
+                       row.Tegenrekeningsnummer)
+                  ("Receiver",
+                   if isSent then
+                       row.Tegenrekeningsnummer
+                   else
+                       row.Opdrachtgeversrekening)
+                  ("Amount", string amount)
+                  ("Total", (string <| Math.Abs amount))
+                  ("Date", row.Boekingsdatum)
+                  ("Description", row.Omschrijving)
+                  ("Name", row.``Naam Tegenrekening``) ]
 
         interface IConverter with
-            member this.DateFormat = dateFormat;
+            member this.DateFormat = dateFormat
+
             member this.Read lines =
-                lines
-                |> AsnTransactions.ParseRows
-                |> Array.map toMap
+                lines |> AsnTransactions.ParseRows |> Array.map toMap
 
             member this.Map row =
                 let fromRow col = Map.find col row
-                {
-                    Header = 
-                        Header (
-                            DateTime.ParseExact(fromRow "Date", dateFormat, CultureInfo.InvariantCulture),
-                            fromRow "Name"
-                        )
-                    Lines = [
-                        { 
-                            Account = Account [fromRow "Receiver"]
-                            Amount = (Commodity "EUR", float (fromRow "Total")) |> Some
-                            Tag = None
-                        }
-                        {
-                            Account = Account [fromRow "Sender"]
-                            Amount = None
-                            Tag = None
-                        }
-                    ]
-                    Comments = [ fromRow "Description" ]
-                }
+
+                { Header =
+                    Header(
+                        DateTime.ParseExact(fromRow "Date", dateFormat, CultureInfo.InvariantCulture),
+                        fromRow "Name"
+                    )
+                  Lines =
+                    [ { Account = Account [ fromRow "Receiver" ]
+                        Amount = (Commodity "EUR", float (fromRow "Total")) |> Some
+                        Tag = None }
+                      { Account = Account [ fromRow "Sender" ]
+                        Amount = None
+                        Tag = None } ]
+                  Comments = [ fromRow "Description" ] }

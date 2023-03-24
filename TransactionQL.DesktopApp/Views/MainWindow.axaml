@@ -43,15 +43,15 @@
                 <Button Name="CarouselPrevious">Previous</Button>
             </StackPanel>
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="{Binding FilterPath}"></TextBlock>
-                <TextBlock Text="{Binding TransactionPath}"></TextBlock>
+                <TextBlock Text="{Binding FilterPath}" />
+                <TextBlock Text="{Binding TransactionPath}" />
                 <Carousel Name="BankTransactionCarousel" Items="{Binding BankTransactions}">
                     <Carousel.PageTransition>
                         <PageSlide Duration="0.25" Orientation="Horizontal" />
                     </Carousel.PageTransition>
                     <Carousel.ItemTemplate>
                         <DataTemplate>
-                            <v:PaymentDetails DataContext="{Binding }"></v:PaymentDetails>
+                            <v:PaymentDetails DataContext="{Binding }" />
                         </DataTemplate>
                     </Carousel.ItemTemplate>
                 </Carousel>

@@ -17,10 +17,10 @@ module AST =
         | Amount of Commodity * float
         | AmountExpression of Commodity * Expression
 
-    type Transaction = { 
-        Account: Account
-        Amount: Amount option
-        Tag: string option }
+    type Transaction =
+        { Account: Account
+          Amount: Amount option
+          Tag: string option }
 
     type Posting = Posting of string option * Transaction list
 
@@ -31,11 +31,15 @@ module AST =
         | String of string
         | Number of float
 
-    type FilterOperator = 
-        | EqualTo       | NotEqualTo
-        | GreaterThan   | GreaterThanOrEqualTo
-        | LessThan      | LessThanOrEqualTo
-        | Contains      | Matches
+    type FilterOperator =
+        | EqualTo
+        | NotEqualTo
+        | GreaterThan
+        | GreaterThanOrEqualTo
+        | LessThan
+        | LessThanOrEqualTo
+        | Contains
+        | Matches
 
     type Filter =
         | Filter of Column * FilterOperator * FilterAtom

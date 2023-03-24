@@ -1,50 +1,60 @@
 ﻿namespace TransactionQL.Console
 
 module Format =
-    type Format = {
-        Date: string
-        Precision: int
-        Comment: string
-    }
+    type Format =
+        { Date: string
+          Precision: int
+          Comment: string }
 
-    let ledger : Format =  {
-        Date = "yyyy/MM/dd"
-        Precision = 2
-        Comment = "; "
-    }
+    let ledger: Format =
+        { Date = "yyyy/MM/dd"
+          Precision = 2
+          Comment = "; " }
 
-module Formatter = 
+module Formatter =
     open System
     open TransactionQL.Parser.QLInterpreter
     open TransactionQL.Parser.AST
     open Format
 
-    let sprintHeader format (Header (date, payee)) =
+    let sprintHeader format (Header(date, payee)) =
         sprintf "%s %s" (date.ToString format.Date) payee
 
     let commentLine format = sprintf "%s%s" format.Comment
 
-    let sprintLine format floatWidth ({ Account = Account accountParts; Amount = amount; Tag = tag } : Line) =
-        let account = String.Join (":", accountParts)
+    let sprintLine
+        format
+        floatWidth
+        ({ Account = Account accountParts
+           Amount = amount
+           Tag = tag }: Line)
+        =
+        let account = String.Join(":", accountParts)
         let numOfSpaces = Math.Max(0, 43 - account.Length)
-        let line = 
+
+        let line =
             match amount with
-            | Some (Commodity commodity, sum) ->
+            | Some(Commodity commodity, sum) ->
                 // Accounts and commodities must be separated by atleast two spaces
                 sprintf "%s  %*s %*.*f" account numOfSpaces commodity floatWidth format.Precision sum
             | None -> account
+
         match tag with
         | Some text -> sprintf "%s  ; %s" line text
         | None -> line
         |> sprintf "    %s" // indent lines
 
-    let sprintPosting format sprintDescription (modifyLine : string -> string) entry =
-        let { Header = header; Lines = lines; Comments = comments } = entry
-        let floatWidth = 
+    let sprintPosting format sprintDescription (modifyLine: string -> string) entry =
+        let { Header = header
+              Lines = lines
+              Comments = comments } =
+            entry
+
+        let floatWidth =
             lines
-            |> List.map (fun ({ Amount = amount }: Line) -> 
+            |> List.map (fun ({ Amount = amount }: Line) ->
                 match amount with
-                | Some (Commodity _, number) -> (sprintf "%.*f" format.Precision number).Length
+                | Some(Commodity _, number) -> (sprintf "%.*f" format.Precision number).Length
                 | None -> 0)
             |> List.max
 
@@ -56,6 +66,5 @@ module Formatter =
         |> List.map modifyLine
         |> fun ls -> String.Join(Environment.NewLine, ls)
 
-    let sprintMissingPosting format sprintDescription = 
+    let sprintMissingPosting format sprintDescription =
         sprintPosting format sprintDescription (commentLine format)
-

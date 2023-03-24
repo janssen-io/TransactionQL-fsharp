@@ -6,16 +6,20 @@ open System
 open TransactionQL.Parser.AST
 open TransactionQL.Parser
 
-let test<'T> parser txt (expected:'T) =
+let test<'T> parser txt (expected: 'T) =
     match run parser txt with
     | Success(actual, _, _) -> Assert.Equal(expected, actual)
     | Failure(msg, _, _) -> Assert.True(false, msg)
 
-let trx (accounts, amount) = { Account = accounts; Amount = amount; Tag = None }
+let trx (accounts, amount) =
+    { Account = accounts
+      Amount = amount
+      Tag = None }
 
-let parseEquals<'T> (parser : Parser<'T, unit>) a b =
+let parseEquals<'T> (parser: Parser<'T, unit>) a b =
     let parsedA = run parser a
     let parsedB = run parser b
+
     match (parsedA, parsedB) with
     | Success(a', _, _), Success(b', _, _) -> Assert.Equal(a', b')
     | Success(_, _, _), Failure(msg, _, _) -> Assert.True(false, msg)
@@ -37,9 +41,7 @@ let ``Regex: /regular expressions/`` () =
 
 [<Fact>]
 let ``Expressions: simple`` () =
-    test QLParser.qexpression "(total/2)" (
-        Divide (Variable "total", ExprNum 2.0)
-    )
+    test QLParser.qexpression "(total/2)" (Divide(Variable "total", ExprNum 2.0))
 
 [<Fact>]
 let ``Expressions: atoms`` () =
@@ -48,18 +50,10 @@ let ``Expressions: atoms`` () =
 
 [<Fact>]
 let ``Expressions: nested`` () =
-    test QLParser.qexpression "((5 + (total - ((1 / 2) * remainder))))" (
-        Add (
-            ExprNum 5.0,
-            Subtract (
-                Variable "total",
-                Multiply(
-                    Divide (
-                        ExprNum 1.0,
-                        ExprNum 2.0),
-                    Variable "remainder"
-                )
-            )))
+    test
+        QLParser.qexpression
+        "((5 + (total - ((1 / 2) * remainder))))"
+        (Add(ExprNum 5.0, Subtract(Variable "total", Multiply(Divide(ExprNum 1.0, ExprNum 2.0), Variable "remainder"))))
 
 [<Fact>]
 let ``Expressions: precedence`` () =
@@ -72,7 +66,7 @@ let ``Expressions: subtraction is left associative`` () =
 
 [<Fact>]
 let ``Accounts: words separated by colons`` () =
-    test QLParser.qaccount "Expenses:Recreation:Hobby" (Account ["Expenses"; "Recreation"; "Hobby"])
+    test QLParser.qaccount "Expenses:Recreation:Hobby" (Account [ "Expenses"; "Recreation"; "Hobby" ])
 
 [<Fact>]
 let ``Commodity: string literals`` () =
@@ -84,52 +78,55 @@ let ``Commodity: words`` () =
 
 [<Fact>]
 let ``Amount: numbers`` () =
-    test QLParser.qamount "EUR 100.00" (Amount (Commodity "EUR", 100.00))
+    test QLParser.qamount "EUR 100.00" (Amount(Commodity "EUR", 100.00))
 
 [<Fact>]
 let ``Amount: expressions`` () =
-    test QLParser.qamount "EUR (total)" (AmountExpression (Commodity "EUR", Variable "total"))
+    test QLParser.qamount "EUR (total)" (AmountExpression(Commodity "EUR", Variable "total"))
 
 [<Fact>]
 let ``Transactions: expression`` () =
-    test QLParser.qtransaction "Expenses:Living:Food EUR (total - 5.25)" (
-        trx (
-            Account ["Expenses";"Living";"Food"],
-            Some <| AmountExpression (
-                Commodity "EUR",
-                Subtract (Variable "total", ExprNum 5.25))
+    test
+        QLParser.qtransaction
+        "Expenses:Living:Food EUR (total - 5.25)"
+        (trx (
+            Account [ "Expenses"; "Living"; "Food" ],
+            Some
+            <| AmountExpression(Commodity "EUR", Subtract(Variable "total", ExprNum 5.25))
         ))
 
 [<Fact>]
 let ``Transactions: amount`` () =
-    test QLParser.qtransaction "Expenses:Living:Food EUR 13.37" (
-        trx (
-            Account ["Expenses";"Living";"Food"],
-            Some <| Amount (Commodity "EUR", 13.37)))
+    test
+        QLParser.qtransaction
+        "Expenses:Living:Food EUR 13.37"
+        (trx (Account [ "Expenses"; "Living"; "Food" ], Some <| Amount(Commodity "EUR", 13.37)))
 
 [<Fact>]
 let ``Transactions: just account`` () =
-    test QLParser.qtransaction "Expenses" (trx (Account ["Expenses"], None))
+    test QLParser.qtransaction "Expenses" (trx (Account [ "Expenses" ], None))
 
 [<Fact>]
 let ``Transactions: amount with tag`` () =
-    test QLParser.qtransaction "Expenses:Living:Food EUR 13.37 ; Key: value" {
-            Account = Account ["Expenses";"Living";"Food"]
-            Amount = Amount (Commodity "EUR", 13.37) |> Some
-            Tag = "Key: value" |> Some
-        }
+    test
+        QLParser.qtransaction
+        "Expenses:Living:Food EUR 13.37 ; Key: value"
+        { Account = Account [ "Expenses"; "Living"; "Food" ]
+          Amount = Amount(Commodity "EUR", 13.37) |> Some
+          Tag = "Key: value" |> Some }
 
 [<Fact>]
 let ``Transactions: just account with tag`` () =
-    test QLParser.qtransaction "Expenses:Living:Food ; Key: value" {
-            Account = Account ["Expenses";"Living";"Food"]
-            Amount = None
-            Tag = "Key: value" |> Some
-        }
+    test
+        QLParser.qtransaction
+        "Expenses:Living:Food ; Key: value"
+        { Account = Account [ "Expenses"; "Living"; "Food" ]
+          Amount = None
+          Tag = "Key: value" |> Some }
 
 [<Fact>]
 let ``Posting: empty`` () =
-    test QLParser.qposting "Posting { }" (Posting (None, []))
+    test QLParser.qposting "Posting { }" (Posting(None, []))
 
 [<Fact>]
 let ``Posting: transaction with a note`` () =
@@ -139,21 +136,27 @@ let ``Posting: transaction with a note`` () =
             Expenses:Test   EUR 10.00
             Assets:Checking
         }"
-    test QLParser.qposting "Posting { }" (Posting (None, []))
+
+    test QLParser.qposting "Posting { }" (Posting(None, []))
 
 [<Fact>]
 let ``Posting: two transactions`` () =
-    let posting = 
+    let posting =
         "Posting {
             Expenses:Rent    EUR (total)
             Expenses:Rent    EUR 5.00
             Assets:Checking
         }"
-    test QLParser.qposting posting (Posting (None, [
-        trx (Account ["Expenses"; "Rent"], Some <| AmountExpression (Commodity "EUR", Variable "total"))
-        trx (Account ["Expenses"; "Rent"], Some <| Amount (Commodity "EUR", 5.0))
-        trx (Account ["Assets"; "Checking"], None)
-    ]))
+
+    test
+        QLParser.qposting
+        posting
+        (Posting(
+            None,
+            [ trx (Account [ "Expenses"; "Rent" ], Some <| AmountExpression(Commodity "EUR", Variable "total"))
+              trx (Account [ "Expenses"; "Rent" ], Some <| Amount(Commodity "EUR", 5.0))
+              trx (Account [ "Assets"; "Checking" ], None) ]
+        ))
 
 [<Fact>]
 let ``Columns: words starting with a capital letter`` () =
@@ -161,22 +164,19 @@ let ``Columns: words starting with a capital letter`` () =
 
 [<Fact>]
 let ``Filters: <column> <op> <expr>`` () =
-    test QLParser.qfilter "Creditor matches /some regex/" (
-        Filter (Column "Creditor", Matches,  RegExp "some regex")
-    )
-    test QLParser.qfilter "Creditor = 3.0" (
-        Filter (Column "Creditor", EqualTo,  Number 3.0)
-    )
+    test QLParser.qfilter "Creditor matches /some regex/" (Filter(Column "Creditor", Matches, RegExp "some regex"))
+    test QLParser.qfilter "Creditor = 3.0" (Filter(Column "Creditor", EqualTo, Number 3.0))
 
 [<Fact>]
 let ``Filters: or groups`` () =
-    test QLParser.qfilter ("A = 1.0\n or B = 2.0\n or C = 3.0") (OrGroup [
-            Filter (Column "A", EqualTo, Number 1.0)
-            OrGroup [
-                Filter (Column "B", EqualTo, Number 2.0)
-                Filter (Column "C", EqualTo, Number 3.0)
-            ]
-        ])
+    test
+        QLParser.qfilter
+        ("A = 1.0\n or B = 2.0\n or C = 3.0")
+        (OrGroup
+            [ Filter(Column "A", EqualTo, Number 1.0)
+              OrGroup
+                  [ Filter(Column "B", EqualTo, Number 2.0)
+                    Filter(Column "C", EqualTo, Number 3.0) ] ])
 
 [<Fact>]
 let ``Payee: # <words>`` () =
@@ -185,7 +185,8 @@ let ``Payee: # <words>`` () =
 
 [<Fact>]
 let ``Query: <payee> <filters> <posting>`` () =
-    let query = """# Full description test
+    let query =
+        """# Full description test
             Creditor = "NL"
             Amount >= 50.00
 
@@ -195,29 +196,32 @@ let ``Query: <payee> <filters> <posting>`` () =
                 Expenses:Development
             }
             """
-    test QLParser.qquery query (
-        Query (
-            Payee "Full description test", [
-                Filter (Column "Creditor", EqualTo, String "NL")
-                Filter (Column "Amount", GreaterThanOrEqualTo,  Number 50.0)]
-            , Posting (None, [
-                trx (
-                    Account ["Assets"; "TestAccount"],
-                    Some <| AmountExpression (
-                        Commodity "EUR",
-                        Divide (Variable "total", ExprNum 2.0)))
-                trx (
-                    Account ["Assets"; "TestSavings"],
-                    Some <| AmountExpression (
-                        Commodity "EUR",
-                        Variable "remainder"))
-                trx (
-                    Account ["Expenses"; "Development"],
-                    None)])))
+
+    test
+        QLParser.qquery
+        query
+        (Query(
+            Payee "Full description test",
+            [ Filter(Column "Creditor", EqualTo, String "NL")
+              Filter(Column "Amount", GreaterThanOrEqualTo, Number 50.0) ],
+            Posting(
+                None,
+                [ trx (
+                      Account [ "Assets"; "TestAccount" ],
+                      Some <| AmountExpression(Commodity "EUR", Divide(Variable "total", ExprNum 2.0))
+                  )
+                  trx (
+                      Account [ "Assets"; "TestSavings" ],
+                      Some <| AmountExpression(Commodity "EUR", Variable "remainder")
+                  )
+                  trx (Account [ "Expenses"; "Development" ], None) ]
+            )
+        ))
 
 [<Fact>]
 let ``Queries: multiple queries`` () =
-    let queries = """# First query
+    let queries =
+        """# First query
         Creditor = "NL"
 
         posting {
@@ -236,23 +240,22 @@ let ``Queries: multiple queries`` () =
             Assets:Checking
         }
     """
-    test QLParser.qprogram queries ([
-        Query (
-            Payee "First query"
-            , [Filter (Column "Creditor", EqualTo,  String "NL")]
-            , Posting (None, [trx (Account ["Test"; "Account"], None)])
-        )
 
-        Query (
-            Payee "Second query"
-            , [
-                Filter (Column "Creditor", EqualTo,  String "BE")
-                OrGroup [
-                    Filter (Column "A", EqualTo, Number 5.0)
-                    Filter (Column "B", EqualTo, Number 2.0)
-                ]
-                Filter (Column "C", EqualTo, Number 1.0)
-            ]
-            , Posting (None, [trx (Account ["Assets"; "Checking"], None)])
-        )
-    ])
+    test
+        QLParser.qprogram
+        queries
+        ([ Query(
+               Payee "First query",
+               [ Filter(Column "Creditor", EqualTo, String "NL") ],
+               Posting(None, [ trx (Account [ "Test"; "Account" ], None) ])
+           )
+
+           Query(
+               Payee "Second query",
+               [ Filter(Column "Creditor", EqualTo, String "BE")
+                 OrGroup
+                     [ Filter(Column "A", EqualTo, Number 5.0)
+                       Filter(Column "B", EqualTo, Number 2.0) ]
+                 Filter(Column "C", EqualTo, Number 1.0) ],
+               Posting(None, [ trx (Account [ "Assets"; "Checking" ], None) ])
+           ) ])

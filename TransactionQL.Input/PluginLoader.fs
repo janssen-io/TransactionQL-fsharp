@@ -9,10 +9,10 @@ module PluginLoader =
 
     let load pluginName pluginDirectory =
         let context = new AssemblyLoadContext("PluginLoader", true)
+
         (Path.GetFullPath pluginDirectory, pluginName)
         |> Path.Combine
         |> context.LoadFromAssemblyPath
-        |> fun assembly -> assembly.GetTypes ()
+        |> fun assembly -> assembly.GetTypes()
         |> Array.tryFind (fun t -> (typeof<IConverter>).IsAssignableFrom t)
         |> Option.map (fun t -> Activator.CreateInstance t :?> IConverter)
-

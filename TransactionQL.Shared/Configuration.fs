@@ -16,4 +16,3 @@ module Configuration =
         let dir = Path.Combine(appDir, "plugins")
         Directory.CreateDirectory dir |> ignore
         dir
-

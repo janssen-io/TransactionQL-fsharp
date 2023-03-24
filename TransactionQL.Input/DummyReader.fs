@@ -4,9 +4,8 @@ open Converters
 
 module DummyReader =
 
-    type DummyReader () =
+    type DummyReader() =
         interface IConverter with
-            member this.DateFormat = "yyyy/MM/dd";
+            member this.DateFormat = "yyyy/MM/dd"
             member this.Read _ = failwith "Not implemented"
             member this.Map _ = failwith "Not implemented"
-

@@ -1,12 +1,11 @@
 using Avalonia.Controls;
 
-namespace TransactionQL.DesktopApp.Views
+namespace TransactionQL.DesktopApp.Views;
+
+public partial class PaymentDetails : UserControl
 {
-    public partial class PaymentDetails : UserControl
+    public PaymentDetails()
     {
-        public PaymentDetails()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

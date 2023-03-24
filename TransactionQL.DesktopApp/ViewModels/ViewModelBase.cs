@@ -1,8 +1,7 @@
 ﻿using ReactiveUI;
 
-namespace TransactionQL.DesktopApp.ViewModels
+namespace TransactionQL.DesktopApp.ViewModels;
+
+public class ViewModelBase : ReactiveObject
 {
-    public class ViewModelBase : ReactiveObject
-    {
-    }
 }

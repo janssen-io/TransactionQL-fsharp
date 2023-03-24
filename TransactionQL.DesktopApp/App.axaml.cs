@@ -3,24 +3,23 @@ using Avalonia.Markup.Xaml;
 using TransactionQL.DesktopApp.ViewModels;
 using TransactionQL.DesktopApp.Views;
 
-namespace TransactionQL.DesktopApp
+namespace TransactionQL.DesktopApp;
+
+public partial class App : Avalonia.Application
 {
-    public partial class App : Avalonia.Application
+    public override void Initialize()
     {
-        public override void Initialize()
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    public override void OnFrameworkInitializationCompleted()
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            AvaloniaXamlLoader.Load(this);
+            desktop.MainWindow = new MainWindow();
+            desktop.MainWindow.DataContext = new MainWindowViewModel(desktop.MainWindow);
         }
 
-        public override void OnFrameworkInitializationCompleted()
-        {
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                desktop.MainWindow = new MainWindow();
-                desktop.MainWindow.DataContext = new MainWindowViewModel(desktop.MainWindow);
-            }
-
-            base.OnFrameworkInitializationCompleted();
-        }
+        base.OnFrameworkInitializationCompleted();
     }
 }
