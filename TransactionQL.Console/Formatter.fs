@@ -18,7 +18,7 @@ module Formatter =
     open Format
 
     let sprintHeader format (Header(date, payee)) =
-        sprintf "%s %s" (date.ToString format.Date) payee
+        $"%s{date.ToString format.Date} %s{payee}"
 
     let commentLine format = sprintf "%s%s" format.Comment
 
@@ -40,7 +40,7 @@ module Formatter =
             | None -> account
 
         match tag with
-        | Some text -> sprintf "%s  ; %s" line text
+        | Some text -> $"%s{line}  ; %s{text}"
         | None -> line
         |> sprintf "    %s" // indent lines
 

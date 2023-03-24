@@ -22,7 +22,7 @@ module ING =
                   ("Receiver", (if isSent then row.Tegenrekening else row.Rekening))
                   ("Amount",
                    row.``Bedrag (EUR)``.Replace(",", ".")
-                   |> fun amount -> if isSent then sprintf "-%s" amount else amount)
+                   |> fun amount -> if isSent then $"-%s{amount}" else amount)
                   ("Total", row.``Bedrag (EUR)``.Replace(",", "."))
                   ("Date", row.Datum.Insert(4, "/").Insert(7, "/"))
                   ("Description", row.Mededelingen)

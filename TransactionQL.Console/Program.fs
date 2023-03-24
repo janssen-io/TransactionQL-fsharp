@@ -51,24 +51,18 @@ module Program =
         interface IArgParserTemplate with
             member s.Usage =
                 match s with
-                | Files(_, _) -> "the paths to the transactions and filter files"
-                | Date _ -> sprintf "the date output format (default: %s)" defaultOpts.Format.Date
-                | Precision _ -> sprintf "the precision of the amounts (default: %d)" defaultOpts.Format.Precision
+                | Files _ -> "the paths to the transactions and filter files"
+                | Date _ -> $"the date output format (default: %s{defaultOpts.Format.Date})"
+                | Precision _ -> $"the precision of the amounts (default: %d{defaultOpts.Format.Precision})"
                 | Comment _ ->
-                    sprintf
-                        "the character(s) to use for single line comments (default: '%s')"
-                        defaultOpts.Format.Comment
+                    $"the character(s) to use for single line comments (default: '%s{defaultOpts.Format.Comment}')"
                 | Converter _ ->
-                    sprintf
-                        "the type of converter used to read transactions. Converters are installed in: %s"
-                        createAndGetPluginDir
+                    $"the type of converter used to read transactions. Converters are installed in: %s{createAndGetPluginDir}"
                 | HasHeader _ ->
-                    sprintf "whether the transaction file contains a column header (default: %b)" defaultOpts.HasHeader
-                | Locale _ -> sprintf "the locale used to parse decimal values (default: %s)" defaultOpts.Locale
+                    $"whether the transaction file contains a column header (default: %b{defaultOpts.HasHeader})"
+                | Locale _ -> $"the locale used to parse decimal values (default: %s{defaultOpts.Locale})"
                 | AddDescription _ ->
-                    sprintf
-                        "add the transaction's description below the header (default: %A)"
-                        defaultOpts.AddDescription
+                    $"add the transaction's description below the header (default: %A{defaultOpts.AddDescription})"
 
     let parseFilters options =
         let filter = QLParser.parse ((new StreamReader(options.FilterFile)).ReadToEnd())

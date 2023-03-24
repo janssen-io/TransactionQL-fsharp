@@ -29,7 +29,7 @@ module QLInterpreter =
                 if env.Variables.ContainsKey var then
                     Map.find var env.Variables
                 else
-                    failwith <| sprintf "Unknown variable '%s'" var
+                    failwith <| $"Unknown variable '%s{var}'"
             | ExprNum number -> number
             | Add(l, r) -> arithmetic (+) (l, r)
             | Subtract(l, r) -> arithmetic (-) (l, r)
@@ -97,12 +97,12 @@ module QLInterpreter =
         | EqualTo -> column = text
         | NotEqualTo -> not <| evalString text column EqualTo
         | Contains -> column.Contains text
-        | _ -> failwith (sprintf "Operator '%A' is not supported for strings." op)
+        | _ -> failwith $"Operator '%A{op}' is not supported for strings."
 
     let evalRegex regex (column: string) op =
         match op with
         | Matches -> Regex(regex, RegexOptions.IgnoreCase).IsMatch(column)
-        | _ -> failwith (sprintf "Operator '%A' is not supported for regular expressions." op)
+        | _ -> failwith $"Operator '%A{op}' is not supported for regular expressions."
 
     let rec evalNumber number column op =
         let value = float column
@@ -114,7 +114,7 @@ module QLInterpreter =
         | GreaterThanOrEqualTo -> value >= number
         | LessThan -> value < number
         | LessThanOrEqualTo -> value <= number
-        | _ -> failwith (sprintf "Operator '%A' is not supported for numbers." op)
+        | _ -> failwith $"Operator '%A{op}' is not supported for numbers."
 
     let rec evalFilter env filter =
         match filter with
@@ -123,7 +123,7 @@ module QLInterpreter =
                 if Map.containsKey col env.Row then
                     Map.find col env.Row
                 else
-                    failwith <| sprintf "Invalid column: '%s'" col
+                    failwith <| $"Invalid column: '%s{col}'"
 
             let evalType =
                 match atom with

@@ -181,7 +181,7 @@ let ``Filters: or groups`` () =
 [<Fact>]
 let ``Payee: # <words>`` () =
     let payee = "Some long string"
-    test QLParser.qpayee (sprintf "# %s" payee) (Payee payee)
+    test QLParser.qpayee $"# %s{payee}" (Payee payee)
 
 [<Fact>]
 let ``Query: <payee> <filters> <posting>`` () =

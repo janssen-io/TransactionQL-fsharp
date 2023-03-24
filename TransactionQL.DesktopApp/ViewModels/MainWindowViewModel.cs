@@ -4,11 +4,14 @@ using DynamicData.Tests;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using Avalonia.LogicalTree;
+using Microsoft.FSharp.Collections;
+using Microsoft.FSharp.Core;
 using TransactionQL.CsharpApi;
 using TransactionQL.Input;
 using TransactionQL.Parser;
@@ -24,6 +27,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         OpenFiltersCommand = ReactiveCommand.Create(OpenFilters);
         OpenTransactionsCommand = ReactiveCommand.Create(OpenTransactions);
+        SaveCommand = ReactiveCommand.Create(Save);
     }
 
     public MainWindowViewModel(Window parent) : this()
@@ -33,6 +37,7 @@ public class MainWindowViewModel : ViewModelBase
 
     public ICommand OpenFiltersCommand { get; }
     public ICommand OpenTransactionsCommand { get; }
+    public ICommand SaveCommand { get; }
 
     private string _filterPath = "";
 
@@ -150,5 +155,13 @@ public class MainWindowViewModel : ViewModelBase
         //  - (next goal: tags/notes)
         // - (optional: if all currencies are the same, check if balanced)
         // - Save posting (title, description, date, notes, transactions)
+    }
+
+    private void Save()
+    {
+        var t = BankTransactions.First();
+        var x = API.formatPosting(t.Date, t.Title, t.Transactions
+            .Select(tr => Tuple.Create(tr.Account, tr.Currency, tr.Amount)).ToArray());
+        Debug.WriteLine(x);
     }
 }

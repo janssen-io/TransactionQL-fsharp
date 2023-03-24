@@ -41,6 +41,7 @@
                 </Button>
                 <Button Name="CarouselNext">Next</Button>
                 <Button Name="CarouselPrevious">Previous</Button>
+                <Button Command="{Binding SaveCommand}">Save</Button>
             </StackPanel>
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="{Binding FilterPath}" />
