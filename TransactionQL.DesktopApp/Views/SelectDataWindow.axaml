@@ -1,0 +1,39 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
+        x:Class="TransactionQL.DesktopApp.Views.SelectDataWindow"
+        x:DataType="vm:SelectDataWindowViewModel"
+        Title="SelectDataWindow">
+    <Window.Styles>
+        <Style Selector="TextBlock.Label">
+            <Setter Property="Margin" Value="0, 10, 0, 5" />
+            <Setter Property="Foreground" Value="DarkGray" />
+        </Style>
+    </Window.Styles>
+    <StackPanel Orientation="Vertical" Margin="10">
+        <TextBlock Classes="Label">Transactions</TextBlock>
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBox Text="{Binding TransactionsFile}" IsEnabled="False" Name="Transactions"
+                     HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="0" />
+            <Button Click="SelectTransactionsFile" Content="Browse" Grid.Column="1" Margin="10,0,0,0" />
+        </Grid>
+
+        <TextBlock Classes="Label">Filters</TextBlock>
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBox Text="{Binding FiltersFile}" IsEnabled="False" Name="Filters"
+                     HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="0" />
+
+            <Button Click="SelectFiltersFile" Content="Browse" Grid.Column="1" Margin="10,0,0,0" />
+        </Grid>
+
+        <TextBlock Classes="Label">Module</TextBlock>
+        <ComboBox SelectedValue="{Binding Module}" Items="{Binding AvailableModules}" />
+        <StackPanel Orientation="Horizontal">
+            <Button Command="{Binding Cancel}">Cancel</Button>
+            <Button Command="{Binding Submit}">OK</Button>
+        </StackPanel>
+    </StackPanel>
+</Window>

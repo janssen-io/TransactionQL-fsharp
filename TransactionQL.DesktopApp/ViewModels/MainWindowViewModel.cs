@@ -1,7 +1,4 @@
-﻿using Avalonia.Controls;
-using Avalonia.Platform.Storage;
-using DynamicData.Tests;
-using ReactiveUI;
+﻿using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -9,34 +6,18 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
-using Avalonia.LogicalTree;
-using Microsoft.FSharp.Collections;
-using Microsoft.FSharp.Core;
 using TransactionQL.CsharpApi;
-using TransactionQL.Input;
-using TransactionQL.Parser;
 using TransactionQL.Shared;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    private readonly Window? _parent;
-
     public MainWindowViewModel()
     {
-        OpenFiltersCommand = ReactiveCommand.Create(OpenFilters);
-        OpenTransactionsCommand = ReactiveCommand.Create(OpenTransactions);
         SaveCommand = ReactiveCommand.Create(Save);
     }
 
-    public MainWindowViewModel(Window parent) : this()
-    {
-        _parent = parent;
-    }
-
-    public ICommand OpenFiltersCommand { get; }
-    public ICommand OpenTransactionsCommand { get; }
     public ICommand SaveCommand { get; }
 
     private string _filterPath = "";
@@ -57,52 +38,9 @@ public class MainWindowViewModel : ViewModelBase
 
     public ObservableCollection<PaymentDetailsViewModel> BankTransactions { get; set; } = new();
 
-    private async void OpenFilters()
+    internal void Parse(SelectDataWindowViewModel.SelectedData data)
     {
-        var options = new FilePickerOpenOptions
-        {
-            AllowMultiple = false,
-            Title = "Select Filters",
-            FileTypeFilter = new[]
-            {
-                new FilePickerFileType("TransactionQL Filters")
-                {
-                    Patterns = new[] { "*.tql" }
-                },
-                FilePickerFileTypes.All
-            }
-        };
-
-        var files = await _parent.StorageProvider.OpenFilePickerAsync(options);
-        if (files.Count > 0) FilterPath = files[0].Path.AbsolutePath;
-    }
-
-    private async void OpenTransactions()
-    {
-        var options = new FilePickerOpenOptions
-        {
-            AllowMultiple = false,
-            Title = "Select Transactions",
-            FileTypeFilter = new[]
-            {
-                new FilePickerFileType("Comma-separated values")
-                {
-                    Patterns = new[] { "*.csv" }
-                },
-                FilePickerFileTypes.All
-            }
-        };
-
-        var files = await _parent.StorageProvider.OpenFilePickerAsync(options);
-        if (files.Count > 0)
-        {
-            TransactionPath = files[0].Path.AbsolutePath;
-            Parse();
-        }
-    }
-
-    private void Parse()
-    {
+        Debug.WriteLine(data);
         //var parser = API.parseFilters("a");
         //if (!parser.TryGetLeft(out var queries))
         //{
@@ -110,12 +48,12 @@ public class MainWindowViewModel : ViewModelBase
         //    return;
         //}
 
-        var loader = API.loadReader("asn", Configuration.createAndGetPluginDir);
+        var loader = API.loadReader(data.Module, Configuration.createAndGetPluginDir);
         if (!loader.TryGetLeft(out var reader))
             // TODO: Show error;
             return;
 
-        using var txt = new StreamReader(TransactionPath);
+        using var txt = new StreamReader(data.TransactionsFile);
         // TODO: temporarily change it? Or change it for the entire program?
         // TODO: provide options object and read locale from options
         CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
@@ -124,6 +62,7 @@ public class MainWindowViewModel : ViewModelBase
 
         BankTransactions.Clear();
 
+        // TODO: show progress/loading bar
         foreach (var row in rows)
         {
             var title = row["Name"]; // TODO: Define type for use in UI?

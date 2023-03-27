@@ -1,22 +1,37 @@
+using System.Diagnostics;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using ReactiveUI;
+using TransactionQL.DesktopApp.ViewModels;
 
 namespace TransactionQL.DesktopApp.Views;
 
 public partial class MainWindow : Window
 {
-    private Button Next;
-    private Button Previous;
-    private Carousel BankTransactions;
-
     public MainWindow()
     {
         InitializeComponent();
-        Next = this.FindControl<Button>("CarouselNext");
-        Previous = this.FindControl<Button>("CarouselPrevious");
-        BankTransactions = this.FindControl<Carousel>("BankTransactionCarousel");
+        CarouselNext = this.FindControl<Button>(nameof(CarouselNext))!;
+        CarouselPrevious = this.FindControl<Button>(nameof(CarouselPrevious))!;
+        BankTransactionCarousel = this.FindControl<Carousel>(nameof(BankTransactionCarousel))!;
 
-        Next.Command = ReactiveCommand.Create(() => BankTransactions.Next());
-        Previous.Command = ReactiveCommand.Create(() => BankTransactions.Previous());
+        CarouselNext.Command = ReactiveCommand.Create(() => BankTransactionCarousel.Next());
+        CarouselPrevious.Command = ReactiveCommand.Create(() => BankTransactionCarousel.Previous());
+    }
+
+    private void Open(object? sender, RoutedEventArgs ea)
+    {
+        // TODO: get available modules from plugin folder
+        var selectDataVm = new SelectDataWindowViewModel()
+        {
+            AvailableModules = { "asn" }
+        };
+        selectDataVm.DataSelected += (_, data) => ((MainWindowViewModel)DataContext!).Parse(data);
+
+        var selectWindow = new SelectDataWindow(selectDataVm);
+
+        selectWindow.Closed += (_, _) => IsEnabled = true;
+        IsEnabled = false;
+        selectWindow.Show();
     }
 }

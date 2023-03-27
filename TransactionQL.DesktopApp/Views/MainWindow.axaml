@@ -33,12 +33,7 @@
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top">
-                <Button Command="{Binding OpenFiltersCommand}">
-                    Open Filters
-                </Button>
-                <Button Command="{Binding OpenTransactionsCommand}">
-                    Open Transactions
-                </Button>
+                <Button Click="Open">Select Data</Button>
                 <Button Name="CarouselNext">Next</Button>
                 <Button Name="CarouselPrevious">Previous</Button>
                 <Button Command="{Binding SaveCommand}">Save</Button>
