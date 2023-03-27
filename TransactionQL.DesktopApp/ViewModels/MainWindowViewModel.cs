@@ -1,5 +1,7 @@
 ﻿using ReactiveUI;
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -15,6 +17,8 @@ namespace TransactionQL.DesktopApp.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
+    public event EventHandler<string> Saved;
+
     public MainWindowViewModel()
     {
         SaveCommand = ReactiveCommand.Create(Save);
@@ -33,6 +37,15 @@ public class MainWindowViewModel : ViewModelBase
             // TODO: Show error;
             return;
 
+        using var accountsFile = new StreamReader(data.AccountsFile);
+        var accountLines = accountsFile
+            .ReadToEnd()
+            .Split(new[] { "\n", "\r\n" }, StringSplitOptions.TrimEntries);
+        var accounts = accountLines
+            .Where(line => line.StartsWith("account "))
+            .Select(line => line.Split(" ")[1]);
+        var validAccounts = new ObservableCollection<string>(accounts.ToArray());
+
         var loader = API.loadReader(data.Module, Configuration.createAndGetPluginDir);
         if (!loader.TryGetLeft(out var reader))
             // TODO: Show error;
@@ -45,14 +58,14 @@ public class MainWindowViewModel : ViewModelBase
         // TODO: if contains header, then skip first line --> move to TransactionQL.Application project (also move C# api there)
         var rows = reader.Read(bankTransactionCsv.ReadToEnd());
 
-        var filteredRows = API.filter(reader, queries, rows);
+        var filteredRows = API.filter(reader, queries, rows).ToArray();
 
         BankTransactions.Clear();
 
         // TODO: show progress/loading bar
-        var i = 0;
-        foreach (var filteredRow in filteredRows)
+        for (var i = 0; i < rows.Length; i++)
         {
+            var filteredRow = filteredRows[i];
             if (filteredRow.TryGetLeft(out var entry))
             {
                 var title = entry.Header.Item2;
@@ -61,7 +74,8 @@ public class MainWindowViewModel : ViewModelBase
                 var amount = decimal.Parse(rows[i]["Amount"],
                     NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
 
-                BankTransactions.Add(new PaymentDetailsViewModel(title, date, description, "EUR", amount)
+                // TODO: fix hard-coded EUR
+                BankTransactions.Add(new PaymentDetailsViewModel(title, date, description, "EUR", amount, validAccounts)
                 {
                     Transactions = new ObservableCollection<Transaction>(entry.Lines.Select(line =>
                     {
@@ -73,6 +87,7 @@ public class MainWindowViewModel : ViewModelBase
                             Currency = !hasAmount ? null : line.Amount.Value.Item1.Item
                         };
                     }))
+                    // TODO: read valid accounts from parent?
                 });
             }
             else if (filteredRow.TryGetRight(out var row))
@@ -82,39 +97,25 @@ public class MainWindowViewModel : ViewModelBase
                 var date = DateTime.ParseExact(row["Date"], reader.DateFormat, CultureInfo.InvariantCulture);
                 var amount = decimal.Parse(row["Amount"],
                     NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
-                BankTransactions.Add(new PaymentDetailsViewModel(title, date, description, "EUR", amount));
+                BankTransactions.Add(
+                    new PaymentDetailsViewModel(title, date, description, "EUR", amount, validAccounts));
             }
-
-            i++;
         }
 
-        // TODO: 
-        // - Show first transaction
-        // - filter first transaction
-        //  - if match: fill in accounts in datagrid
-        //  - else:     leave grid empty
-
-        // TODO: think about the easiest-to-use API
-        // [x] Give some text to parse as filters
-        // [x] Method to parse single transaction -> impossible if we do not want to break the interface contract
-        // [x] Re-use plugin to read CSV? -> Yes!
-
-        // Then:
-        // - Show transaction in card
-        //  - Make Title editable
-        //  - Make Description editable
-        //  - (next goal: tags/notes)
-        // - Add input fields below [account] [currency] [amount]
-        //  - (next goal: tags/notes)
+        // TODO:
+        // - tags/notes (posting)
+        // - tags/notes (transaction)
         // - (optional: if all currencies are the same, check if balanced)
-        // - Save posting (title, description, date, notes, transactions)
     }
 
     private void Save()
     {
-        var t = BankTransactions.First();
-        var x = API.formatPosting(t.Date, t.Title, t.Transactions
-            .Select(tr => Tuple.Create(tr.Account, tr.Currency, tr.Amount)).ToArray());
-        Debug.WriteLine(x);
+        var postings = BankTransactions.Select(posting =>
+            API.formatPosting(
+                posting.Date,
+                posting.Title,
+                posting.Transactions.Select(trx =>
+                    Tuple.Create(trx.Account, trx.Currency, trx.Amount)).ToArray()));
+        Saved?.Invoke(this, string.Join(Environment.NewLine + Environment.NewLine, postings));
     }
 }

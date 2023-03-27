@@ -1,8 +1,8 @@
 module FormatterTests
 
 open Xunit
-open TransactionQL.Console
-open TransactionQL.Console.Format
+open TransactionQL.Application
+open TransactionQL.Application.Format
 open TransactionQL.Parser.QLInterpreter
 open TransactionQL.Parser.AST
 open System

@@ -1,13 +1,12 @@
-﻿using Avalonia.Interactivity;
-using TransactionQL.DesktopApp.ViewModels;
+﻿namespace TransactionQL.DesktopApp.Views;
 
-namespace TransactionQL.DesktopApp.Views;
-
+using Avalonia.Interactivity;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using ViewModels;
 
 public partial class SelectDataWindow : Window
 {
@@ -18,9 +17,9 @@ public partial class SelectDataWindow : Window
         this.AttachDevTools();
 #endif
 
-        // TODO: show error when controls are not found
         Transactions = this.FindControl<TextBox>(nameof(Transactions));
         Filters = this.FindControl<TextBox>(nameof(Filters));
+        Accounts = this.FindControl<TextBox>(nameof(Accounts));
     }
 
     public SelectDataWindow(SelectDataWindowViewModel dataContext) : this()
@@ -75,5 +74,27 @@ public partial class SelectDataWindow : Window
         var files = await StorageProvider.OpenFilePickerAsync(options);
         if (files.Count > 0)
             Dispatcher.UIThread.Post(() => { Filters.Text = files[0].Path.AbsolutePath; });
+    }
+
+    private async void SelectAccountsFile(object? sender, RoutedEventArgs e)
+    {
+        var options = new FilePickerOpenOptions
+        {
+            AllowMultiple = false,
+            Title = "Select Accounts",
+            FileTypeFilter = new[]
+            {
+                new FilePickerFileType("Accounts File (Ledger)")
+                {
+                    Patterns = new[] { "*.ldg", "*.ledger" }
+                },
+                FilePickerFileTypes.All
+            }
+        };
+
+        var files = await StorageProvider.OpenFilePickerAsync(options);
+        if (files.Count > 0)
+            // Dispatcher.UIThread.Post(() => { Accounts.Text = files[0].Path.AbsolutePath; });
+            Accounts.Text = files[0].Path.AbsolutePath;
     }
 }

@@ -1,6 +1,5 @@
 ﻿namespace TransactionQL.Console
 
-
 module Program =
     open Argu
     open System
@@ -13,7 +12,8 @@ module Program =
     open System.IO
     open FParsec
     open Interpretation
-    open Format
+    open TransactionQL.Application
+    open TransactionQL.Application.Format
 
     type AddDescriptionFlag =
         | Always

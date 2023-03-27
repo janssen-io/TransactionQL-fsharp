@@ -15,14 +15,15 @@ public static class DesignData
         new DateTime(2023, 03, 14),
         "Payment Note 32458 Electricity Bill 03206138 01-02-2023",
         "€",
-        -133.70m)
+        -133.70m,
+        new ObservableCollection<string> { "Test", "Test2", "Test3" }
+    )
     {
         Transactions = new ObservableCollection<Transaction>
         {
             new() { Account = "Assets:Checking", Currency = "EUR", Amount = -127.11m },
             new() { Account = "Expenses:Living:Utilities" }
-        },
-        ValidAccounts = new ObservableCollection<string> { "Test", "Test2", "Test3" }
+        }
     };
 
     public static readonly MainWindowViewModel MainWindow = new()

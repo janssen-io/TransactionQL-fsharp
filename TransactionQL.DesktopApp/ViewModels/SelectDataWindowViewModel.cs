@@ -27,6 +27,14 @@ public class SelectDataWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _filtersFile, value);
     }
 
+    private string _accountsFile = "";
+
+    public string AccountsFile
+    {
+        get => _accountsFile;
+        set => this.RaiseAndSetIfChanged(ref _accountsFile, value);
+    }
+
     private string _module = "";
 
     public string Module
@@ -45,7 +53,7 @@ public class SelectDataWindowViewModel : ViewModelBase
         Submit = ReactiveCommand.Create(() =>
         {
             // TODO: disable button/show message if not everything is selected.
-            DataSelected?.Invoke(this, new SelectedData(TransactionsFile, FiltersFile, Module));
+            DataSelected?.Invoke(this, new SelectedData(TransactionsFile, FiltersFile, AccountsFile, Module));
         });
 
         Cancel = ReactiveCommand.Create(() => SelectionCancelled?.Invoke(this, EventArgs.Empty));
@@ -55,12 +63,14 @@ public class SelectDataWindowViewModel : ViewModelBase
     {
         public string TransactionsFile { get; }
         public string FiltersFile { get; }
+        public string AccountsFile { get; }
         public string Module { get; }
 
-        public SelectedData(string transactionsFile, string filtersFile, string module)
+        public SelectedData(string transactionsFile, string filtersFile, string accountsFile, string module)
         {
             TransactionsFile = transactionsFile;
             FiltersFile = filtersFile;
+            AccountsFile = accountsFile;
             Module = module;
         }
     }

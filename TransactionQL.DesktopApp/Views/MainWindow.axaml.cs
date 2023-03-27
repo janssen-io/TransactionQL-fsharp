@@ -1,6 +1,7 @@
-using System.Diagnostics;
+using System.IO;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using ReactiveUI;
 using TransactionQL.DesktopApp.ViewModels;
 
@@ -19,6 +20,36 @@ public partial class MainWindow : Window
         CarouselPrevious.Command = ReactiveCommand.Create(() => BankTransactionCarousel.Previous());
     }
 
+    public MainWindow(MainWindowViewModel vm) : this()
+    {
+        DataContext = vm;
+        ((MainWindowViewModel)DataContext).Saved += Save;
+    }
+
+    private async void Save(object? sender, string postings)
+    {
+        var options = new FilePickerSaveOptions
+        {
+            Title = "Select Ledger File",
+            FileTypeChoices = new[]
+            {
+                new FilePickerFileType("Ledger")
+                {
+                    Patterns = new[] { "*.ledger", "*.ldg" }
+                },
+                FilePickerFileTypes.All
+            }
+        };
+
+        var file = await StorageProvider.SaveFilePickerAsync(options);
+        if (file == null) return;
+
+        var path = file.Path.AbsolutePath;
+        await using var stream = new FileStream(path, FileMode.Append);
+        await using var writer = new StreamWriter(stream);
+        await writer.WriteLineAsync(postings);
+    }
+
     private void Open(object? sender, RoutedEventArgs ea)
     {
         // TODO: get available modules from plugin folder
@@ -29,6 +60,7 @@ public partial class MainWindow : Window
         selectDataVm.DataSelected += (_, data) => ((MainWindowViewModel)DataContext!).Parse(data);
 
         var selectWindow = new SelectDataWindow(selectDataVm);
+        selectWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 
         selectWindow.Closed += (_, _) => IsEnabled = true;
         IsEnabled = false;

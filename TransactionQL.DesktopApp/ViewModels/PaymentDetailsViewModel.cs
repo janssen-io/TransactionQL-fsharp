@@ -61,15 +61,12 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     public ObservableCollection<Transaction> Transactions { get; set; } = new();
 
-    public ObservableCollection<string> ValidAccounts { get; set; } = new()
-    {
-        "Assets:Checking",
-        "Expenses:Living:Utilities"
-    };
+    public ObservableCollection<string> ValidAccounts { get; }
 
     public ICommand AddTransactionCommand { get; }
 
-    public PaymentDetailsViewModel(string title, DateTime date, string description, string currency, decimal amount)
+    public PaymentDetailsViewModel(string title, DateTime date, string description, string currency, decimal amount,
+        ObservableCollection<string> validAccounts)
     {
         Title = title;
         Date = date;
@@ -77,8 +74,7 @@ public class PaymentDetailsViewModel : ViewModelBase
         Currency = currency;
         Amount = amount;
 
-        ValidAccounts.Add("Test");
-        ValidAccounts.Add("Assets:Receivables:Friend1");
+        ValidAccounts = validAccounts;
 
         AddTransactionCommand = ReactiveCommand.Create(() => { Transactions.Add(Transaction.Empty); });
     }

@@ -60,6 +60,11 @@ module API =
                       Tag = None })
             |> List.ofArray
 
-        { Header = header
-          Lines = lines
-          Comments = [] }
+        let entry =
+            { Header = header
+              Lines = lines
+              Comments = [] }
+
+        let sprintDesc = (List.map <| (fun line -> $"; %s{line}"))
+
+        Formatter.sprintPosting Format.ledger sprintDesc id entry
