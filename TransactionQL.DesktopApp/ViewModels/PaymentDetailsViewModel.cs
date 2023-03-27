@@ -59,11 +59,7 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     #endregion properties
 
-    // TODO: add transaction when last item is not empty
-    public ObservableCollection<Transaction> Transactions { get; set; } = new()
-    {
-        new Transaction { Account = "Assets:Checking", Currency = "€", Amount = 5m }
-    };
+    public ObservableCollection<Transaction> Transactions { get; set; } = new();
 
     public ObservableCollection<string> ValidAccounts { get; set; } = new()
     {

@@ -1,4 +1,4 @@
-﻿namespace TransactionQL.Console
+﻿namespace TransactionQL.Application
 
 module Format =
     type Format =

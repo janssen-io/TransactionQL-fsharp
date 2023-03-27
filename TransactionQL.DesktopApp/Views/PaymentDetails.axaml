@@ -49,31 +49,32 @@
         <Border CornerRadius="10" ClipToBounds="True" Margin="0,10,0,10">
             <Border Padding="20" Background="White">
                 <RelativePanel Background="White">
-                    <TextBox x:Name="Title" Text="{Binding Title}" Classes="h1" Padding="0,6,6,5"
-                             RelativePanel.LeftOf="Currency"
-                             RelativePanel.AlignLeftWithPanel="True" />
-
+                    <Grid ColumnDefinitions="*,Auto,Auto" Name="Header" RelativePanel.AlignLeftWithPanel="True"
+                          RelativePanel.AlignRightWithPanel="True">
+                        <TextBox Name="Title" Text="{Binding Title}" Classes="h1"
+                                 Grid.Column="0"
+                                 Padding="0,0,6,0" />
+                        <TextBlock Name="Currency"
+                                   Text="{Binding Currency}"
+                                   Classes="subtitle"
+                                   TextAlignment="Right"
+                                   Margin="0,0,10,0"
+                                   Grid.Column="1"
+                                   MinWidth="50" />
+                        <TextBlock Text="{Binding Amount, StringFormat={}{0:.00}}"
+                                   Classes="h2" Classes.Negative="{Binding IsNegativeAmount}"
+                                   Grid.Column="2"
+                                   Name="Amount" />
+                    </Grid>
                     <TextBlock Text="{Binding Date, StringFormat='{}{0:yyyy-MM-dd}'}"
-                               Classes="subtitle"
-                               x:Name="Date" RelativePanel.Below="Title" />
+                               Classes="subtitle" Name="Date" RelativePanel.Below="Header" />
                     <TextBox Text="{Binding Description}"
-                             Classes="p"
-                             x:Name="Description" RelativePanel.Below="Date"
+                             Classes="p" Name="Description"
                              AcceptsReturn="True"
                              TextWrapping="Wrap"
-                             RelativePanel.AlignLeftWithPanel="True"
-                             RelativePanel.AlignRightWithPanel="True"
+                             RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
+                             RelativePanel.Below="Date"
                              Padding="0,6,6,5" />
-                    <TextBlock x:Name="Currency"
-                               Text="{Binding Currency}"
-                               Classes="subtitle"
-                               RelativePanel.LeftOf="Amount"
-                               TextAlignment="Right"
-                               Margin="0,0,10,0"
-                               MinWidth="50" />
-                    <TextBlock Text="{Binding Amount, StringFormat={}{0:.00}}"
-                               Classes="h2" Classes.Negative="{Binding IsNegativeAmount}"
-                               x:Name="Amount" RelativePanel.AlignRightWithPanel="True" />
                 </RelativePanel>
             </Border>
         </Border>

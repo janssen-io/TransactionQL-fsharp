@@ -1,6 +1,8 @@
-﻿namespace TransactionQL.CsharpApi
+﻿namespace TransactionQL.Application
 
 open System
+open TransactionQL.Input.Converters
+open TransactionQL.Parser.Interpretation
 
 
 
@@ -10,6 +12,7 @@ module API =
     open TransactionQL.Parser
     open TransactionQL.Parser.AST
     open TransactionQL.Parser.QLInterpreter
+    open TransactionQL.Parser.Interpretation
     open TransactionQL.Shared.Types
 
     let parseFilters filterContents =
@@ -23,6 +26,19 @@ module API =
         match PluginLoader.load name pluginDirectory with
         | Some reader -> Left reader
         | None -> Right $"Unable to load plugin from directory %s{pluginDirectory}"
+
+    let filter (reader: IConverter) (queries: Query array) rows =
+        rows
+        |> Seq.map (fun row ->
+            { Variables = Map.empty
+              Row = row
+              DateFormat = reader.DateFormat })
+        |> Seq.map (fun env -> QLInterpreter.evalProgram env (List.ofArray queries))
+        |> (fun results -> Seq.zip results rows)
+        |> Seq.map (fun (res, row) ->
+            match res with
+            | Interpretation(_, Some entry) -> Left entry
+            | Interpretation(_, None) -> Right row)
 
     let formatPosting date title trx =
         let header = Header(date, title)

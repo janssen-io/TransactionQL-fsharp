@@ -26,7 +26,7 @@
                     MaterialOpacity="0.1" />
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
-        <Panel Margin="40">
+        <StackPanel Margin="40">
             <!--<Button Command="{Binding OpenWorkspaceCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">
         <PathIcon Data="{StaticResource folder_open_regular}" />
       </Button>-->
@@ -39,8 +39,6 @@
                 <Button Command="{Binding SaveCommand}">Save</Button>
             </StackPanel>
             <StackPanel Orientation="Vertical">
-                <TextBlock Text="{Binding FilterPath}" />
-                <TextBlock Text="{Binding TransactionPath}" />
                 <Carousel Name="BankTransactionCarousel" Items="{Binding BankTransactions}">
                     <Carousel.PageTransition>
                         <PageSlide Duration="0.25" Orientation="Horizontal" />
@@ -52,6 +50,12 @@
                     </Carousel.ItemTemplate>
                 </Carousel>
             </StackPanel>
-        </Panel>
+        </StackPanel>
     </Panel>
+    <!-- 
+        TODO: Create custom status bar control that shows:
+        - progress bar when loading bank transactions
+        - current item when manually processing bank transactions
+        - error messages/warnings -> or maybe as a toast?
+    -->
 </Window>

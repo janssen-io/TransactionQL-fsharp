@@ -6,17 +6,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Formatter.fs"/>
-        <Compile Include="Program.fs"/>
+        <Compile Include="Program.fs" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Argu" Version="6.0.0"/>
+        <PackageReference Include="Argu" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj"/>
-        <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj"/>
+        <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
+        <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
     </ItemGroup>
 
 </Project>
