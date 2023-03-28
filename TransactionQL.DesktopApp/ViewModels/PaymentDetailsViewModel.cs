@@ -1,6 +1,7 @@
 ﻿using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 using System.Windows.Input;
 using Avalonia.Controls;
 
@@ -12,6 +13,7 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     private string _title = "";
 
+    [DataMember]
     public string Title
     {
         get => _title;
@@ -20,6 +22,7 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     private string _currency = "";
 
+    [DataMember]
     public string Currency
     {
         get => _currency;
@@ -28,6 +31,7 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     private decimal _amount;
 
+    [DataMember]
     public decimal Amount
     {
         get => _amount;
@@ -38,11 +42,12 @@ public class PaymentDetailsViewModel : ViewModelBase
         }
     }
 
-    public bool IsNegativeAmount => Amount < 0;
+    [IgnoreDataMember] public bool IsNegativeAmount => Amount < 0;
 
 
     private string _description = "";
 
+    [DataMember]
     public string Description
     {
         get => _description;
@@ -51,6 +56,7 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     private DateTime _date = DateTime.MinValue;
 
+    [DataMember]
     public DateTime Date
     {
         get => _date;
@@ -59,14 +65,19 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     #endregion properties
 
-    public ObservableCollection<Transaction> Transactions { get; set; } = new();
+    [DataMember] public ObservableCollection<Transaction> Transactions { get; set; } = new();
 
-    public ObservableCollection<string> ValidAccounts { get; }
+    [DataMember] public ObservableCollection<string> ValidAccounts { get; } = new();
 
-    public ICommand AddTransactionCommand { get; }
+    [IgnoreDataMember] public ICommand AddTransactionCommand { get; }
+
+    public PaymentDetailsViewModel()
+    {
+        AddTransactionCommand = ReactiveCommand.Create(() => { Transactions.Add(Transaction.Empty); });
+    }
 
     public PaymentDetailsViewModel(string title, DateTime date, string description, string currency, decimal amount,
-        ObservableCollection<string> validAccounts)
+        ObservableCollection<string> validAccounts) : this()
     {
         Title = title;
         Date = date;
@@ -75,18 +86,16 @@ public class PaymentDetailsViewModel : ViewModelBase
         Amount = amount;
 
         ValidAccounts = validAccounts;
-
-        AddTransactionCommand = ReactiveCommand.Create(() => { Transactions.Add(Transaction.Empty); });
     }
 }
 
 public class Transaction
 {
-    public string Account { get; set; } = "";
-    public string? Currency { get; set; }
-    public decimal? Amount { get; set; }
+    [DataMember] public string Account { get; set; } = "";
+    [DataMember] public string? Currency { get; set; }
+    [DataMember] public decimal? Amount { get; set; }
 
-    public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate { get; }
+    [IgnoreDataMember] public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate { get; }
 
     public Transaction()
     {

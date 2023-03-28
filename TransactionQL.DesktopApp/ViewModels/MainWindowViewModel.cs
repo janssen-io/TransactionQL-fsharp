@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Windows.Input;
 using Microsoft.FSharp.Core;
 using TransactionQL.Application;
@@ -22,12 +23,26 @@ public class MainWindowViewModel : ViewModelBase
         SaveCommand = ReactiveCommand.Create(Save);
     }
 
-    public ICommand SaveCommand { get; }
+    [IgnoreDataMember] public ICommand SaveCommand { get; }
 
-    public ObservableCollection<PaymentDetailsViewModel> BankTransactions { get; set; } = new();
+    [DataMember] public ObservableCollection<PaymentDetailsViewModel> BankTransactions { get; set; } = new();
+
+    private string _locale;
+
+    [DataMember]
+    public string Locale
+    {
+        get => _locale;
+        set
+        {
+            _locale = value;
+            CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(value);
+        }
+    }
 
     private int _bankTransactionIndex = 0;
 
+    [DataMember]
     public int BankTransactionIndex
     {
         get => _bankTransactionIndex;
@@ -36,6 +51,7 @@ public class MainWindowViewModel : ViewModelBase
 
     private bool _hasTransactions = false;
 
+    [DataMember]
     public bool HasTransactions
     {
         get => _hasTransactions;
@@ -68,7 +84,7 @@ public class MainWindowViewModel : ViewModelBase
         using var bankTransactionCsv = new StreamReader(data.TransactionsFile);
         // TODO: temporarily change it? Or change it for the entire program?
         // TODO: provide options object and read locale from options
-        CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
+        Locale = "en-US";
         if (data.HasHeader) bankTransactionCsv.ReadLine();
         var rows = reader.Read(bankTransactionCsv.ReadToEnd());
 
