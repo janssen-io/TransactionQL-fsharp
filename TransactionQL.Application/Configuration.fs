@@ -1,4 +1,4 @@
-﻿namespace TransactionQL.Shared
+﻿namespace TransactionQL.Application
 
 module Configuration =
 

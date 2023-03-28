@@ -5,9 +5,10 @@
              xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
              xmlns:dd="using:TransactionQL.DesktopApp"
              xmlns:views="clr-namespace:TransactionQL.DesktopApp.Views"
+             xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
              mc:Ignorable="d"
-             Width="500"
-             d:DesignHeight="500"
+             d:DesignHeight="400"
+             d:DesignWidth="500"
              x:Class="TransactionQL.DesktopApp.Views.PaymentDetails"
              x:DataType="vm:PaymentDetailsViewModel"
              d:DataContext="{x:Static dd:DesignData.PaymentDetails}">
@@ -43,12 +44,24 @@
         <Style Selector="TextBlock.Negative">
             <Setter Property="Foreground" Value="Red" />
         </Style>
+
+        <Style Selector="TextBlock.TableHeader">
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
+        <Style Selector="TextBox.Cell">
+            <Setter Property="Margin" Value="10,3" />
+        </Style>
+        <Style Selector="Border.Card">
+            <Setter Property="Margin" Value="20" />
+            <Setter Property="Background" Value="White" />
+        </Style>
     </UserControl.Styles>
 
     <StackPanel Orientation="Vertical">
-        <Border CornerRadius="10" ClipToBounds="True" Margin="0,10,0,10">
-            <Border Padding="20" Background="White">
-                <RelativePanel Background="White">
+        <Border CornerRadius="10" ClipToBounds="True" Background="White">
+            <Border Classes="Card">
+                <RelativePanel>
                     <Grid ColumnDefinitions="*,Auto,Auto" Name="Header" RelativePanel.AlignLeftWithPanel="True"
                           RelativePanel.AlignRightWithPanel="True">
                         <TextBox Name="Title" Text="{Binding Title}" Classes="h1"
@@ -78,55 +91,72 @@
                 </RelativePanel>
             </Border>
         </Border>
-        <Border
-            Margin="0,15,0,15"
-            CornerRadius="10"
-            ClipToBounds="True"
-            Background="White">
-            <DataGrid
-                AutoGenerateColumns="False"
-                Items="{Binding Transactions}"
-                CanUserReorderColumns="False"
-                CanUserSortColumns="False"
-                GridLinesVisibility="Horizontal"
-                Height="250">
-
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Account"
-                                            Width="7*">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <!-- Temporarily disable bindings for the AutoCompleteBox, because otherwise Avalonia cannot find 'ValidAccounts' on DataContext
-                    As the type is seen as System.Object -->
-                                <AutoCompleteBox
-                                    x:CompileBindings="False"
-                                    BorderBrush="Transparent"
-                                    SelectedItem="{Binding Account}"
-                                    TextFilter="{Binding AccountAutoCompletePredicate}"
-                                    Items="{Binding 
-                      Path=DataContext.ValidAccounts,
-                      RelativeSource={RelativeSource FindAncestor, AncestorType=views:PaymentDetails}}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Cur."
-                                        Binding="{Binding Currency}"
-                                        Width="2*" />
-                    <!-- Seems like a lot of trouble to align the Amounts to the right -->
-                    <DataGridTemplateColumn Header="Amount"
-                                            Width="2*">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox Text="{Binding Amount}"
-                                         Margin="0,0,10,0"
-                                         VerticalAlignment="Center"
-                                         TextAlignment="Right" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+        <Border Margin="0,15,0,0" CornerRadius="10" ClipToBounds="True" Background="White"
+                Height="300">
+            <Border Classes="Card">
+                <RelativePanel>
+                    <Button Name="AddTransaction"
+                            RelativePanel.AlignRightWithPanel="True"
+                            Command="{Binding AddTransactionCommand}"
+                            i:Attached.Icon="fa-plus"
+                            HotKey="Ctrl+D" />
+                    <DockPanel RelativePanel.Below="AddTransaction"
+                               RelativePanel.AlignLeftWithPanel="True"
+                               RelativePanel.AlignRightWithPanel="True"
+                               RelativePanel.AlignBottomWithPanel="True">
+                        <Grid ShowGridLines="False"
+                              ColumnDefinitions="7*,2*,2*"
+                              DockPanel.Dock="Top"
+                              Margin="0,10,0,0">
+                            <TextBlock Grid.Column="0" Text="Account" Classes="TableHeader" TextAlignment="Left" />
+                            <TextBlock Grid.Column="1" Text="Currency" Classes="TableHeader" />
+                            <TextBlock Grid.Column="2" Text="Amount" Classes="TableHeader" />
+                        </Grid>
+                        <ScrollViewer DockPanel.Dock="Bottom">
+                            <ItemsControl Items="{Binding Transactions}">
+                                <ItemsControl.Styles>
+                                    <Style Selector="ItemsPresenter">
+                                        <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />
+                                    </Style>
+                                </ItemsControl.Styles>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <!-- Temporarily disable bindings for the AutoCompleteBox, because otherwise Avalonia cannot find 'ValidAccounts' on DataContext
+                                             As the type is seen as System.Object -->
+                                        <StackPanel Orientation="Vertical">
+                                            <Separator Background="DarkGray" Margin="0" />
+                                            <Grid ShowGridLines="False" ColumnDefinitions="7*,2*,2*">
+                                                <AutoCompleteBox
+                                                    Padding="0, 5"
+                                                    VerticalAlignment="Center"
+                                                    Classes="Cell"
+                                                    x:CompileBindings="False"
+                                                    BorderBrush="Transparent"
+                                                    SelectedItem="{Binding Account}"
+                                                    TextFilter="{Binding AccountAutoCompletePredicate}"
+                                                    Items="{Binding Path=DataContext.ValidAccounts,
+                                    RelativeSource={RelativeSource FindAncestor, AncestorType=views:PaymentDetails}}" />
+                                                <TextBox
+                                                    Grid.Column="1"
+                                                    Classes="Cell"
+                                                    Text="{Binding Currency}"
+                                                    VerticalAlignment="Center"
+                                                    TextAlignment="Right" />
+                                                <TextBox
+                                                    Grid.Column="2"
+                                                    Classes="Cell"
+                                                    Text="{Binding Amount}"
+                                                    VerticalAlignment="Center"
+                                                    TextAlignment="Right" />
+                                            </Grid>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </DockPanel>
+                </RelativePanel>
+            </Border>
         </Border>
-        <Button Content="Add" Margin="0,0,0,0" Command="{Binding AddTransactionCommand}" />
     </StackPanel>
 </UserControl>

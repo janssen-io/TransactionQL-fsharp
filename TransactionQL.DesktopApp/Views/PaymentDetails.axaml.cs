@@ -1,3 +1,5 @@
+using Avalonia.Input;
+
 namespace TransactionQL.DesktopApp.Views;
 
 using Avalonia.Controls;

@@ -4,7 +4,7 @@ module Program =
     open Argu
     open System
     open System.Globalization
-    open TransactionQL.Shared.Configuration
+    open TransactionQL.Application.Configuration
     open TransactionQL.Parser
     open TransactionQL.Input
     open TransactionQL.Input.Converters

@@ -1,7 +1,5 @@
 ﻿using ReactiveUI;
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -17,7 +15,7 @@ namespace TransactionQL.DesktopApp.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    public event EventHandler<string> Saved;
+    public event EventHandler<string>? Saved;
 
     public MainWindowViewModel()
     {
@@ -27,6 +25,22 @@ public class MainWindowViewModel : ViewModelBase
     public ICommand SaveCommand { get; }
 
     public ObservableCollection<PaymentDetailsViewModel> BankTransactions { get; set; } = new();
+
+    private int _bankTransactionIndex = 0;
+
+    public int BankTransactionIndex
+    {
+        get => _bankTransactionIndex;
+        set => this.RaiseAndSetIfChanged(ref _bankTransactionIndex, value);
+    }
+
+    private bool _hasTransactions = false;
+
+    public bool HasTransactions
+    {
+        get => _hasTransactions;
+        set => this.RaiseAndSetIfChanged(ref _hasTransactions, value);
+    }
 
     internal void Parse(SelectDataWindowViewModel.SelectedData data)
     {
@@ -62,7 +76,8 @@ public class MainWindowViewModel : ViewModelBase
 
         BankTransactions.Clear();
 
-        // TODO: show progress/loading bar
+        if (filteredRows.Length > 0) HasTransactions = true;
+
         for (var i = 0; i < rows.Length; i++)
         {
             var filteredRow = filteredRows[i];
@@ -110,12 +125,15 @@ public class MainWindowViewModel : ViewModelBase
 
     private void Save()
     {
-        var postings = BankTransactions.Select(posting =>
-            API.formatPosting(
+        var postings = BankTransactions
+            .Select(posting => API.formatPosting(
                 posting.Date,
                 posting.Title,
-                posting.Transactions.Select(trx =>
-                    Tuple.Create(trx.Account, trx.Currency, trx.Amount)).ToArray()));
+                posting.Transactions
+                    .Where(trx => !string.IsNullOrEmpty(trx.Account))
+                    .Select(trx => Tuple.Create(trx.Account, trx.Currency, trx.Amount))
+                    .ToArray()));
+
         Saved?.Invoke(this, string.Join(Environment.NewLine + Environment.NewLine, postings));
     }
 }

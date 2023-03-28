@@ -5,7 +5,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:dd="using:TransactionQL.DesktopApp"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="450"
+        Width="1000"
         x:Class="TransactionQL.DesktopApp.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
@@ -15,6 +17,8 @@
         ExtendClientAreaToDecorationsHint="False"
         DataContext="{x:Static dd:DesignData.MainWindow}">
 
+    <Window.Resources>
+    </Window.Resources>
 
     <Panel>
         <ExperimentalAcrylicBorder IsHitTestVisible="False">
@@ -26,20 +30,59 @@
                     MaterialOpacity="0.1" />
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
-        <StackPanel Margin="40">
+        <StackPanel Margin="20">
             <!--<Button Command="{Binding OpenWorkspaceCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">
-        <PathIcon Data="{StaticResource folder_open_regular}" />
       </Button>-->
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top">
-                <Button Click="Open">Select Data</Button>
-                <Button Name="CarouselNext">Next</Button>
-                <Button Name="CarouselPrevious">Previous</Button>
-                <Button Command="{Binding SaveCommand}">Save</Button>
-            </StackPanel>
-            <StackPanel Orientation="Vertical">
-                <Carousel Name="BankTransactionCarousel" Items="{Binding BankTransactions}">
+            <Border Background="#d6e3d7" CornerRadius="5">
+                <Grid ColumnDefinitions="*,*,*" Margin="10,0">
+                    <Grid.Styles>
+                        <Style Selector="Button">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Margin" Value="0,0,10,0" />
+                        </Style>
+                    </Grid.Styles>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Left"
+                                Margin="5">
+                        <Button Click="Open" HotKey="Ctrl+O" i:Attached.Icon="fa-regular fa-folder-open" />
+                        <Button Command="{Binding SaveCommand}" HotKey="Ctrl+S"
+                                i:Attached.Icon="fa-regular fa-floppy-disk" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Margin="5"
+                                Grid.Column="1">
+                        <Button Name="CarouselPrevious" HotKey="Ctrl+Q" i:Attached.Icon="fa-angle-left" />
+                        <Button Name="CarouselNext" HotKey="Ctrl+E" i:Attached.Icon="fa-angle-right" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Margin="5"
+                                Grid.Column="2">
+                        <ProgressBar Minimum="0" Maximum="{Binding BankTransactions.Count}"
+                                     Value="{Binding BankTransactionIndex}"
+                                     Margin="0,0,12,0" />
+                        <TextBlock
+                            Text="{Binding BankTransactionIndex}" />
+                        <TextBlock Text="/" />
+                        <TextBlock
+                            Text="{Binding BankTransactions.Count}" />
+
+                    </StackPanel>
+                </Grid>
+            </Border>
+            <Grid ColumnDefinitions="5*,3*" Margin="0, 20,0,0">
+                <Carousel Grid.Column="0"
+                          Name="BankTransactionCarousel"
+                          Items="{Binding BankTransactions}"
+                          SelectedIndex="{Binding BankTransactionIndex}"
+                          WrapSelection="True">
+                    <Carousel.Styles>
+                        <Style Selector="ItemsPresenter">
+                            <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />
+                        </Style>
+                    </Carousel.Styles>
                     <Carousel.PageTransition>
                         <PageSlide Duration="0.25" Orientation="Horizontal" />
                     </Carousel.PageTransition>
@@ -49,13 +92,31 @@
                         </DataTemplate>
                     </Carousel.ItemTemplate>
                 </Carousel>
-            </StackPanel>
+                <Border Margin="20,0,0,0" CornerRadius="10" Background="White" Grid.Column="1"
+                        MaxHeight="500">
+                    <RelativePanel>
+                        <ScrollViewer RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignTopWithPanel="True">
+                            <ItemsControl Name="TransactionsList"
+                                          Margin="10"
+                                          Items="{Binding BankTransactions}"
+                                          HorizontalAlignment="Stretch">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Background="Transparent" HorizontalAlignment="Stretch"
+                                                Click="GotoTransaction">
+                                            <TextBlock Text="{Binding Title}" HorizontalAlignment="Stretch" />
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </RelativePanel>
+                </Border>
+            </Grid>
         </StackPanel>
     </Panel>
     <!-- 
         TODO: Create custom status bar control that shows:
-        - progress bar when loading bank transactions
-        - current item when manually processing bank transactions
         - error messages/warnings -> or maybe as a toast?
     -->
 </Window>
