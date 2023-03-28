@@ -59,11 +59,13 @@ public partial class MainWindow : Window
         };
         selectDataVm.DataSelected += (_, data) => ((MainWindowViewModel)DataContext!).Parse(data);
 
-        var selectWindow = new SelectDataWindow(selectDataVm);
-        selectWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-
+        var selectWindow = new SelectDataWindow(selectDataVm)
+        {
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+        };
         selectWindow.Closed += (_, _) => IsEnabled = true;
+
         IsEnabled = false;
-        selectWindow.Show();
+        selectWindow.Show(this);
     }
 }
