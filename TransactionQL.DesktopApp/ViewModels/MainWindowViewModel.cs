@@ -129,6 +129,7 @@ public class MainWindowViewModel : ViewModelBase
             .Select(posting => API.formatPosting(
                 posting.Date,
                 posting.Title,
+                posting.Description,
                 posting.Transactions
                     .Where(trx => !string.IsNullOrEmpty(trx.Account))
                     .Select(trx => Tuple.Create(trx.Account, trx.Currency, trx.Amount))

@@ -40,7 +40,7 @@ module API =
             | Interpretation(_, Some entry) -> Left entry
             | Interpretation(_, None) -> Right row)
 
-    let formatPosting date title trx =
+    let formatPosting date title (description: string) trx =
         let header = Header(date, title)
 
         let lines =
@@ -60,10 +60,12 @@ module API =
                       Tag = None })
             |> List.ofArray
 
+        let newLines = [| "\r\n"; "\n" |]
+
         let entry =
             { Header = header
               Lines = lines
-              Comments = [] }
+              Comments = List.ofArray (description.Split(newLines, StringSplitOptions.RemoveEmptyEntries)) }
 
         let sprintDesc = (List.map <| (fun line -> $"; %s{line}"))
 
