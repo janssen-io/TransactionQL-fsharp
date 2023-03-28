@@ -69,7 +69,7 @@ public class MainWindowViewModel : ViewModelBase
         // TODO: temporarily change it? Or change it for the entire program?
         // TODO: provide options object and read locale from options
         CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
-        // TODO: if contains header, then skip first line --> move to TransactionQL.Application project (also move C# api there)
+        if (data.HasHeader) bankTransactionCsv.ReadLine();
         var rows = reader.Read(bankTransactionCsv.ReadToEnd());
 
         var filteredRows = API.filter(reader, queries, rows).ToArray();

@@ -19,6 +19,14 @@ public class SelectDataWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _transactionsFile, value);
     }
 
+    private bool _hasHeader = false;
+
+    public bool HasHeader
+    {
+        get => _hasHeader;
+        set => this.RaiseAndSetIfChanged(ref _hasHeader, value);
+    }
+
     private string _filtersFile = "";
 
     public string FiltersFile
@@ -53,7 +61,8 @@ public class SelectDataWindowViewModel : ViewModelBase
         Submit = ReactiveCommand.Create(() =>
         {
             // TODO: disable button/show message if not everything is selected.
-            DataSelected?.Invoke(this, new SelectedData(TransactionsFile, FiltersFile, AccountsFile, Module));
+            DataSelected?.Invoke(this,
+                new SelectedData(TransactionsFile, HasHeader, FiltersFile, AccountsFile, Module));
         });
 
         Cancel = ReactiveCommand.Create(() => SelectionCancelled?.Invoke(this, EventArgs.Empty));
@@ -62,13 +71,16 @@ public class SelectDataWindowViewModel : ViewModelBase
     public class SelectedData
     {
         public string TransactionsFile { get; }
+        public bool HasHeader { get; }
         public string FiltersFile { get; }
         public string AccountsFile { get; }
         public string Module { get; }
 
-        public SelectedData(string transactionsFile, string filtersFile, string accountsFile, string module)
+        public SelectedData(string transactionsFile, bool hasHeader, string filtersFile, string accountsFile,
+            string module)
         {
             TransactionsFile = transactionsFile;
+            HasHeader = hasHeader;
             FiltersFile = filtersFile;
             AccountsFile = accountsFile;
             Module = module;
