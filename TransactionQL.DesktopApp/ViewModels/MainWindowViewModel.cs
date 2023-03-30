@@ -17,26 +17,42 @@ namespace TransactionQL.DesktopApp.ViewModels;
 public class MainWindowViewModel : ViewModelBase
 {
     public event EventHandler<string>? Saved;
+    public event EventHandler? StateSaved;
 
     public MainWindowViewModel()
     {
         SaveCommand = ReactiveCommand.Create(Save);
+        SaveStateCommand = ReactiveCommand.Create(() =>
+        {
+            StateSaved?.Invoke(this, EventArgs.Empty);
+            LastSaved = DateTime.Now.ToShortTimeString();
+        });
     }
 
     [IgnoreDataMember] public ICommand SaveCommand { get; }
+    [IgnoreDataMember] public ICommand SaveStateCommand { get; }
+
+    private string _lastSaved = "";
+
+    [IgnoreDataMember]
+    public string LastSaved
+    {
+        get => _lastSaved;
+        set => this.RaiseAndSetIfChanged(ref _lastSaved, value);
+    }
 
     [DataMember] public ObservableCollection<PaymentDetailsViewModel> BankTransactions { get; set; } = new();
 
-    private string _locale;
+    private string? _locale;
 
     [DataMember]
-    public string Locale
+    public string? Locale
     {
         get => _locale;
         set
         {
             _locale = value;
-            CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(value);
+            CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(value ?? "en-US");
         }
     }
 

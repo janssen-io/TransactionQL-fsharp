@@ -113,7 +113,7 @@
                             <TextBlock Grid.Column="2" Text="Amount" Classes="TableHeader" />
                         </Grid>
                         <ScrollViewer DockPanel.Dock="Bottom">
-                            <ItemsControl Items="{Binding Transactions}">
+                            <ItemsControl Items="{Binding Transactions}" Padding="0,0,0,10">
                                 <ItemsControl.Styles>
                                     <Style Selector="ItemsPresenter">
                                         <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />

@@ -1,10 +1,13 @@
 using System;
+using System.Diagnostics;
+using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
 using ReactiveUI;
 using TransactionQL.DesktopApp.Application;
 using TransactionQL.DesktopApp.ViewModels;
@@ -12,7 +15,7 @@ using TransactionQL.DesktopApp.Views;
 
 namespace TransactionQL.DesktopApp;
 
-public partial class App : Avalonia.Application
+public partial class App : Avalonia.Application, IDisposable
 {
     private readonly Subject<IDisposable> _shouldPersistState = new();
 
@@ -23,45 +26,60 @@ public partial class App : Avalonia.Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        // Create the AutoSuspendHelper.
-        var suspension = new AutoSuspendHelper(ApplicationLifetime);
+        // Create observables for SuspensionHost to save/restore state.
+        var launching = new Subject<Unit>();
+
         RxApp.SuspensionHost.CreateNewAppState = () => new MainWindowViewModel();
-        RxApp.SuspensionHost.SetupDefaultSuspendResume(new JsonSuspensionDriver("appstate.json"));
-        if (ApplicationLifetime is IControlledApplicationLifetime controlled)
-            controlled.Exit += OnControlledOnExit;
-
         RxApp.SuspensionHost.ShouldPersistState = _shouldPersistState;
-        suspension.OnFrameworkInitializationCompleted();
+        RxApp.SuspensionHost.IsLaunchingNew = launching;
+        RxApp.SuspensionHost.IsResuming = Observable.Never<Unit>();
 
-        // Load the saved view model state.
+        // SetupDefaultSuspendResume must be called after setting observables!
+        // This method subscribes to them.
+        RxApp.SuspensionHost.SetupDefaultSuspendResume(new JsonSuspensionDriver("appstate.json"));
+
+        // Load the state and start the app
         var state = RxApp.SuspensionHost.GetAppState<MainWindowViewModel>();
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = new MainWindow(state);
-        else
-            new MainWindow(state).Show();
 
-        // TODO: is this the best way to start a long running, light-weight background task?
-        StartPeriodicPersistence();
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            desktop.MainWindow = new MainWindow(state);
+            state.StateSaved += OnStateSaved;
+            desktop.Exit += OnControlledOnExit;
+        }
+        else
+        {
+            throw new Exception("App must be started with Desktop ApplicationLifetime");
+        }
+
+        launching.OnNext(Unit.Default);
 
         base.OnFrameworkInitializationCompleted();
     }
 
-    private async void StartPeriodicPersistence()
+    private void OnControlledOnExit(object? o,
+        ControlledApplicationLifetimeExitEventArgs controlledApplicationLifetimeExitEventArgs)
     {
-        var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
-        while (await timer.WaitForNextTickAsync())
-        {
-            var manual = new ManualResetEvent(false);
-            _shouldPersistState.OnNext(Disposable.Create(() => manual.Set()));
-            manual.WaitOne();
-        }
+        // Only save app state if application exited for the right reasons
+        // TODO: verify that uncaught exceptions/app crashes do indeed set a different ApplicationExitCode
+        if (controlledApplicationLifetimeExitEventArgs.ApplicationExitCode == 0)
+            SaveState();
     }
 
-    private void OnControlledOnExit(object o,
-        ControlledApplicationLifetimeExitEventArgs controlledApplicationLifetimeExitEventArgs)
+    private void OnStateSaved(object? sender, EventArgs args)
+    {
+        SaveState();
+    }
+
+    private void SaveState()
     {
         var manual = new ManualResetEvent(false);
         _shouldPersistState.OnNext(Disposable.Create(() => manual.Set()));
-        manual.WaitOne();
+        if (!manual.WaitOne(TimeSpan.FromSeconds(10))) throw new Exception("Could not save state");
+    }
+
+    public void Dispose()
+    {
+        _shouldPersistState.Dispose();
     }
 }

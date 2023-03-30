@@ -43,10 +43,14 @@
                     </Grid.Styles>
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Left"
-                                Margin="5">
+                                Margin="5"
+                                Spacing="5">
                         <Button Click="Open" HotKey="Ctrl+O" i:Attached.Icon="fa-regular fa-folder-open" />
-                        <Button Command="{Binding SaveCommand}" HotKey="Ctrl+S"
+                        <Button Command="{Binding SaveStateCommand}" HotKey="Ctrl+S"
+                                i:Attached.Icon="fa-code-commit" />
+                        <Button Command="{Binding SaveCommand}" HotKey="Ctrl+Alt+S"
                                 i:Attached.Icon="fa-regular fa-floppy-disk" />
+                        <TextBlock Text="{Binding LastSaved}" VerticalAlignment="Center" />
                     </StackPanel>
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center"
