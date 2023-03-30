@@ -11,6 +11,15 @@ public class PaymentDetailsViewModel : ViewModelBase
 {
     #region properties
 
+    private bool _isActive = false;
+
+    [DataMember]
+    public bool IsActive
+    {
+        get => _isActive;
+        set => this.RaiseAndSetIfChanged(ref _isActive, value);
+    }
+
     private string _title = "";
 
     [DataMember]

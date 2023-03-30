@@ -81,6 +81,7 @@
                           Name="BankTransactionCarousel"
                           Items="{Binding BankTransactions}"
                           SelectedIndex="{Binding BankTransactionIndex}"
+                          SelectionChanged="BankTransactionCarousel_OnSelectionChanged"
                           WrapSelection="True">
                     <Carousel.Styles>
                         <Style Selector="ItemsPresenter">

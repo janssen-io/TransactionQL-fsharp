@@ -1,7 +1,9 @@
 using System.IO;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using Avalonia.VisualTree;
 using ReactiveUI;
 using TransactionQL.DesktopApp.ViewModels;
 
@@ -80,5 +82,12 @@ public partial class MainWindow : Window
         if (container == null) return;
 
         BankTransactionCarousel.SelectedIndex = TransactionsList.IndexFromContainer(container!);
+    }
+
+    private void BankTransactionCarousel_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        foreach (var item in e.RemovedItems.OfType<PaymentDetailsViewModel>()) item.IsActive = false;
+
+        foreach (var item in e.AddedItems.OfType<PaymentDetailsViewModel>()) item.IsActive = true;
     }
 }

@@ -99,7 +99,8 @@
                             RelativePanel.AlignRightWithPanel="True"
                             Command="{Binding AddTransactionCommand}"
                             i:Attached.Icon="fa-plus"
-                            HotKey="Ctrl+D" />
+                            HotKey="Ctrl+D"
+                            IsEnabled="{Binding IsActive}" />
                     <DockPanel RelativePanel.Below="AddTransaction"
                                RelativePanel.AlignLeftWithPanel="True"
                                RelativePanel.AlignRightWithPanel="True"
