@@ -17,8 +17,9 @@ public partial class MainWindow : Window
         CarouselNext = this.FindControl<Button>(nameof(CarouselNext))!;
         CarouselPrevious = this.FindControl<Button>(nameof(CarouselPrevious))!;
         BankTransactionCarousel = this.FindControl<Carousel>(nameof(BankTransactionCarousel))!;
+        BankTransactionCarousel.PageTransition = null;
 
-        TransactionsList = this.FindControl<ItemsControl>(nameof(TransactionsList))!;
+        TransactionsList = this.FindControl<ListBox>(nameof(TransactionsList))!;
 
         CarouselNext.Command = ReactiveCommand.Create(() => BankTransactionCarousel.Next());
         CarouselPrevious.Command = ReactiveCommand.Create(() => BankTransactionCarousel.Previous());
@@ -71,17 +72,6 @@ public partial class MainWindow : Window
 
         IsEnabled = false;
         selectWindow.Show(this);
-    }
-
-    private void GotoTransaction(object? sender, RoutedEventArgs e)
-    {
-        var item = ((Button?)sender)?.DataContext;
-        if (item == null) return;
-
-        var container = TransactionsList.ContainerFromItem(item);
-        if (container == null) return;
-
-        BankTransactionCarousel.SelectedIndex = TransactionsList.IndexFromContainer(container!);
     }
 
     private void BankTransactionCarousel_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)

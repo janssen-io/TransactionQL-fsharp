@@ -30,10 +30,8 @@
                     MaterialOpacity="0.1" />
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
-        <StackPanel Margin="20">
-            <!--<Button Command="{Binding OpenWorkspaceCommand}" HorizontalAlignment="Right" VerticalAlignment="Top">
-      </Button>-->
-            <Border Background="#d6e3d7" CornerRadius="5">
+        <Grid RowDefinitions="Auto,*" ColumnDefinitions="*" Margin="20">
+            <Border Name="Toolbar" Background="#d6e3d7" CornerRadius="5">
                 <Grid ColumnDefinitions="*,*,*" Margin="10,0">
                     <Grid.Styles>
                         <Style Selector="Button">
@@ -76,7 +74,11 @@
                     </StackPanel>
                 </Grid>
             </Border>
-            <Grid ColumnDefinitions="5*,3*" Margin="0, 20,0,0">
+            <Grid Name="Main" ColumnDefinitions="5*,3*" Margin="0, 20,0,0"
+                  Grid.Row="1"
+                  RelativePanel.Below="Toolbar"
+                  RelativePanel.AlignLeftWithPanel="True"
+                  RelativePanel.AlignRightWithPanel="True">
                 <Carousel Grid.Column="0"
                           Name="BankTransactionCarousel"
                           Items="{Binding BankTransactions}"
@@ -97,28 +99,21 @@
                         </DataTemplate>
                     </Carousel.ItemTemplate>
                 </Carousel>
-                <Border Margin="20,0,0,0" CornerRadius="10" Background="White" Grid.Column="1"
-                        MaxHeight="500">
-                    <RelativePanel>
-                        <ScrollViewer RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignTopWithPanel="True">
-                            <ItemsControl Name="TransactionsList"
-                                          Margin="10"
-                                          Items="{Binding BankTransactions}"
-                                          HorizontalAlignment="Stretch">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Button Background="Transparent" HorizontalAlignment="Stretch"
-                                                Click="GotoTransaction">
-                                            <TextBlock Text="{Binding Title}" HorizontalAlignment="Stretch" />
-                                        </Button>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-                    </RelativePanel>
-                </Border>
+                <ListBox SelectionMode="Single"
+                         CornerRadius="10"
+                         Grid.Column="1"
+                         Background="White"
+                         Name="TransactionsList" Items="{Binding BankTransactions}"
+                         SelectedIndex="{Binding BankTransactionIndex}"
+                         Margin="15,0,0,0">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Title}" HorizontalAlignment="Stretch" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </Grid>
-        </StackPanel>
+        </Grid>
     </Panel>
     <!-- 
         TODO: Create custom status bar control that shows:

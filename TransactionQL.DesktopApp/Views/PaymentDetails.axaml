@@ -58,11 +58,12 @@
         </Style>
     </UserControl.Styles>
 
-    <StackPanel Orientation="Vertical">
+    <Grid RowDefinitions="Auto,*">
         <Border CornerRadius="10" ClipToBounds="True" Background="White">
             <Border Classes="Card">
                 <RelativePanel>
-                    <Grid ColumnDefinitions="*,Auto,Auto" Name="Header" RelativePanel.AlignLeftWithPanel="True"
+                    <Grid ColumnDefinitions="*,Auto,Auto" Name="Header"
+                          RelativePanel.AlignLeftWithPanel="True"
                           RelativePanel.AlignRightWithPanel="True">
                         <TextBox Name="Title" Text="{Binding Title}" Classes="h1"
                                  Grid.Column="0"
@@ -91,8 +92,7 @@
                 </RelativePanel>
             </Border>
         </Border>
-        <Border Margin="0,15,0,0" CornerRadius="10" ClipToBounds="True" Background="White"
-                Height="300">
+        <Border Grid.Row="1" Margin="0,15,0,0" CornerRadius="10" ClipToBounds="True" Background="White">
             <Border Classes="Card">
                 <RelativePanel>
                     <Button Name="AddTransaction"
@@ -126,33 +126,36 @@
                                     <DataTemplate>
                                         <!-- Temporarily disable bindings for the AutoCompleteBox, because otherwise Avalonia cannot find 'ValidAccounts' on DataContext
                                              As the type is seen as System.Object -->
-                                        <StackPanel Orientation="Vertical">
-                                            <Separator Background="DarkGray" Margin="0" />
-                                            <Grid ShowGridLines="False" ColumnDefinitions="7*,2*,2*">
-                                                <AutoCompleteBox
-                                                    Padding="0, 5"
-                                                    VerticalAlignment="Center"
-                                                    Classes="Cell"
-                                                    x:CompileBindings="False"
-                                                    BorderBrush="Transparent"
-                                                    SelectedItem="{Binding Account}"
-                                                    TextFilter="{Binding AccountAutoCompletePredicate}"
-                                                    Items="{Binding Path=DataContext.ValidAccounts,
+                                        <Grid ShowGridLines="False" ColumnDefinitions="7*,2*,2*"
+                                              RowDefinitions="*,*">
+                                            <Separator Grid.ColumnSpan="3" />
+                                            <AutoCompleteBox
+                                                Grid.Row="1"
+                                                Grid.Column="0"
+                                                Padding="0, 5"
+                                                VerticalAlignment="Center"
+                                                Classes="Cell"
+                                                x:CompileBindings="False"
+                                                BorderBrush="Transparent"
+                                                SelectedItem="{Binding Account}"
+                                                TextFilter="{Binding AccountAutoCompletePredicate}"
+                                                Items="{Binding Path=DataContext.ValidAccounts,
                                     RelativeSource={RelativeSource FindAncestor, AncestorType=views:PaymentDetails}}" />
-                                                <TextBox
-                                                    Grid.Column="1"
-                                                    Classes="Cell"
-                                                    Text="{Binding Currency}"
-                                                    VerticalAlignment="Center"
-                                                    TextAlignment="Right" />
-                                                <TextBox
-                                                    Grid.Column="2"
-                                                    Classes="Cell"
-                                                    Text="{Binding Amount}"
-                                                    VerticalAlignment="Center"
-                                                    TextAlignment="Right" />
-                                            </Grid>
-                                        </StackPanel>
+                                            <TextBox
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                Classes="Cell"
+                                                Text="{Binding Currency}"
+                                                VerticalAlignment="Center"
+                                                TextAlignment="Right" />
+                                            <TextBox
+                                                Grid.Row="1"
+                                                Grid.Column="2"
+                                                Classes="Cell"
+                                                Text="{Binding Amount}"
+                                                VerticalAlignment="Center"
+                                                TextAlignment="Right" />
+                                        </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
@@ -161,5 +164,5 @@
                 </RelativePanel>
             </Border>
         </Border>
-    </StackPanel>
+    </Grid>
 </UserControl>
