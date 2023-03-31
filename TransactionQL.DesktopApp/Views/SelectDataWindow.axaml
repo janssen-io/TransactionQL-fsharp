@@ -9,7 +9,7 @@
         Width="500" d:DesignWidth="400" d:DesignHeight="325"
         SizeToContent="Height"
         x:DataType="vm:SelectDataWindowViewModel"
-        Title="SelectDataWindow">
+        Title="Select Data">
     <Window.Styles>
         <Style Selector="TextBlock.Label">
             <Setter Property="Margin" Value="0, 10, 0, 5" />

@@ -1,9 +1,12 @@
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.VisualTree;
+using FSharp.Data.Runtime;
 using ReactiveUI;
 using TransactionQL.DesktopApp.ViewModels;
 
@@ -57,10 +60,12 @@ public partial class MainWindow : Window
 
     private void Open(object? sender, RoutedEventArgs ea)
     {
-        // TODO: get available modules from plugin folder
+        var pluginDirectory = TransactionQL.Application.Configuration.createAndGetPluginDir;
+        var dir = new DirectoryInfo(pluginDirectory);
+        var files = dir.GetFiles("*.dll").Select(f => f.Name);
         var selectDataVm = new SelectDataWindowViewModel()
         {
-            AvailableModules = { "asn" }
+            AvailableModules = new ObservableCollection<string>(files)
         };
         selectDataVm.DataSelected += (_, data) => ((MainWindowViewModel)DataContext!).Parse(data);
 

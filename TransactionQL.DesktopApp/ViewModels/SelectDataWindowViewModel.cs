@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 
 namespace TransactionQL.DesktopApp.ViewModels;
@@ -42,15 +43,25 @@ public class SelectDataWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _accountsFile, value);
     }
 
-    private string _module = "";
+    private string? _module = "";
 
-    public string Module
+    public string? Module
     {
         get => _module;
         set => this.RaiseAndSetIfChanged(ref _module, value);
     }
 
-    public ObservableCollection<string> AvailableModules { get; set; } = new();
+    private ObservableCollection<string> _availableModules = new();
+
+    public ObservableCollection<string> AvailableModules
+    {
+        get => _availableModules;
+        set
+        {
+            _availableModules = value;
+            Module = value.FirstOrDefault();
+        }
+    }
 
     public ICommand Submit { get; }
     public ICommand Cancel { get; }
