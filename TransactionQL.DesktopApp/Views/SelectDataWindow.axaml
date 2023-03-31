@@ -21,7 +21,7 @@
     <StackPanel Orientation="Vertical" Margin="10">
         <TextBlock Classes="Label">Transactions</TextBlock>
         <Grid ColumnDefinitions="*,Auto">
-            <TextBox Text="{Binding TransactionsFile}" IsEnabled="False" Name="Transactions"
+            <TextBox Text="{Binding TransactionsFile}" IsReadOnly="True" Name="Transactions"
                      HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="0" />
             <Button Click="SelectTransactionsFile" Classes="Browse" Grid.Column="1" Margin="10,0,0,0" />
         </Grid>
@@ -33,7 +33,7 @@
 
         <TextBlock Classes="Label">Filters</TextBlock>
         <Grid ColumnDefinitions="*,Auto">
-            <TextBox Text="{Binding FiltersFile}" IsEnabled="False" Name="Filters"
+            <TextBox Text="{Binding FiltersFile}" IsReadOnly="True" Name="Filters"
                      HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="0" />
 
             <Button Click="SelectFiltersFile" Classes="Browse" Grid.Column="1" Margin="10,0,0,0" />
@@ -41,7 +41,7 @@
 
         <TextBlock Classes="Label">Accounts</TextBlock>
         <Grid ColumnDefinitions="*,Auto">
-            <TextBox Text="{Binding AccountsFile}" IsEnabled="False" Name="Accounts"
+            <TextBox Text="{Binding AccountsFile}" IsReadOnly="True" Name="Accounts"
                      HorizontalAlignment="Stretch" VerticalAlignment="Center" Grid.Column="0" />
 
             <Button Click="SelectAccountsFile" Classes="Browse" Grid.Column="1" Margin="10,0,0,0" />

@@ -27,7 +27,7 @@ public partial class App : Avalonia.Application, IDisposable
     public override void OnFrameworkInitializationCompleted()
     {
         // Use a custom AutoSuspendHelper to also be able to save app state on-demand.
-        var suspensionHelper = new CustomSuspensionHelper(_shouldPersistState);
+        var suspensionHelper = new CustomSuspensionHelper(_shouldPersistState, ApplicationLifetime);
 
         // Load the state and start the app
         var state = RxApp.SuspensionHost.GetAppState<MainWindowViewModel>();
@@ -38,7 +38,7 @@ public partial class App : Avalonia.Application, IDisposable
             state.StateSaved += OnStateSaved;
             desktop.Exit += OnControlledOnExit;
         }
-        else
+        else if (!Design.IsDesignMode)
         {
             throw new Exception("App must be started with Desktop ApplicationLifetime");
         }
