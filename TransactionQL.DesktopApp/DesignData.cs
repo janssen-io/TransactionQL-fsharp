@@ -23,7 +23,8 @@ public static class DesignData
         {
             new() { Account = "Assets:Checking", Currency = "EUR", Amount = -127.11m },
             new() { Account = "Expenses:Living:Utilities" }
-        }
+        },
+        IsActive = true
     };
 
     public static readonly MainWindowViewModel MainWindow = new()

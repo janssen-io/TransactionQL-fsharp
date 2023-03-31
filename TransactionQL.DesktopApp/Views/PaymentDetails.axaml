@@ -101,7 +101,9 @@
                             Command="{Binding AddTransactionCommand}"
                             i:Attached.Icon="fa-plus"
                             HotKey="Ctrl+D"
-                            IsEnabled="{Binding IsActive}" />
+                            IsEnabled="{Binding IsActive}">
+                        <ToolTip.Tip>Add Line (Ctrl+D)</ToolTip.Tip>
+                    </Button>
                     <DockPanel RelativePanel.Below="AddTransaction"
                                RelativePanel.AlignLeftWithPanel="True"
                                RelativePanel.AlignRightWithPanel="True"
