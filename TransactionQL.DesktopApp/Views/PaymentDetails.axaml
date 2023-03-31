@@ -88,6 +88,7 @@
                              TextWrapping="Wrap"
                              RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True"
                              RelativePanel.Below="Date"
+                             MaxHeight="100"
                              Padding="0,6,6,5" />
                 </RelativePanel>
             </Border>
@@ -107,16 +108,19 @@
                                RelativePanel.AlignBottomWithPanel="True">
                         <Grid ShowGridLines="False"
                               ColumnDefinitions="7*,2*,2*"
+                              RowDefinitions="*,*"
                               DockPanel.Dock="Top"
                               Margin="0,10,0,0">
-                            <TextBlock Grid.Column="0" Text="Account" Classes="TableHeader" TextAlignment="Left" />
-                            <TextBlock Grid.Column="1" Text="Currency" Classes="TableHeader" />
-                            <TextBlock Grid.Column="2" Text="Amount" Classes="TableHeader" />
+                            <TextBlock Grid.Column="0" Grid.Row="0" Text="Account" Classes="TableHeader"
+                                       TextAlignment="Left" />
+                            <TextBlock Grid.Column="1" Grid.Row="0" Text="Currency" Classes="TableHeader" />
+                            <TextBlock Grid.Column="2" Grid.Row="0" Text="Amount" Classes="TableHeader" />
+                            <Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0" />
                         </Grid>
                         <ScrollViewer DockPanel.Dock="Bottom">
                             <ItemsControl Name="Transactions"
                                           Items="{Binding Transactions}"
-                                          Padding="0,0,0,10">
+                                          Padding="0,0,0,30">
                                 <ItemsControl.Styles>
                                     <Style Selector="ItemsPresenter">
                                         <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />
@@ -128,9 +132,8 @@
                                              As the type is seen as System.Object -->
                                         <Grid ShowGridLines="False" ColumnDefinitions="7*,2*,2*"
                                               RowDefinitions="*,*">
-                                            <Separator Grid.ColumnSpan="3" />
                                             <AutoCompleteBox
-                                                Grid.Row="1"
+                                                Grid.Row="0"
                                                 Grid.Column="0"
                                                 Padding="0, 5"
                                                 VerticalAlignment="Center"
@@ -142,19 +145,24 @@
                                                 Items="{Binding Path=DataContext.ValidAccounts,
                                     RelativeSource={RelativeSource FindAncestor, AncestorType=views:PaymentDetails}}" />
                                             <TextBox
-                                                Grid.Row="1"
+                                                Grid.Row="0"
                                                 Grid.Column="1"
                                                 Classes="Cell"
                                                 Text="{Binding Currency}"
                                                 VerticalAlignment="Center"
                                                 TextAlignment="Right" />
                                             <TextBox
-                                                Grid.Row="1"
+                                                Grid.Row="0"
                                                 Grid.Column="2"
                                                 Classes="Cell"
                                                 Text="{Binding Amount}"
                                                 VerticalAlignment="Center"
                                                 TextAlignment="Right" />
+                                            <Separator
+                                                Grid.Row="1"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="3"
+                                                Margin="0" />
                                         </Grid>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
