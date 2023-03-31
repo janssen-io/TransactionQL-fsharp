@@ -26,17 +26,8 @@ public partial class App : Avalonia.Application, IDisposable
 
     public override void OnFrameworkInitializationCompleted()
     {
-        // Create observables for SuspensionHost to save/restore state.
-        var launching = new Subject<Unit>();
-
-        RxApp.SuspensionHost.CreateNewAppState = () => new MainWindowViewModel();
-        RxApp.SuspensionHost.ShouldPersistState = _shouldPersistState;
-        RxApp.SuspensionHost.IsLaunchingNew = launching;
-        RxApp.SuspensionHost.IsResuming = Observable.Never<Unit>();
-
-        // SetupDefaultSuspendResume must be called after setting observables!
-        // This method subscribes to them.
-        RxApp.SuspensionHost.SetupDefaultSuspendResume(new JsonSuspensionDriver("appstate.json"));
+        // Use a custom AutoSuspendHelper to also be able to save app state on-demand.
+        var suspensionHelper = new CustomSuspensionHelper(_shouldPersistState);
 
         // Load the state and start the app
         var state = RxApp.SuspensionHost.GetAppState<MainWindowViewModel>();
@@ -52,8 +43,7 @@ public partial class App : Avalonia.Application, IDisposable
             throw new Exception("App must be started with Desktop ApplicationLifetime");
         }
 
-        launching.OnNext(Unit.Default);
-
+        suspensionHelper.OnFrameworkInitializationCompleted();
         base.OnFrameworkInitializationCompleted();
     }
 
