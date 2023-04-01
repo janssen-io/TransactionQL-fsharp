@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -32,6 +33,13 @@ public partial class MainWindow : Window
     {
         DataContext = vm;
         ((MainWindowViewModel)DataContext).Saved += Save;
+        ((MainWindowViewModel)DataContext).ErrorThrown += ShowError;
+    }
+
+    private void ShowError(object? sender, ErrorViewModel e)
+    {
+        var errorDialog = new ErrorDialog { DataContext = e };
+        errorDialog.Show(this);
     }
 
     private async void Save(object? sender, string postings)

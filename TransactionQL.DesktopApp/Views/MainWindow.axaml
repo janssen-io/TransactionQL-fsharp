@@ -16,10 +16,6 @@
         TransparencyLevelHint="AcrylicBlur"
         ExtendClientAreaToDecorationsHint="False"
         DataContext="{x:Static dd:DesignData.MainWindow}">
-
-    <Window.Resources>
-    </Window.Resources>
-
     <Panel>
         <ExperimentalAcrylicBorder IsHitTestVisible="False">
             <ExperimentalAcrylicBorder.Material>

@@ -19,6 +19,8 @@ public class MainWindowViewModel : ViewModelBase
     public event EventHandler<string>? Saved;
     public event EventHandler? StateSaved;
 
+    public event EventHandler<ErrorViewModel>? ErrorThrown;
+
     public MainWindowViewModel()
     {
         SaveCommand = ReactiveCommand.Create(Save);
@@ -80,8 +82,11 @@ public class MainWindowViewModel : ViewModelBase
         using var filterTql = new StreamReader(data.FiltersFile);
         var parser = API.parseFilters(filterTql.ReadToEnd());
         if (!parser.TryGetLeft(out var queries))
-            // TODO: Show error;
+        {
+            _ = parser.TryGetRight(out var message);
+            ErrorThrown?.Invoke(this, new ErrorViewModel(message));
             return;
+        }
 
         using var accountsFile = new StreamReader(data.AccountsFile);
         var accountLines = accountsFile
@@ -94,8 +99,11 @@ public class MainWindowViewModel : ViewModelBase
 
         var loader = API.loadReader(data.Module, Configuration.createAndGetPluginDir);
         if (!loader.TryGetLeft(out var reader))
-            // TODO: Show error;
+        {
+            _ = parser.TryGetRight(out var message);
+            ErrorThrown?.Invoke(this, new ErrorViewModel(message));
             return;
+        }
 
         using var bankTransactionCsv = new StreamReader(data.TransactionsFile);
         // TODO: temporarily change it? Or change it for the entire program?
@@ -134,7 +142,6 @@ public class MainWindowViewModel : ViewModelBase
                             Currency = !hasAmount ? null : line.Amount.Value.Item1.Item
                         };
                     }))
-                    // TODO: read valid accounts from parent?
                 });
             }
             else if (filteredRow.TryGetRight(out var row))
@@ -157,16 +164,23 @@ public class MainWindowViewModel : ViewModelBase
 
     private void Save()
     {
-        var postings = BankTransactions
-            .Select(posting => API.formatPosting(
-                posting.Date,
-                posting.Title,
-                posting.Description,
-                posting.Transactions
-                    .Where(trx => !string.IsNullOrEmpty(trx.Account))
-                    .Select(trx => Tuple.Create(trx.Account, trx.Currency, trx.Amount))
-                    .ToArray()));
+        try
+        {
+            var postings = BankTransactions
+                .Select(posting => API.formatPosting(
+                    posting.Date,
+                    posting.Title,
+                    posting.Description,
+                    posting.Transactions
+                        .Where(trx => !string.IsNullOrEmpty(trx.Account))
+                        .Select(trx => Tuple.Create(trx.Account, trx.Currency, trx.Amount))
+                        .ToArray()));
 
-        Saved?.Invoke(this, string.Join(Environment.NewLine + Environment.NewLine, postings));
+            Saved?.Invoke(this, string.Join(Environment.NewLine + Environment.NewLine, postings));
+        }
+        catch (Exception e)
+        {
+            ErrorThrown?.Invoke(this, new ErrorViewModel(e.Message));
+        }
     }
 }
