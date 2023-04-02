@@ -42,6 +42,7 @@ public partial class MainWindow : Window
         errorDialog.Show(this);
     }
 
+    // TODO: use interaction to get the path, but save in ViewModel?
     private async void Save(object? sender, string postings)
     {
         var options = new FilePickerSaveOptions
@@ -54,7 +55,8 @@ public partial class MainWindow : Window
                     Patterns = new[] { "*.ledger", "*.ldg" }
                 },
                 FilePickerFileTypes.All
-            }
+            },
+            ShowOverwritePrompt = false
         };
 
         var file = await StorageProvider.SaveFilePickerAsync(options);

@@ -10,7 +10,6 @@ using System.Windows.Input;
 using Microsoft.FSharp.Core;
 using TransactionQL.Application;
 using TransactionQL.Parser;
-using TransactionQL.Shared;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
@@ -130,7 +129,7 @@ public class MainWindowViewModel : ViewModelBase
                     NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
 
                 // TODO: fix hard-coded EUR
-                BankTransactions.Add(new PaymentDetailsViewModel(title, date, description, "EUR", amount, validAccounts)
+                var transaction = new PaymentDetailsViewModel(title, date, description, "EUR", amount, validAccounts)
                 {
                     Postings = new ObservableCollection<Posting>(entry.Lines.Select(line =>
                     {
@@ -142,7 +141,9 @@ public class MainWindowViewModel : ViewModelBase
                             Currency = !hasAmount ? null : line.Amount.Value.Item1.Item
                         };
                     }))
-                });
+                };
+                transaction.IsValid(out var _);
+                BankTransactions.Add(transaction);
             }
             else if (filteredRow.TryGetRight(out var row))
             {
@@ -152,7 +153,10 @@ public class MainWindowViewModel : ViewModelBase
                 var amount = decimal.Parse(row["Amount"],
                     NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
                 BankTransactions.Add(
-                    new PaymentDetailsViewModel(title, date, description, "EUR", amount, validAccounts));
+                    new PaymentDetailsViewModel(title, date, description, "EUR", amount, validAccounts)
+                    {
+                        HasError = true
+                    });
             }
         }
 
@@ -199,10 +203,15 @@ public class MainWindowViewModel : ViewModelBase
             var t = BankTransactions[i];
             if (t.IsValid(out var message)) continue;
 
-            errorMessage = $"Transaction {i} '{t.Title}' is invalid:{Environment.NewLine}{message}";
-            return false;
+            // Only display first error
+            // The others will get a red dot to display they also have errors.
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                BankTransactionIndex = i;
+                errorMessage = $"Transaction {i} '{t.Title}' is invalid:{Environment.NewLine}{message}";
+            }
         }
 
-        return true;
+        return string.IsNullOrEmpty(errorMessage);
     }
 }

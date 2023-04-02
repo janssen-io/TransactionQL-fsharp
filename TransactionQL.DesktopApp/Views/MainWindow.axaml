@@ -16,6 +16,12 @@
         TransparencyLevelHint="AcrylicBlur"
         ExtendClientAreaToDecorationsHint="True"
         DataContext="{x:Static dd:DesignData.MainWindow}">
+    <Window.Styles>
+        <Style Selector="Button.Primary:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#125729" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+    </Window.Styles>
     <Panel>
         <ExperimentalAcrylicBorder IsHitTestVisible="False">
             <ExperimentalAcrylicBorder.Material>
@@ -27,7 +33,7 @@
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
         <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="*" Margin="20 10 20 20">
-            <TextBlock Grid.Row="0" FontSize="10">TransactionQL Desktop</TextBlock>
+            <TextBlock Grid.Row="0" FontSize="12">TransactionQL Desktop</TextBlock>
             <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0 20 0 0">
                 <Border Grid.Column="0" Name="Toolbar" Background="#e6f3e7" Padding="1" CornerRadius="5">
                     <Border Background="#d6e3d7" CornerRadius="5">
@@ -79,10 +85,12 @@
                     </Border>
                 </Border>
                 <Button Grid.Column="1"
+                        Classes="Primary"
                         Height="40"
                         Margin="20 0 0 0"
                         Background="#327749"
                         Foreground="White"
+                        CornerRadius="5"
                         Command="{Binding SaveCommand}" HotKey="Ctrl+Alt+S">
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <i:Icon Value="fa-check" VerticalAlignment="Center" />
@@ -124,7 +132,15 @@
                          Margin="15,0,0,0">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Title}" HorizontalAlignment="Stretch" />
+                            <StackPanel Orientation="Horizontal" Spacing="3">
+                                <TextBlock VerticalAlignment="Center"
+                                           Text="{Binding Title}" HorizontalAlignment="Stretch" />
+                                <Border IsVisible="{Binding HasError}"
+                                        VerticalAlignment="Top"
+                                        CornerRadius="5" Background="DarkRed" ClipToBounds="True"
+                                        Width="5"
+                                        Height="5" />
+                            </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>

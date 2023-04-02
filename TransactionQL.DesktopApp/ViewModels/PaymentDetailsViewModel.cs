@@ -19,7 +19,20 @@ public class PaymentDetailsViewModel : ViewModelBase
     public bool IsActive
     {
         get => _isActive;
-        set => this.RaiseAndSetIfChanged(ref _isActive, value);
+        set
+        {
+            IsValid(out var _);
+            this.RaiseAndSetIfChanged(ref _isActive, value);
+        }
+    }
+
+    private bool _hasError = false;
+
+    [DataMember]
+    public bool HasError
+    {
+        get => _hasError;
+        set => this.RaiseAndSetIfChanged(ref _hasError, value);
     }
 
     private string _title = "";
@@ -111,7 +124,9 @@ public class PaymentDetailsViewModel : ViewModelBase
             errors.Add("The transaction may contain at most one posting without costs.");
 
         errorMessage = string.Join(Environment.NewLine, errors);
-        return !errors.Any();
+
+        HasError = errors.Any();
+        return !HasError;
     }
 }
 
