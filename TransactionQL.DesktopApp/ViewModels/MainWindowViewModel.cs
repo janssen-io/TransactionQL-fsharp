@@ -132,10 +132,10 @@ public class MainWindowViewModel : ViewModelBase
                 // TODO: fix hard-coded EUR
                 BankTransactions.Add(new PaymentDetailsViewModel(title, date, description, "EUR", amount, validAccounts)
                 {
-                    Transactions = new ObservableCollection<Transaction>(entry.Lines.Select(line =>
+                    Postings = new ObservableCollection<Posting>(entry.Lines.Select(line =>
                     {
                         var hasAmount = FSharpOption<Tuple<AST.Commodity, double>>.None != line.Amount;
-                        return new Transaction()
+                        return new Posting()
                         {
                             Account = string.Join(':', line.Account.Item),
                             Amount = !hasAmount ? null : (decimal)line.Amount.Value.Item2,
@@ -164,6 +164,12 @@ public class MainWindowViewModel : ViewModelBase
 
     private void Save()
     {
+        if (!AreEntriesValid(out var message))
+        {
+            ErrorThrown?.Invoke(this, new ErrorViewModel(message));
+            return;
+        }
+
         try
         {
             var postings = BankTransactions
@@ -171,7 +177,7 @@ public class MainWindowViewModel : ViewModelBase
                     posting.Date,
                     posting.Title,
                     posting.Description,
-                    posting.Transactions
+                    posting.Postings
                         .Where(trx => !string.IsNullOrEmpty(trx.Account))
                         .Select(trx => Tuple.Create(trx.Account, trx.Currency, trx.Amount))
                         .ToArray()));
@@ -182,5 +188,21 @@ public class MainWindowViewModel : ViewModelBase
         {
             ErrorThrown?.Invoke(this, new ErrorViewModel(e.Message));
         }
+    }
+
+    private bool AreEntriesValid(out string errorMessage)
+    {
+        errorMessage = string.Empty;
+
+        for (var i = 0; i < BankTransactions.Count; i++)
+        {
+            var t = BankTransactions[i];
+            if (t.IsValid(out var message)) continue;
+
+            errorMessage = $"Transaction {i} '{t.Title}' is invalid:{Environment.NewLine}{message}";
+            return false;
+        }
+
+        return true;
     }
 }

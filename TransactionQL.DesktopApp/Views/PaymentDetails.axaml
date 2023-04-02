@@ -121,7 +121,7 @@
                         </Grid>
                         <ScrollViewer DockPanel.Dock="Bottom">
                             <ItemsControl Name="Transactions"
-                                          Items="{Binding Transactions}"
+                                          Items="{Binding Postings}"
                                           Padding="0,0,0,30">
                                 <ItemsControl.Styles>
                                     <Style Selector="ItemsPresenter">

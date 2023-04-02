@@ -1,6 +1,8 @@
 ﻿using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
 using Avalonia.Controls;
@@ -74,7 +76,7 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     #endregion properties
 
-    [DataMember] public ObservableCollection<Transaction> Transactions { get; set; } = new();
+    [DataMember] public ObservableCollection<Posting> Postings { get; set; } = new();
 
     [DataMember] public ObservableCollection<string> ValidAccounts { get; } = new();
 
@@ -82,7 +84,7 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     public PaymentDetailsViewModel()
     {
-        AddTransactionCommand = ReactiveCommand.Create(() => { Transactions.Add(Transaction.Empty); });
+        AddTransactionCommand = ReactiveCommand.Create(() => { Postings.Add(Posting.Empty); });
     }
 
     public PaymentDetailsViewModel(string title, DateTime date, string description, string currency, decimal amount,
@@ -96,9 +98,24 @@ public class PaymentDetailsViewModel : ViewModelBase
 
         ValidAccounts = validAccounts;
     }
+
+    public bool IsValid(out string errorMessage)
+    {
+        List<string> errors = new();
+
+        if (string.IsNullOrEmpty(Title)) errors.Add("The transaction's title must be set.");
+        if (Postings.Count(p => !string.IsNullOrEmpty(p.Account)) < 2)
+            errors.Add("The transaction must contain at least two postings.");
+
+        if (Postings.Count(p => p.Amount == null || string.IsNullOrEmpty(p.Currency)) > 1)
+            errors.Add("The transaction may contain at most one posting without costs.");
+
+        errorMessage = string.Join(Environment.NewLine, errors);
+        return !errors.Any();
+    }
 }
 
-public class Transaction
+public class Posting
 {
     [DataMember] public string Account { get; set; } = "";
     [DataMember] public string? Currency { get; set; }
@@ -106,12 +123,12 @@ public class Transaction
 
     [IgnoreDataMember] public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate { get; }
 
-    public Transaction()
+    public Posting()
     {
         AccountAutoCompletePredicate = FilterAccounts;
     }
 
-    public static Transaction Empty => new()
+    public static Posting Empty => new()
     {
         Account = "", Currency = null, Amount = null
     };

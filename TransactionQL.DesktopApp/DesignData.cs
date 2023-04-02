@@ -19,7 +19,7 @@ public static class DesignData
         new ObservableCollection<string> { "Test", "Test2", "Test3" }
     )
     {
-        Transactions = new ObservableCollection<Transaction>
+        Postings = new ObservableCollection<Posting>
         {
             new() { Account = "Assets:Checking", Currency = "EUR", Amount = -127.11m },
             new() { Account = "Expenses:Living:Utilities" }
