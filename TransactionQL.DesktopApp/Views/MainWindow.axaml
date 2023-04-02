@@ -22,64 +22,73 @@
                 <ExperimentalAcrylicMaterial
                     BackgroundSource="Digger"
                     TintColor="#78b591"
-                    TintOpacity="0.8"
-                    MaterialOpacity="0.1" />
+                    TintOpacity="1"
+                    MaterialOpacity="0.7" />
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
         <Grid RowDefinitions="Auto,*" ColumnDefinitions="*" Margin="20">
-            <Border Name="Toolbar" Background="#d6e3d7" CornerRadius="5">
-                <Grid ColumnDefinitions="*,*,*" Margin="10,0">
-                    <Grid.Styles>
-                        <Style Selector="Button">
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="Margin" Value="0,0,10,0" />
-                        </Style>
-                    </Grid.Styles>
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Left"
-                                Margin="5"
-                                Spacing="5">
-                        <Button Click="Open" HotKey="Ctrl+O" i:Attached.Icon="fa-regular fa-folder-open">
-                            <ToolTip.Tip>Open Bank Transactions (Ctrl+O)</ToolTip.Tip>
-                        </Button>
-                        <Button Command="{Binding SaveStateCommand}" HotKey="Ctrl+S"
-                                i:Attached.Icon="fa-regular fa-floppy-disk">
-                            <ToolTip.Tip>Save Progress (Ctrl+S)</ToolTip.Tip>
-                        </Button>
-                        <Button Command="{Binding SaveCommand}" HotKey="Ctrl+Alt+S"
-                                i:Attached.Icon="fa-check">
-                            <ToolTip.Tip>Export</ToolTip.Tip>
-                        </Button>
-                        <TextBlock Text="{Binding LastSaved}" VerticalAlignment="Center" />
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Center"
-                                Margin="5"
-                                Grid.Column="1">
-                        <Button Name="CarouselPrevious" HotKey="Ctrl+Q" i:Attached.Icon="fa-angle-left">
-                            <ToolTip.Tip>Previous (Ctrl+Q)</ToolTip.Tip>
-                        </Button>
-                        <Button Name="CarouselNext" HotKey="Ctrl+E" i:Attached.Icon="fa-angle-right">
-                            <ToolTip.Tip>Next (Ctrl+E)</ToolTip.Tip>
-                        </Button>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Margin="5"
-                                Grid.Column="2">
-                        <ProgressBar Minimum="0" Maximum="{Binding BankTransactions.Count}"
-                                     Value="{Binding BankTransactionIndex}"
-                                     Margin="0,0,12,0" />
-                        <TextBlock
-                            Text="{Binding BankTransactionIndex}" />
-                        <TextBlock Text="/" />
-                        <TextBlock
-                            Text="{Binding BankTransactions.Count}" />
+            <Grid ColumnDefinitions="*,Auto">
+                <Border Grid.Column="0" Name="Toolbar" Background="#e6f3e7" Padding="1" CornerRadius="5">
+                    <Border Background="#d6e3d7" CornerRadius="5">
+                        <Grid ColumnDefinitions="*,*,*" Margin="10,0">
+                            <Grid.Styles>
+                                <Style Selector="Button">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Setter Property="Margin" Value="0,0,10,0" />
+                                </Style>
+                            </Grid.Styles>
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Left"
+                                        Margin="5"
+                                        Spacing="5">
+                                <Button Click="Open" HotKey="Ctrl+O" i:Attached.Icon="fa-regular fa-folder-open">
+                                    <ToolTip.Tip>Open Bank Transactions (Ctrl+O)</ToolTip.Tip>
+                                </Button>
+                                <Button Command="{Binding SaveStateCommand}" HotKey="Ctrl+S"
+                                        i:Attached.Icon="fa-regular fa-floppy-disk">
+                                    <ToolTip.Tip>Save Progress (Ctrl+S)</ToolTip.Tip>
+                                </Button>
+                                <TextBlock Text="{Binding LastSaved}" VerticalAlignment="Center" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center"
+                                        Margin="5"
+                                        Grid.Column="1">
+                                <Button Name="CarouselPrevious" HotKey="Ctrl+Q" i:Attached.Icon="fa-angle-left">
+                                    <ToolTip.Tip>Previous (Ctrl+Q)</ToolTip.Tip>
+                                </Button>
+                                <Button Name="CarouselNext" HotKey="Ctrl+E" i:Attached.Icon="fa-angle-right">
+                                    <ToolTip.Tip>Next (Ctrl+E)</ToolTip.Tip>
+                                </Button>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Margin="5"
+                                        Grid.Column="2">
+                                <ProgressBar Minimum="0" Maximum="{Binding BankTransactions.Count}"
+                                             Value="{Binding BankTransactionIndex}"
+                                             Margin="0,0,12,0" />
+                                <TextBlock Text="{Binding BankTransactionIndex}" />
+                                <TextBlock Text="/" />
+                                <TextBlock Text="{Binding BankTransactions.Count}" />
 
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Border>
+                <Button Grid.Column="1"
+                        Height="40"
+                        Margin="20 0 0 0"
+                        Background="#327749"
+                        Foreground="White"
+                        Command="{Binding SaveCommand}" HotKey="Ctrl+Alt+S">
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <i:Icon Value="fa-check" VerticalAlignment="Center" />
+                        <TextBlock Text="Export" VerticalAlignment="Center" />
                     </StackPanel>
-                </Grid>
-            </Border>
+                </Button>
+            </Grid>
             <Grid Name="Main" ColumnDefinitions="5*,3*" Margin="0, 20,0,0"
                   Grid.Row="1"
                   RelativePanel.Below="Toolbar"
@@ -121,8 +130,4 @@
             </Grid>
         </Grid>
     </Panel>
-    <!-- 
-        TODO: Create custom status bar control that shows:
-        - error messages/warnings -> or maybe as a toast?
-    -->
 </Window>
