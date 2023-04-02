@@ -27,6 +27,6 @@ Write-Host "- plugins/bunq"
 Copy-Item -Path ".\TransactionQL.Plugins.Bunq\bin\$configuration\net7.0\publish\TransactionQL.Plugins.Bunq.dll" -Destination "$pluginDir\bunq.dll" -Force
 
 Write-Host "- Desktop App"
-Copy-Item -Path ".\TransactionQL.DesktopApp\bin\$configuration\net7.0\win-x64\publish" -Destination "$appdir\app" -Recurse -Force
+Copy-Item -Path ".\TransactionQL.DesktopApp\bin\$configuration\net7.0\win-x64\publish\*" -Destination "$appdir\app" -Recurse -Force
 
 explorer.exe "$appdir\app"
