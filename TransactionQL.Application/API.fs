@@ -67,6 +67,7 @@ module API =
               Lines = lines
               Comments = List.ofArray (description.Split(newLines, StringSplitOptions.RemoveEmptyEntries)) }
 
-        let sprintDesc = (List.map <| (fun line -> $"; %s{line}"))
+        // TODO: generalize indents, not sure if this is the right place.
+        let sprintDesc = (List.map <| (fun line -> $"    ; %s{line}"))
 
         Formatter.sprintPosting Format.ledger sprintDesc id entry
