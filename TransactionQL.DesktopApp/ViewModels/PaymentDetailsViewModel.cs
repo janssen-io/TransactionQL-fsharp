@@ -120,8 +120,23 @@ public class PaymentDetailsViewModel : ViewModelBase
         if (Postings.Count(p => !string.IsNullOrEmpty(p.Account)) < 2)
             errors.Add("The transaction must contain at least two postings.");
 
-        if (Postings.Count(p => p.Amount == null || string.IsNullOrEmpty(p.Currency)) > 1)
+        if (Postings.Count(p => !p.HasAmount()) > 1)
             errors.Add("The transaction may contain at most one posting without costs.");
+
+        // TODO: handle multiple currencies
+        var balance = Postings.Aggregate(0m, (total, p) => total + p.Value);
+        if (Postings.All(p => p.HasAmount()) && balance != 0m)
+            errors.Add($"The transaction's postings are not balanced, the total equals {balance:0.00}.");
+
+        // TODO: handle multiple currencies
+        var leftSide = Postings
+            .Where(p => Math.Sign(p.Value) == Math.Sign(this.Amount))
+            .Aggregate(0m, (total, p) => total + p.Value);
+        var rightSide = Postings
+            .Where(p => Math.Sign(p.Value) != Math.Sign(this.Amount))
+            .Aggregate(0m, (total, p) => total + p.Value);
+        if (leftSide != this.Amount && rightSide != this.Amount)
+            errors.Add($"The transaction's postings do not match the total: ({leftSide:0.00} + {rightSide:0.00}<> {Amount:0.00}).");
 
         errorMessage = string.Join(Environment.NewLine, errors);
 
@@ -133,11 +148,12 @@ public class PaymentDetailsViewModel : ViewModelBase
 public class Posting
 {
     private string? currency;
-    private string account = "";
+    private string? account = "";
 
-    [DataMember] public string Account { get => account; set => account = value.Trim(); }
+    [DataMember] public string? Account { get => account; set => account = value?.Trim(); }
     [DataMember] public string? Currency { get => currency; set => currency = value?.Trim(); }
     [DataMember] public decimal? Amount { get; set; }
+    public decimal Value => Amount ?? 0m;
 
     [IgnoreDataMember] public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate { get; }
 
@@ -152,6 +168,11 @@ public class Posting
         Currency = null,
         Amount = null
     };
+
+    internal bool HasAmount()
+    {
+        return !string.IsNullOrEmpty(Currency) && Amount != null;
+    }
 
     private static bool FilterAccounts(string? searchString, string item)
     {
