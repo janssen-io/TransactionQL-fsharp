@@ -151,6 +151,8 @@ public class Posting
     private static bool FilterAccounts(string? searchString, string item)
     {
         if (searchString is null) return true;
+        searchString = searchString.ToLowerInvariant();
+        item = item.ToLowerInvariant();
 
         var searchIndex = 0;
         for (var itemIndex = 0; itemIndex < item.Length && searchIndex < searchString.Length; itemIndex++)
