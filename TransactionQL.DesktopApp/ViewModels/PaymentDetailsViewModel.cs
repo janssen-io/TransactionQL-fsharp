@@ -35,22 +35,22 @@ public class PaymentDetailsViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _hasError, value);
     }
 
-    private string _title = "";
+    private string? _title = "";
 
     [DataMember]
-    public string Title
+    public string? Title
     {
         get => _title;
-        set => this.RaiseAndSetIfChanged(ref _title, value);
+        set => this.RaiseAndSetIfChanged(ref _title, value?.Trim());
     }
 
-    private string _currency = "";
+    private string? _currency = "";
 
     [DataMember]
-    public string Currency
+    public string? Currency
     {
         get => _currency;
-        set => this.RaiseAndSetIfChanged(ref _currency, value);
+        set => this.RaiseAndSetIfChanged(ref _currency, value?.Trim());
     }
 
     private decimal _amount;
@@ -69,13 +69,13 @@ public class PaymentDetailsViewModel : ViewModelBase
     [IgnoreDataMember] public bool IsNegativeAmount => Amount < 0;
 
 
-    private string _description = "";
+    private string? _description = "";
 
     [DataMember]
-    public string Description
+    public string? Description
     {
         get => _description;
-        set => this.RaiseAndSetIfChanged(ref _description, value);
+        set => this.RaiseAndSetIfChanged(ref _description, value?.Trim());
     }
 
     private DateTime _date = DateTime.MinValue;
@@ -132,8 +132,11 @@ public class PaymentDetailsViewModel : ViewModelBase
 
 public class Posting
 {
-    [DataMember] public string Account { get; set; } = "";
-    [DataMember] public string? Currency { get; set; }
+    private string? currency;
+    private string account = "";
+
+    [DataMember] public string Account { get => account; set => account = value.Trim(); }
+    [DataMember] public string? Currency { get => currency; set => currency = value?.Trim(); }
     [DataMember] public decimal? Amount { get; set; }
 
     [IgnoreDataMember] public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate { get; }
@@ -145,7 +148,9 @@ public class Posting
 
     public static Posting Empty => new()
     {
-        Account = "", Currency = null, Amount = null
+        Account = "",
+        Currency = null,
+        Amount = null
     };
 
     private static bool FilterAccounts(string? searchString, string item)
