@@ -135,7 +135,7 @@ public class PaymentDetailsViewModel : ViewModelBase
         var rightSide = Postings
             .Where(p => Math.Sign(p.Value) != Math.Sign(this.Amount))
             .Aggregate(0m, (total, p) => total + p.Value);
-        if (leftSide != this.Amount && rightSide != this.Amount)
+        if (Math.Abs(leftSide) != Math.Abs(this.Amount) && Math.Abs(rightSide) != Math.Abs(this.Amount))
             errors.Add($"The transaction's postings do not match the total: ({leftSide:0.00} + {rightSide:0.00}<> {Amount:0.00}).");
 
         errorMessage = string.Join(Environment.NewLine, errors);
