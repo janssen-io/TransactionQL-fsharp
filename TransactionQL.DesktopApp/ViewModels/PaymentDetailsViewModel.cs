@@ -128,16 +128,6 @@ public class PaymentDetailsViewModel : ViewModelBase
         if (Postings.All(p => p.HasAmount()) && balance != 0m)
             errors.Add($"The transaction's postings are not balanced, the total equals {balance:0.00}.");
 
-        // TODO: handle multiple currencies
-        var leftSide = Postings
-            .Where(p => Math.Sign(p.Value) == Math.Sign(this.Amount))
-            .Aggregate(0m, (total, p) => total + p.Value);
-        var rightSide = Postings
-            .Where(p => Math.Sign(p.Value) != Math.Sign(this.Amount))
-            .Aggregate(0m, (total, p) => total + p.Value);
-        if (Math.Abs(leftSide) != Math.Abs(this.Amount) && Math.Abs(rightSide) != Math.Abs(this.Amount))
-            errors.Add($"The transaction's postings do not match the total: ({leftSide:0.00} + {rightSide:0.00}<> {Amount:0.00}).");
-
         errorMessage = string.Join(Environment.NewLine, errors);
 
         HasError = errors.Any();
