@@ -1,6 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <PackAsTool>True</PackAsTool>
+        <ToolCommandName>tql</ToolCommandName>
+        <PackageOutputPath>./nupkg</PackageOutputPath>
         <OutputType>Exe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
     </PropertyGroup>
