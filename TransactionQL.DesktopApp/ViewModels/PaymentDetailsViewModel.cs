@@ -120,11 +120,12 @@ public class PaymentDetailsViewModel : ViewModelBase
         if (Postings.Count(p => !string.IsNullOrEmpty(p.Account)) < 2)
             errors.Add("The transaction must contain at least two postings.");
 
-        if (Postings.Count(p => !p.HasAmount()) > 1)
-            errors.Add("The transaction may contain at most one posting without costs.");
+        var nonEmptyPostings = Postings.Where(p => !string.IsNullOrEmpty(p.Account));
+        if (nonEmptyPostings.Count(p => !p.HasAmount()) > 1)
+            errors.Add("The transaction may contain at most one auto-calculated posting (one without costs).");
 
         // TODO: handle multiple currencies
-        var balance = Postings.Aggregate(0m, (total, p) => total + p.Value);
+        var balance = nonEmptyPostings.Aggregate(0m, (total, p) => total + p.Value);
         if (Postings.All(p => p.HasAmount()) && balance != 0m)
             errors.Add($"The transaction's postings are not balanced, the total equals {balance:0.00}.");
 
