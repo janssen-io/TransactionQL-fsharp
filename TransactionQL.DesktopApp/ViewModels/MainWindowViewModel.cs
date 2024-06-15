@@ -179,11 +179,11 @@ public class MainWindowViewModel : ViewModelBase
             var postings = BankTransactions
                 .Select(posting => API.formatPosting(
                     posting.Date,
-                    posting.Title,
-                    posting.Description,
+                    posting.Title?.Trim(),
+                    posting.Description?.Trim(),
                     posting.Postings
                         .Where(trx => !string.IsNullOrEmpty(trx.Account))
-                        .Select(trx => Tuple.Create(trx.Account, trx.Currency, trx.Amount))
+                        .Select(trx => Tuple.Create(trx.Account?.Trim(), trx.Currency?.Trim(), trx.Amount))
                         .ToArray()));
 
             Saved?.Invoke(this, string.Join(Environment.NewLine + Environment.NewLine, postings));

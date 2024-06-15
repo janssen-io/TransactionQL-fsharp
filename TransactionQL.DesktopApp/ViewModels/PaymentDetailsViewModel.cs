@@ -41,7 +41,7 @@ public class PaymentDetailsViewModel : ViewModelBase
     public string? Title
     {
         get => _title;
-        set => this.RaiseAndSetIfChanged(ref _title, value?.Trim());
+        set => this.RaiseAndSetIfChanged(ref _title, value);
     }
 
     private string? _currency = "";
@@ -50,7 +50,7 @@ public class PaymentDetailsViewModel : ViewModelBase
     public string? Currency
     {
         get => _currency;
-        set => this.RaiseAndSetIfChanged(ref _currency, value?.Trim());
+        set => this.RaiseAndSetIfChanged(ref _currency, value);
     }
 
     private decimal _amount;
@@ -75,7 +75,7 @@ public class PaymentDetailsViewModel : ViewModelBase
     public string? Description
     {
         get => _description;
-        set => this.RaiseAndSetIfChanged(ref _description, value?.Trim());
+        set => this.RaiseAndSetIfChanged(ref _description, value);
     }
 
     private DateTime _date = DateTime.MinValue;
@@ -137,11 +137,10 @@ public class PaymentDetailsViewModel : ViewModelBase
 
 public class Posting
 {
-    private string? currency;
-    private string? account = "";
 
-    [DataMember] public string? Account { get => account; set => account = value?.Trim(); }
-    [DataMember] public string? Currency { get => currency; set => currency = value?.Trim(); }
+    [DataMember]
+    public string? Account { get; set; } = "";
+    [DataMember] public string? Currency { get; set; }
     [DataMember] public decimal? Amount { get; set; }
     public decimal Value => Amount ?? 0m;
 
