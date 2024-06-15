@@ -167,7 +167,7 @@ public class Posting
     public static Posting Empty => new()
     {
         Account = "",
-        Currency = null,
+        Currency = "EUR",
         Amount = null
     };
 
