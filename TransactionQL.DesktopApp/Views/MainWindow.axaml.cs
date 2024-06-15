@@ -91,8 +91,9 @@ public partial class MainWindow : Window
 
     private void BankTransactionCarousel_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        foreach (var item in e.RemovedItems.OfType<PaymentDetailsViewModel>()) item.IsActive = false;
+        foreach (var item in e.RemovedItems.OfType<PaymentDetailsViewModel>()) item.Deactivate();
 
-        foreach (var item in e.AddedItems.OfType<PaymentDetailsViewModel>()) item.IsActive = true;
+        var visibleItem = e.AddedItems.OfType<PaymentDetailsViewModel>().FirstOrDefault();
+        visibleItem?.Activate();
     }
 }

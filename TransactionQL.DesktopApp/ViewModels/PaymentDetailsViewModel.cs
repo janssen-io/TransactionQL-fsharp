@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
 using Avalonia.Controls;
+using DynamicData;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
@@ -21,7 +22,6 @@ public class PaymentDetailsViewModel : ViewModelBase
         get => _isActive;
         set
         {
-            IsValid(out var _);
             this.RaiseAndSetIfChanged(ref _isActive, value);
         }
     }
@@ -110,6 +110,18 @@ public class PaymentDetailsViewModel : ViewModelBase
         Amount = amount;
 
         ValidAccounts = validAccounts;
+    }
+
+    public void Activate()
+    {
+        Postings.RemoveMany(Postings.Where(p => string.IsNullOrEmpty(p.Account)));
+        IsActive = true;
+    }
+
+    public void Deactivate()
+    {
+        IsValid(out var _);
+        IsActive = false;
     }
 
     public bool IsValid(out string errorMessage)
