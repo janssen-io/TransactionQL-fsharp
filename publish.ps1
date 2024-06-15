@@ -20,7 +20,7 @@ dotnet publish TransactionQL.DesktopApp/TransactionQL.DesktopApp.csproj -c $conf
 
 $appData = [environment]::GetFolderPath("ApplicationData")
 $appDir = Join-Path $appData "tql"
-$pluginDir = Join-Path $appData "tql" "plugins"
+$pluginDir = Join-Path $appDir "plugins"
 New-Item -Path $appDir -ItemType Directory -ErrorAction SilentlyContinue
 New-Item -Path $pluginDir -ItemType Directory -ErrorAction SilentlyContinue
 
