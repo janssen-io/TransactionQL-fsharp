@@ -158,3 +158,25 @@ That is, when you transfer money it is negative, when you receive money it is po
 
 For more information about the command line interface, run it with the `--help` flag.
 
+## Desktop Application
+The desktop application (`TransactionQL.DesktopApp`) runs on multiple operating systems using Avalonia and uses the same functionality as the CLI.
+
+### Loading transactions and filters
+When you open the application, you can select transactions, filters and existing accounts using `Ctrl+O` or by clicking on the _folder_ icon in the top left.
+The existings accounts must be in [Ledger CLI](https://ledger-cli.org/doc/ledger3.html#Keeping-it-Consistent-1) format (`account My:Account:Name`).
+
+![img/select-data.png](img/select-data.png)
+
+### Updating transactions 
+The app uses the same filters to automatically categorize transactions. Any transactions that could not be categorized automatically are marked with a red dot in the list.
+To update them, you can simply go through them (`Ctrl+Q` and `Ctrl+E` for previous/next transaction respectively). You can add a new posting (line) with `Ctrl+D` or by clicking on the _plus_ (`+`) icon above the posting table.
+The _Account_ field of the new line is automatically in focus and as you type, it uses fuzzy search to auto-complete the account's name.
+Use `<Tab>` to navigate to the currency and amount fields.
+
+> Postings without an account name will be automatically removed. So don't fret it if you accidentally added too many.
+
+![img/gui.png](img/gui.png)
+
+### Saving and exporting
+The app automatically saves your progress when you exit the app. You can also force this by pressing the _floppy disk_ icon in the top bar (`Ctrl+S`).
+When all transactions have valid postings and titles (no more red dots), you can export it to Ledger CLI format. You can select an existing ledger and the app will append the transactions to the end of the file.
