@@ -1,4 +1,3 @@
-using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -6,8 +5,6 @@ using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using Avalonia.VisualTree;
-using FSharp.Data.Runtime;
 using ReactiveUI;
 using TransactionQL.DesktopApp.ViewModels;
 

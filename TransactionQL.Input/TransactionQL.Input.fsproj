@@ -5,17 +5,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Converters.fs"/>
-        <Compile Include="DummyReader.fs"/>
-        <Compile Include="PluginLoader.fs"/>
+        <Compile Include="Converters.fs" />
+        <Compile Include="DummyReader.fs" />
+        <Compile Include="PluginLoader.fs" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FSharp.Data" Version="3.3.2"/>
+        <PackageReference Include="FSharp.Data" Version="6.4.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj"/>
+        <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="FSharp.Core" Version="8.0.300" />
     </ItemGroup>
 
 </Project>

@@ -105,7 +105,7 @@
                   RelativePanel.AlignRightWithPanel="True">
                 <Carousel Grid.Column="0"
                           Name="BankTransactionCarousel"
-                          Items="{Binding BankTransactions}"
+                          ItemsSource="{Binding BankTransactions}"
                           SelectedIndex="{Binding BankTransactionIndex}"
                           SelectionChanged="BankTransactionCarousel_OnSelectionChanged"
                           WrapSelection="True">
@@ -127,7 +127,7 @@
                          CornerRadius="10"
                          Grid.Column="1"
                          Background="White"
-                         Name="TransactionsList" Items="{Binding BankTransactions}"
+                         Name="TransactionsList" ItemsSource="{Binding BankTransactions}"
                          SelectedIndex="{Binding BankTransactionIndex}"
                          Margin="15,0,0,0">
                     <ListBox.ItemTemplate>

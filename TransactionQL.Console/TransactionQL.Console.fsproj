@@ -13,13 +13,17 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Argu" Version="6.0.0" />
+        <PackageReference Include="Argu" Version="6.2.4" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\TransactionQL.Application\TransactionQL.Application.fsproj" />
         <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
         <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="FSharp.Core" Version="8.0.300" />
     </ItemGroup>
 
 </Project>

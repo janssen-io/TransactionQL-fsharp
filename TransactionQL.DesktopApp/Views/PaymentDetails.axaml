@@ -121,7 +121,7 @@
                         </Grid>
                         <ScrollViewer DockPanel.Dock="Bottom">
                             <ItemsControl Name="Transactions"
-                                          Items="{Binding Postings}"
+                                          ItemsSource="{Binding Postings}"
                                           Padding="0,0,0,30">
                                 <ItemsControl.Styles>
                                     <Style Selector="ItemsPresenter">
@@ -144,7 +144,7 @@
                                                 BorderBrush="Transparent"
                                                 SelectedItem="{Binding Account}"
                                                 TextFilter="{Binding AccountAutoCompletePredicate}"
-                                                Items="{Binding Path=DataContext.ValidAccounts,
+                                                ItemsSource="{Binding Path=DataContext.ValidAccounts,
                                     RelativeSource={RelativeSource FindAncestor, AncestorType=views:PaymentDetails}}" />
                                             <TextBox
                                                 Grid.Row="0"

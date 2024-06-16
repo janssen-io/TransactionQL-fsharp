@@ -8,12 +8,16 @@
         <None Include="ing.csv">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <Compile Include="ING.fs"/>
+        <Compile Include="ING.fs" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj"/>
-        <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj"/>
+        <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
+        <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="FSharp.Core" Version="8.0.300" />
     </ItemGroup>
 
 </Project>
