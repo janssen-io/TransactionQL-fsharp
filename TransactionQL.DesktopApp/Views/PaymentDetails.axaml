@@ -15,6 +15,7 @@
     <UserControl.Styles>
         <Style Selector="TextBox">
             <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="SelectionBrush" Value="#e2e9e4" />
         </Style>
         <Style Selector="TextBox.h1">
             <Setter Property="FontSize" Value="24" />
@@ -36,9 +37,10 @@
 
         <Style Selector="TextBox.p">
             <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Margin" Value="0,25,0,0" />
+            <Setter Property="Margin" Value="0,15,0,0" />
             <Setter Property="LineHeight" Value="25" />
             <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="#777" />
         </Style>
 
         <Style Selector="TextBlock.Negative">
