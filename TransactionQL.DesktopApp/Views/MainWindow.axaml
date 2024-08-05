@@ -6,7 +6,7 @@
         xmlns:dd="using:TransactionQL.DesktopApp"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
-        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="550"
         Width="1000"
         x:Class="TransactionQL.DesktopApp.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -130,6 +130,14 @@
                          Name="TransactionsList" ItemsSource="{Binding BankTransactions}"
                          SelectedIndex="{Binding BankTransactionIndex}"
                          Margin="15,0,0,0">
+                    <ListBox.Styles>
+                      <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                        <Setter Property="Background" Value="#c4dbcd"></Setter>
+                      </Style>
+                      <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+                        <Setter Property="Background" Value="#e2e9e4"></Setter>
+                      </Style>
+                    </ListBox.Styles>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" Spacing="3">
