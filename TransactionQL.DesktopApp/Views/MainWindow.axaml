@@ -12,32 +12,24 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="TransactionQL Desktop"
-        Background="Transparent"
-        TransparencyLevelHint="AcrylicBlur"
-        ExtendClientAreaToDecorationsHint="True"
+        Background="#fcffff"
+        ExtendClientAreaToDecorationsHint="False"
         DataContext="{x:Static dd:DesignData.MainWindow}">
     <Window.Styles>
         <Style Selector="Button.Primary:pointerover /template/ ContentPresenter">
             <Setter Property="Background" Value="#125729" />
             <Setter Property="Foreground" Value="White" />
         </Style>
+      <Style Selector="Window,TextBox,AutoCompleteBox">
+        <Setter Property="Foreground" Value="#123a28" />
+      </Style>
     </Window.Styles>
     <Panel>
-        <ExperimentalAcrylicBorder IsHitTestVisible="False">
-            <ExperimentalAcrylicBorder.Material>
-                <ExperimentalAcrylicMaterial
-                    BackgroundSource="Digger"
-                    TintColor="#78b591"
-                    TintOpacity="1"
-                    MaterialOpacity="0.7" />
-            </ExperimentalAcrylicBorder.Material>
-        </ExperimentalAcrylicBorder>
-        <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="*" Margin="20 10 20 20">
+        <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="*">
             <TextBlock Grid.Row="0" FontSize="12">TransactionQL Desktop</TextBlock>
-            <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0 20 0 0">
-                <Border Grid.Column="0" Name="Toolbar" Background="#e6f3e7" Padding="1" CornerRadius="5">
-                    <Border Background="#d6e3d7" CornerRadius="5">
-                        <Grid ColumnDefinitions="*,*,*" Margin="10,0">
+            <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+                <Border Grid.Column="0" Name="Toolbar" CornerRadius="7">
+                        <Grid ColumnDefinitions="*,*,*" Margin="10,20,10,0">
                             <Grid.Styles>
                                 <Style Selector="Button">
                                     <Setter Property="Background" Value="Transparent" />
@@ -83,26 +75,25 @@
                             </StackPanel>
                         </Grid>
                     </Border>
-                </Border>
-                <Button Grid.Column="1"
-                        Classes="Primary"
-                        Height="40"
-                        Margin="20 0 0 0"
-                        Background="#327749"
-                        Foreground="White"
-                        CornerRadius="5"
-                        Command="{Binding SaveCommand}" HotKey="Ctrl+Alt+S">
-                    <StackPanel Orientation="Horizontal" Spacing="10">
-                        <i:Icon Value="fa-check" VerticalAlignment="Center" />
-                        <TextBlock Text="Export" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
+              <Button Grid.Column="1"
+                      Classes="Primary"
+                      Height="40"
+                      Margin="20 20 20 0"
+                      Background="#327749"
+                      Foreground="White"
+                      CornerRadius="5"
+                      Command="{Binding SaveCommand}" HotKey="Ctrl+Alt+S">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                  <i:Icon Value="fa-check" VerticalAlignment="Center" />
+                  <TextBlock Text="Export" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button>
             </Grid>
-            <Grid Name="Main" ColumnDefinitions="5*,3*" Margin="0, 20,0,0"
+            <Grid Name="Main" ColumnDefinitions="5*,3*" Margin="0,20,0,0"
                   Grid.Row="2"
                   RelativePanel.Below="Toolbar"
                   RelativePanel.AlignLeftWithPanel="True"
-                  RelativePanel.AlignRightWithPanel="True">
+                  RelativePanel.AlignRightWithPanel="True" >
                 <Carousel Grid.Column="0"
                           Name="BankTransactionCarousel"
                           ItemsSource="{Binding BankTransactions}"
@@ -115,21 +106,22 @@
                         </Style>
                     </Carousel.Styles>
                     <Carousel.PageTransition>
-                        <PageSlide Duration="0.25" Orientation="Horizontal" />
+                        <PageSlide Duration="1" Orientation="Horizontal" />
                     </Carousel.PageTransition>
                     <Carousel.ItemTemplate>
                         <DataTemplate>
-                            <v:PaymentDetails DataContext="{Binding }" />
+                            <v:PaymentDetails DataContext="{Binding}" Padding="20" />
                         </DataTemplate>
                     </Carousel.ItemTemplate>
                 </Carousel>
+              <Border BoxShadow="0 4 6 #dfe4df" Grid.Column="1" Margin="0,20,20,20" CornerRadius="7">
+                <Border BorderBrush="#c4dbcd" BorderThickness="0 4 0 0" ClipToBounds="True" CornerRadius="7">
                 <ListBox SelectionMode="Single"
-                         CornerRadius="10"
-                         Grid.Column="1"
+                         CornerRadius="0 0 7 7"
                          Background="White"
                          Name="TransactionsList" ItemsSource="{Binding BankTransactions}"
                          SelectedIndex="{Binding BankTransactionIndex}"
-                         Margin="15,0,0,0">
+                         >
                     <ListBox.Styles>
                       <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
                         <Setter Property="Background" Value="#c4dbcd"></Setter>
@@ -152,6 +144,8 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                </Border>
+                </Border>
             </Grid>
         </Grid>
     </Panel>
