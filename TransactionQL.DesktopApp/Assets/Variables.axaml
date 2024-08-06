@@ -32,5 +32,6 @@
   <Color x:Key="error-900">hsl(0, 70%, 10%)</Color>
 
   <CornerRadius x:Key="Radius">7</CornerRadius>
+  <CornerRadius x:Key="AccentRadius">7 7 0 0</CornerRadius>
 
 </ResourceDictionary>
