@@ -15,7 +15,7 @@
     <UserControl.Styles>
         <Style Selector="TextBox">
             <Setter Property="BorderBrush" Value="Transparent" />
-          <Setter Property="SelectionBrush" Value="#e2e9e4" />
+          <Setter Property="SelectionBrush" Value="{DynamicResource Selection}" />
         </Style>
         <Style Selector="TextBox:pointerover">
             <Setter Property="BorderBrush" Value="Transparent" />
