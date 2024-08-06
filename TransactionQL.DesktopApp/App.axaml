@@ -57,6 +57,7 @@
           <SolidColorBrush x:Key="PrimarySoftBrush" Color="{StaticResource primary-800}" />
           <SolidColorBrush x:Key="PrimarySoft2Brush" Color="{StaticResource primary-700}" />
           <SolidColorBrush x:Key="PrimaryForegroundBrush" Color="{StaticResource primary-300}" />
+          <SolidColorBrush x:Key="PrimaryForeground2Brush" Color="{StaticResource primary-200}" />
           <SolidColorBrush x:Key="SoftForegroundBrush" Color="{StaticResource grey-900}" />
           <BoxShadows x:Key="elevate-100">0 0 0 1 #59dfe9df</BoxShadows>
           <BoxShadows x:Key="elevate-200">0 0 0 1 #59dfe9df</BoxShadows>
