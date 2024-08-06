@@ -10,9 +10,9 @@
         Width="1000"
         x:Class="TransactionQL.DesktopApp.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
         Title="TransactionQL Desktop"
-        ExtendClientAreaToDecorationsHint="False"
+        Icon="/Assets/lion.ico"
+        ExtendClientAreaToDecorationsHint="True"
         DataContext="{x:Static dd:DesignData.MainWindow}">
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles.axaml" />
@@ -22,13 +22,8 @@
       <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
         <Border Grid.Column="0" Name="Toolbar">
           <Grid ColumnDefinitions="*,*,*">
-            <Grid.Styles>
-              <Style Selector="Button">
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="Margin" Value="0,0,10,0" />
-              </Style>
-            </Grid.Styles>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="20">
+              <Image Height="12" Width="12" Source="/Assets/lion.png"/>
               <Button Click="Open" HotKey="Ctrl+O" Classes="IconAction" i:Attached.Icon="fa-regular fa-folder-open">
                 <ToolTip.Tip>Open Bank Transactions (Ctrl+O)</ToolTip.Tip>
               </Button>
@@ -36,9 +31,25 @@
                       i:Attached.Icon="fa-regular fa-floppy-disk">
                 <ToolTip.Tip>Save Progress (Ctrl+S)</ToolTip.Tip>
               </Button>
-              <TextBlock Text="{Binding LastSaved}" VerticalAlignment="Center" />
+              <TextBlock Text=
+                         "{Binding LastSaved}" VerticalAlignment="Center" />
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1">
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                          IsVisible="{Binding !IsDone}">
+                <TextBlock Text="{Binding NumberOfValidTransactions}" />
+                <TextBlock Text="/" />
+                <TextBlock Text="{Binding BankTransactions.Count}" />
+              </StackPanel>
+              <Button Grid.Column="1"
+                      Classes="Primary"
+                      IsVisible="{Binding IsDone}"
+                      Command="{Binding SaveCommand}" HotKey="Ctrl+Alt+S">
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                  <i:Icon Value="fa-check" VerticalAlignment="Center" />
+                  <TextBlock Text="Export" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button>
               <Button Classes="Hidden" Name="CarouselPrevious" HotKey="Ctrl+Q" i:Attached.Icon="fa-angle-left">
                 <ToolTip.Tip>Previous (Ctrl+Q)</ToolTip.Tip>
               </Button>
@@ -50,29 +61,12 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         Grid.Column="2">
-              <ProgressBar Minimum="0" Maximum="{Binding BankTransactions.Count}"
-                           Value="{Binding NumberOfValidTransactions}" />
-              <TextBlock Text="{Binding NumberOfValidTransactions}" />
-              <TextBlock Text="/" />
-              <TextBlock Text="{Binding BankTransactions.Count}" />
-              <Button Grid.Column="1"
-                      Classes="Primary"
-                      Command="{Binding SaveCommand}" HotKey="Ctrl+Alt+S">
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                  <i:Icon Value="fa-check" VerticalAlignment="Center" />
-                  <TextBlock Text="Export" VerticalAlignment="Center"/>
-                </StackPanel>
-              </Button>
             </StackPanel>
           </Grid>
         </Border>
       </Grid>
       <Grid Name="Main" ColumnDefinitions="5*,3*"
-            Grid.Row="2"
-            RelativePanel.Below="Toolbar"
-            RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.AlignBottomWithPanel="True">
+            Grid.Row="2" >
         <Carousel Grid.Column="0"
                   Name="BankTransactionCarousel"
                   ItemsSource="{Binding BankTransactions}"
@@ -111,6 +105,13 @@
           </Border>
         </Border>
       </Grid>
+      <DockPanel VerticalAlignment="Bottom" Grid.Row="3">
+        <ProgressBar Minimum="0" Maximum="{Binding BankTransactions.Count}"
+                     Value="{Binding NumberOfValidTransactions}"
+                     MinHeight="2"
+                     DockPanel.Dock="Bottom" HorizontalAlignment="Stretch"
+                     CornerRadius="0"/>
+      </DockPanel>
     </Grid>
   </Panel>
 </Window>

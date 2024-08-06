@@ -27,17 +27,21 @@
     <Setter Property="Background" Value="Transparent" />
   </Style>
 
+  <Style Selector="Button:pointerover /template/ ContentPresenter">
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+
   <Style Selector="Button /template/ ContentPresenter">
-    <Setter Property="BoxShadow" Value="inset 0 -1 0 #000000, inset 0 1 0 #ffffff" />
+    <Setter Property="BoxShadow" Value="{DynamicResource ButtonShadow}" />
   </Style>
 
   <Style Selector="Button.Primary">
     <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}" />
-    <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource Primary2ForegroundBrush}" />
     <Setter Property="Padding" Value="8 8" />
     <Style Selector="^:pointerover /template/ ContentPresenter">
       <Setter Property="Background" Value="{DynamicResource Primary2BackgroundBrush}" />
-      <Setter Property="Foreground" Value="White" />
+      <Setter Property="Foreground" Value="{DynamicResource Primary2ForegroundBrush}" />
     </Style>
   </Style>
 
@@ -50,7 +54,7 @@
     <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}"/>
   </Style>
   <Style Selector=".TableHeader TextBlock">
-    <Setter Property="Foreground" Value="{DynamicResource PrimaryBackgroundBrush}"/>
+    <Setter Property="Foreground" Value="{DynamicResource TableHeaderForegroundBrush}"/>
     <Setter Property="TextAlignment" Value="Right" />
     <Setter Property="FontWeight" Value="500" />
     <Setter Property="FontSize" Value="10"/>
@@ -135,7 +139,7 @@
 
   <!-- Toolbar -->
   <Style Selector="Border#Toolbar">
-    <Setter Property="Margin" Value="20 0 0 0" />
+    <Setter Property="Margin" Value="20 10 0 0" />
   </Style>
   <Style Selector="Border#Toolbar TextBlock">
     <Setter Property="VerticalAlignment" Value="Center" />
@@ -148,7 +152,12 @@
   <Style Selector="Button.IconAction /template/ ContentPresenter">
     <Setter Property="BoxShadow" Value="none" />
     <Setter Property="Background" Value="Transparent" />
-    <Setter Property="Foreground" Value="{DynamicResource PrimaryForeground2Brush}" />
+    <Setter Property="Foreground" Value="{DynamicResource Primary2ForegroundBrush}" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+  <Style Selector="Button.IconAction:pointerover /template/ ContentPresenter">
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+    <Setter Property="Cursor" Value="Hand" />
   </Style>
 
   <!-- Main List -->
@@ -166,6 +175,9 @@
     </Style>
     <Style Selector="^:selected /template/ ContentPresenter">
       <Setter Property="FontWeight" Value="600" />
+    </Style>
+    <Style Selector="^:pointerover /template/ ContentPresenter">
+      <Setter Property="Cursor" Value="Hand" />
     </Style>
     <Style Selector="^:pointerover Border.ErrorBorder, ^:selected Border.ErrorBorder">
       <Setter Property="Background" Value="{DynamicResource ErrorBackgroundBrush}" />
@@ -189,6 +201,11 @@
 
   <Style Selector="ProgressBar">
     <Setter Property="Foreground" Value="{DynamicResource PrimaryBackgroundBrush}" />
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+  <Style Selector="ProgressBar /template/ LayoutTransformControl TextBlock">
+    <Setter Property="Padding" Value="5 0" />
+    <Setter Property="Background" Value="{DynamicResource TransparentBackgroundBrush}" />
   </Style>
 
 </Styles>

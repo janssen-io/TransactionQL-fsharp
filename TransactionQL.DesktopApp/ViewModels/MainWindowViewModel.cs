@@ -80,8 +80,14 @@ public class MainWindowViewModel : ViewModelBase
     public int NumberOfValidTransactions
     {
         get => _numberOfValidTransactions;
-        set => this.RaiseAndSetIfChanged(ref _numberOfValidTransactions, value);
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _numberOfValidTransactions, value);
+            this.RaisePropertyChanged(nameof(IsDone));
+        }
     }
+
+    public bool IsDone => _numberOfValidTransactions == BankTransactions.Count;
 
     internal void Parse(SelectDataWindowViewModel.SelectedData data)
     {
