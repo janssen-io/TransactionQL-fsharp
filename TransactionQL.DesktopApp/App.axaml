@@ -2,19 +2,47 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:TransactionQL.DesktopApp"
              x:Class="TransactionQL.DesktopApp.App"
-             RequestedThemeVariant="Light">
-    <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             RequestedThemeVariant="Default">
+  <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
-    <Application.DataTemplates>
-        <local:ViewLocator />
-    </Application.DataTemplates>
+  <Application.DataTemplates>
+    <local:ViewLocator />
+  </Application.DataTemplates>
 
-    <Application.Styles>
-        <FluentTheme />
-        <StyleInclude Source="avares://TransactionQL.DesktopApp/Icons.axaml" />
-        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
-        <Style Selector="Window">
-            <Setter Property="FontFamily" Value="Segoe UI" />
-        </Style>
-    </Application.Styles>
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="/Assets/Colours.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+      <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+          <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource primary-200}" />
+          <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource grey-100}" />
+          <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource grey-900}" />
+          <SolidColorBrush x:Key="SubtitleForegroundBrush" Color="{StaticResource grey-600}" />
+          <SolidColorBrush x:Key="ErrorForegroundBrush" Color="{StaticResource red-700}" />
+          <SolidColorBrush x:Key="BaseBackgroundBrush" Color="White" />
+          <SolidColorBrush x:Key="TableHeaderBackgroundBrush" Color="{StaticResource primary-200}" />
+          <SolidColorBrush x:Key="TableHeaderForegroundBrush" Color="{StaticResource primary-800}" />
+          <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource grey-200}" />
+          <SolidColorBrush x:Key="ShadowBrush" Color="{StaticResource grey-600}" />
+          <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{StaticResource primary-700}" />
+          <SolidColorBrush x:Key="Primary2BackgroundBrush" Color="{StaticResource primary-800}" />
+          <SolidColorBrush x:Key="PrimaryForegroundBrush" Color="{StaticResource grey-100}" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+          <SolidColorBrush x:Key="Selection" Color="{StaticResource primary-800}" />
+        </ResourceDictionary>
+      </ResourceDictionary.ThemeDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+    <StyleInclude Source="avares://TransactionQL.DesktopApp/Icons.axaml" />
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+    <Style Selector="Window">
+      <Setter Property="FontFamily" Value="Segoe UI" />
+    </Style>
+  </Application.Styles>
 </Application>

@@ -1,0 +1,32 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Color x:Key="primary-100">hsl(142, 90%, 99%)</Color>
+  <Color x:Key="primary-200">hsl(142, 81%, 94%)</Color>
+  <Color x:Key="primary-300">hsl(141, 67%, 80%)</Color>
+  <Color x:Key="primary-400">hsl(146, 57%, 65%)</Color>
+  <Color x:Key="primary-500">hsl(145, 55%, 49%)</Color>
+  <Color x:Key="primary-600">hsl(146, 62%, 38%)</Color>
+  <Color x:Key="primary-700">hsl(146, 65%, 28%)</Color>
+  <Color x:Key="primary-800">hsl(155, 59%, 20%)</Color>
+  <Color x:Key="primary-900">hsl(155, 65%, 10%)</Color>
+
+  <Color x:Key="grey-100">hsl(142, 10%, 99%)</Color>
+  <Color x:Key="grey-200">hsl(142, 10%, 94%)</Color>
+  <Color x:Key="grey-300">hsl(141, 10%, 80%)</Color>
+  <Color x:Key="grey-400">hsl(146, 10%, 65%)</Color>
+  <Color x:Key="grey-500">hsl(145, 10%, 49%)</Color>
+  <Color x:Key="grey-600">hsl(146, 10%, 38%)</Color>
+  <Color x:Key="grey-700">hsl(146, 10%, 28%)</Color>
+  <Color x:Key="grey-800">hsl(155, 10%, 20%)</Color>
+  <Color x:Key="grey-900">hsl(155, 10%, 10%)</Color>
+
+  <Color x:Key="error-100">hsl(0, 80%, 99%)</Color>
+  <Color x:Key="error-200">hsl(0, 71%, 95%)</Color>
+  <Color x:Key="error-300">hsl(0, 79%, 81%)</Color>
+  <Color x:Key="error-400">hsl(0, 69%, 64%)</Color>
+  <Color x:Key="error-500">hsl(0, 71%, 53%)</Color>
+  <Color x:Key="error-600">hsl(0, 70%, 42%)</Color>
+  <Color x:Key="error-700">hsl(0, 67%, 32%)</Color>
+  <Color x:Key="error-800">hsl(0, 60%, 24%)</Color>
+  <Color x:Key="error-900">hsl(0, 70%, 10%)</Color>
+</ResourceDictionary>

@@ -14,6 +14,11 @@
         <AvaloniaResource Include="Assets\**" />
     </ItemGroup>
 
+    <ItemGroup>
+      <AvaloniaXaml Remove="Assets\Colours.axaml" />
+      <AvaloniaXaml Remove="Assets\Styles.axaml" />
+    </ItemGroup>
+
 
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="11.0.10" />
@@ -32,6 +37,16 @@
     <ItemGroup>
         <ProjectReference Include="..\TransactionQL.Application\TransactionQL.Application.fsproj" />
         <ProjectReference Include="..\TransactionQL.Shared\TransactionQL.Shared.fsproj" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <AvaloniaResource Update="Assets\Colours.axaml">
+        <SubType>Designer</SubType>
+      </AvaloniaResource>
+      <AvaloniaResource Update="Assets\Styles.axaml">
+        <SubType>Designer</SubType>
+      </AvaloniaResource>
     </ItemGroup>
 
 
