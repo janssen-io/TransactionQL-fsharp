@@ -92,5 +92,6 @@ public partial class MainWindow : Window
 
         var visibleItem = e.AddedItems.OfType<PaymentDetailsViewModel>().FirstOrDefault();
         visibleItem?.Activate();
+        ((MainWindowViewModel)this.DataContext).CountValid();
     }
 }

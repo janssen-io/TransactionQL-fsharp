@@ -75,6 +75,14 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _hasTransactions, value);
     }
 
+    private int _numberOfValidTransactions = 0;
+    [DataMember]
+    public int NumberOfValidTransactions
+    {
+        get => _numberOfValidTransactions;
+        set => this.RaiseAndSetIfChanged(ref _numberOfValidTransactions, value);
+    }
+
     internal void Parse(SelectDataWindowViewModel.SelectedData data)
     {
         Debug.WriteLine(data);
@@ -159,6 +167,7 @@ public class MainWindowViewModel : ViewModelBase
                     });
             }
         }
+        CountValid();
 
         // TODO:
         // - tags/notes (posting)
@@ -213,5 +222,10 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         return string.IsNullOrEmpty(errorMessage);
+    }
+
+    internal void CountValid()
+    {
+        this.NumberOfValidTransactions = this.BankTransactions.Count(t => !t.HasError);
     }
 }
