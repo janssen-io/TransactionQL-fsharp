@@ -41,7 +41,27 @@
           <BoxShadows x:Key="elevate-400">0 9 20 #890f240f, 0 15 10 -13 #290f240f</BoxShadows>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
-          <SolidColorBrush x:Key="Selection" Color="{StaticResource primary-800}" />
+          <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource primary-800}" />
+          <SolidColorBrush x:Key="BackgroundBrush" Color="Black" />
+          <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource grey-200}" />
+          <SolidColorBrush x:Key="SubtitleForegroundBrush" Color="{StaticResource grey-400}" />
+          <SolidColorBrush x:Key="ErrorForegroundBrush" Color="{StaticResource error-300}" />
+          <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="{StaticResource error-900}" />
+          <SolidColorBrush x:Key="BaseBackgroundBrush" Color="{StaticResource grey-900}" />
+          <SolidColorBrush x:Key="TableHeaderBackgroundBrush" Color="{StaticResource primary-900}" />
+          <SolidColorBrush x:Key="TableHeaderForegroundBrush" Color="{StaticResource primary-300}" />
+          <SolidColorBrush x:Key="DividerSoftBrush" Color="{StaticResource grey-800}" />
+          <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource primary-600}" />
+          <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{StaticResource primary-400}" />
+          <SolidColorBrush x:Key="Primary2BackgroundBrush" Color="{StaticResource primary-300}" />
+          <SolidColorBrush x:Key="PrimarySoftBrush" Color="{StaticResource primary-800}" />
+          <SolidColorBrush x:Key="PrimarySoft2Brush" Color="{StaticResource primary-700}" />
+          <SolidColorBrush x:Key="PrimaryForegroundBrush" Color="{StaticResource primary-300}" />
+          <SolidColorBrush x:Key="SoftForegroundBrush" Color="{StaticResource grey-900}" />
+          <BoxShadows x:Key="elevate-100">0 2 3 #dfe4df</BoxShadows>
+          <BoxShadows x:Key="elevate-200">0 5 15 #19dfe4df, 0 2 4 #19dfe4df</BoxShadows>
+          <BoxShadows x:Key="elevate-300">0 7 15 #490f240f, 0 12 8 -11 #29dfe4df</BoxShadows>
+          <BoxShadows x:Key="elevate-400">0 9 20 #890f240f, 0 15 10 -13 #290f240f</BoxShadows>
         </ResourceDictionary>
       </ResourceDictionary.ThemeDictionaries>
     </ResourceDictionary>

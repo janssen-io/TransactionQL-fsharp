@@ -71,7 +71,8 @@
             Grid.Row="2"
             RelativePanel.Below="Toolbar"
             RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True" >
+            RelativePanel.AlignRightWithPanel="True"
+            RelativePanel.AlignBottomWithPanel="True">
         <Carousel Grid.Column="0"
                   Name="BankTransactionCarousel"
                   ItemsSource="{Binding BankTransactions}"
@@ -91,10 +92,11 @@
         </Carousel>
         <Border Name="Transactions" Grid.Column="1">
           <Border Classes="Card">
-            <StackPanel Orientation="Vertical">
-              <Border Classes="CardAccent">
+            <DockPanel>
+              <Border Classes="CardAccent" DockPanel.Dock="Top">
               </Border>
-              <ListBox SelectionMode="Single"
+              <ListBox DockPanel.Dock="Bottom"
+                       SelectionMode="Single"
                        Name="TransactionsList" ItemsSource="{Binding BankTransactions}"
                        SelectedIndex="{Binding BankTransactionIndex}" >
                 <ListBox.ItemTemplate>
@@ -105,7 +107,7 @@
                   </DataTemplate>
                 </ListBox.ItemTemplate>
               </ListBox>
-            </StackPanel>
+            </DockPanel>
           </Border>
         </Border>
       </Grid>

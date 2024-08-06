@@ -19,10 +19,12 @@
   </Style>
   <Style Selector="TextBox,AutoCompleteBox">
     <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="Background" Value="Transparent" />
 
-    <Style Selector="^:pointerover /template/ ContentPresenter">
-      <Setter Property="BorderBrush" Value="Transparent" />
-    </Style>
+  </Style>
+  <Style Selector="TextBox:focus /template/ Border, TextBox:pointerover /template/ Border">
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="Background" Value="Transparent" />
   </Style>
 
   <Style Selector="Button /template/ ContentPresenter">
@@ -114,6 +116,8 @@
   <!-- Cards -->
   <Style Selector="Border.Card">
     <Setter Property="Background" Value="{DynamicResource BaseBackgroundBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource BackgroundBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
     <Setter Property="BoxShadow" Value="{DynamicResource elevate-200}" />
     <Setter Property="CornerRadius" Value="{DynamicResource Radius}" />
 
@@ -185,7 +189,6 @@
 
   <Style Selector="ProgressBar">
     <Setter Property="Foreground" Value="{DynamicResource PrimaryBackgroundBrush}" />
-    <Setter Property="" Value="{DynamicResource PrimaryBackgroundBrush}" />
   </Style>
 
 </Styles>
