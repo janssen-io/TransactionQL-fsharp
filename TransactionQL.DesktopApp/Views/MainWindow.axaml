@@ -12,133 +12,103 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="TransactionQL Desktop"
-        Background="{DynamicResource Background}"
         ExtendClientAreaToDecorationsHint="False"
         DataContext="{x:Static dd:DesignData.MainWindow}">
-    <Window.Styles>
-      <StyleInclude Source="/Assets/Styles.axaml" />
-    </Window.Styles>
-    <Panel>
-        <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="*">
-            <TextBlock Grid.Row="0" FontSize="12">TransactionQL Desktop</TextBlock>
-            <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
-                <Border Grid.Column="0" Name="Toolbar" CornerRadius="7">
-                        <Grid ColumnDefinitions="*,*,*" Margin="10,20,10,0">
-                            <Grid.Styles>
-                                <Style Selector="Button">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="Margin" Value="0,0,10,0" />
-                                </Style>
-                            </Grid.Styles>
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Left"
-                                        Margin="5"
-                                        Spacing="5">
-                                <Button Click="Open" HotKey="Ctrl+O" i:Attached.Icon="fa-regular fa-folder-open">
-                                    <ToolTip.Tip>Open Bank Transactions (Ctrl+O)</ToolTip.Tip>
-                                </Button>
-                                <Button Command="{Binding SaveStateCommand}" HotKey="Ctrl+S"
-                                        i:Attached.Icon="fa-regular fa-floppy-disk">
-                                    <ToolTip.Tip>Save Progress (Ctrl+S)</ToolTip.Tip>
-                                </Button>
-                                <TextBlock Text="{Binding LastSaved}" VerticalAlignment="Center" />
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Center"
-                                        Margin="5"
-                                        Grid.Column="1">
-                                <Button Name="CarouselPrevious" HotKey="Ctrl+Q" i:Attached.Icon="fa-angle-left">
-                                    <ToolTip.Tip>Previous (Ctrl+Q)</ToolTip.Tip>
-                                </Button>
-                                <Button Name="CarouselNext" HotKey="Ctrl+E" i:Attached.Icon="fa-angle-right">
-                                    <ToolTip.Tip>Next (Ctrl+E)</ToolTip.Tip>
-                                </Button>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Margin="5"
-                                        Grid.Column="2">
-                                <ProgressBar Minimum="0" Maximum="{Binding BankTransactions.Count}"
-                                             Value="{Binding BankTransactionIndex}"
-                                             Margin="0,0,12,0" />
-                                <TextBlock Text="{Binding BankTransactionIndex}" />
-                                <TextBlock Text="/" />
-                                <TextBlock Text="{Binding BankTransactions.Count}" />
-
-                            </StackPanel>
-                        </Grid>
-                    </Border>
+  <Window.Styles>
+    <StyleInclude Source="/Assets/Styles.axaml" />
+  </Window.Styles>
+  <Panel>
+    <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="*">
+      <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+        <Border Grid.Column="0" Name="Toolbar">
+          <Grid ColumnDefinitions="*,*,*">
+            <Grid.Styles>
+              <Style Selector="Button">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Margin" Value="0,0,10,0" />
+              </Style>
+            </Grid.Styles>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+              <Button Click="Open" HotKey="Ctrl+O" Classes="IconAction" i:Attached.Icon="fa-regular fa-folder-open">
+                <ToolTip.Tip>Open Bank Transactions (Ctrl+O)</ToolTip.Tip>
+              </Button>
+              <Button Command="{Binding SaveStateCommand}" Classes="IconAction" HotKey="Ctrl+S"
+                      i:Attached.Icon="fa-regular fa-floppy-disk">
+                <ToolTip.Tip>Save Progress (Ctrl+S)</ToolTip.Tip>
+              </Button>
+              <TextBlock Text="{Binding LastSaved}" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1">
+              <Button Classes="Hidden" Name="CarouselPrevious" HotKey="Ctrl+Q" i:Attached.Icon="fa-angle-left">
+                <ToolTip.Tip>Previous (Ctrl+Q)</ToolTip.Tip>
+              </Button>
+              <Button Classes="Hidden" Name="CarouselNext" HotKey="Ctrl+E" i:Attached.Icon="fa-angle-right">
+                <ToolTip.Tip>Next (Ctrl+E)</ToolTip.Tip>
+              </Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Grid.Column="2">
+              <ProgressBar Minimum="0" Maximum="{Binding BankTransactions.Count}"
+                           Value="{Binding NumberOfValidTransactions}" />
+              <TextBlock Text="{Binding NumberOfValidTransactions}" />
+              <TextBlock Text="/" />
+              <TextBlock Text="{Binding BankTransactions.Count}" />
               <Button Grid.Column="1"
                       Classes="Primary"
-                      Height="40"
-                      Margin="20 20 20 0"
-                      CornerRadius="5"
                       Command="{Binding SaveCommand}" HotKey="Ctrl+Alt+S">
                 <StackPanel Orientation="Horizontal" Spacing="10">
                   <i:Icon Value="fa-check" VerticalAlignment="Center" />
                   <TextBlock Text="Export" VerticalAlignment="Center"/>
                 </StackPanel>
               </Button>
-            </Grid>
-            <Grid Name="Main" ColumnDefinitions="5*,3*" Margin="0,20,0,0"
-                  Grid.Row="2"
-                  RelativePanel.Below="Toolbar"
-                  RelativePanel.AlignLeftWithPanel="True"
-                  RelativePanel.AlignRightWithPanel="True" >
-                <Carousel Grid.Column="0"
-                          Name="BankTransactionCarousel"
-                          ItemsSource="{Binding BankTransactions}"
-                          SelectedIndex="{Binding BankTransactionIndex}"
-                          SelectionChanged="BankTransactionCarousel_OnSelectionChanged"
-                          WrapSelection="True">
-                    <Carousel.Styles>
-                        <Style Selector="ItemsPresenter">
-                            <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />
-                        </Style>
-                    </Carousel.Styles>
-                    <Carousel.PageTransition>
-                        <PageSlide Duration="1" Orientation="Horizontal" />
-                    </Carousel.PageTransition>
-                    <Carousel.ItemTemplate>
-                        <DataTemplate>
-                            <v:PaymentDetails DataContext="{Binding}" Padding="20" />
-                        </DataTemplate>
-                    </Carousel.ItemTemplate>
-                </Carousel>
-              <Border BoxShadow="0 4 6 #dfe4df" Grid.Column="1" Margin="0,20,20,20" CornerRadius="7">
-                <Border BorderBrush="#c4dbcd" BorderThickness="0 4 0 0" ClipToBounds="True" CornerRadius="7">
-                <ListBox SelectionMode="Single"
-                         CornerRadius="0 0 7 7"
-                         Background="White"
-                         Name="TransactionsList" ItemsSource="{Binding BankTransactions}"
-                         SelectedIndex="{Binding BankTransactionIndex}"
-                         >
-                    <ListBox.Styles>
-                      <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-                        <Setter Property="Background" Value="#c4dbcd"></Setter>
-                      </Style>
-                      <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-                        <Setter Property="Background" Value="#e2e9e4"></Setter>
-                      </Style>
-                    </ListBox.Styles>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal" Spacing="3">
-                                <TextBlock VerticalAlignment="Center"
-                                           Text="{Binding Title}" HorizontalAlignment="Stretch" />
-                                <Border IsVisible="{Binding HasError}"
-                                        VerticalAlignment="Top"
-                                        CornerRadius="5" Background="DarkRed" ClipToBounds="True"
-                                        Width="5"
-                                        Height="5" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                </Border>
-                </Border>
-            </Grid>
-        </Grid>
-    </Panel>
+            </StackPanel>
+          </Grid>
+        </Border>
+      </Grid>
+      <Grid Name="Main" ColumnDefinitions="5*,3*"
+            Grid.Row="2"
+            RelativePanel.Below="Toolbar"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True" >
+        <Carousel Grid.Column="0"
+                  Name="BankTransactionCarousel"
+                  ItemsSource="{Binding BankTransactions}"
+                  SelectedIndex="{Binding BankTransactionIndex}"
+                  SelectionChanged="BankTransactionCarousel_OnSelectionChanged"
+                  WrapSelection="True">
+          <Carousel.Styles>
+            <Style Selector="ItemsPresenter">
+              <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />
+            </Style>
+          </Carousel.Styles>
+          <Carousel.ItemTemplate>
+            <DataTemplate>
+              <v:PaymentDetails DataContext="{Binding}" Padding="20" />
+            </DataTemplate>
+          </Carousel.ItemTemplate>
+        </Carousel>
+        <Border Name="Transactions" Grid.Column="1">
+          <Border Classes="Card">
+            <StackPanel Orientation="Vertical">
+              <Border Classes="CardAccent">
+              </Border>
+              <ListBox SelectionMode="Single"
+                       Name="TransactionsList" ItemsSource="{Binding BankTransactions}"
+                       SelectedIndex="{Binding BankTransactionIndex}" >
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
+                    <Border Classes="Indicator" Classes.ErrorBorder="{Binding HasError}">
+                      <TextBlock Text="{Binding Title}" HorizontalAlignment="Stretch" />
+                    </Border>
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </StackPanel>
+          </Border>
+        </Border>
+      </Grid>
+    </Grid>
+  </Panel>
 </Window>

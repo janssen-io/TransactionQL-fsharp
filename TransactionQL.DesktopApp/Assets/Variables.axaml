@@ -1,14 +1,15 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <Color x:Key="primary-100">hsl(142, 90%, 99%)</Color>
-  <Color x:Key="primary-200">hsl(142, 81%, 94%)</Color>
-  <Color x:Key="primary-300">hsl(141, 67%, 80%)</Color>
-  <Color x:Key="primary-400">hsl(146, 57%, 65%)</Color>
-  <Color x:Key="primary-500">hsl(145, 55%, 49%)</Color>
-  <Color x:Key="primary-600">hsl(146, 62%, 38%)</Color>
-  <Color x:Key="primary-700">hsl(146, 65%, 28%)</Color>
-  <Color x:Key="primary-800">hsl(155, 59%, 20%)</Color>
-  <Color x:Key="primary-900">hsl(155, 65%, 10%)</Color>
+                    <Design.PreviewWith><Border Padding="20" /></Design.PreviewWith>
+  <Color x:Key="primary-100">hsl(152, 90%, 99%)</Color>
+  <Color x:Key="primary-200">hsl(152, 81%, 94%)</Color>
+  <Color x:Key="primary-300">hsl(151, 67%, 80%)</Color>
+  <Color x:Key="primary-400">hsl(156, 57%, 65%)</Color>
+  <Color x:Key="primary-500">hsl(155, 55%, 49%)</Color>
+  <Color x:Key="primary-600">hsl(156, 62%, 38%)</Color>
+  <Color x:Key="primary-700">hsl(156, 65%, 28%)</Color>
+  <Color x:Key="primary-800">hsl(165, 59%, 20%)</Color>
+  <Color x:Key="primary-900">hsl(165, 65%, 10%)</Color>
 
   <Color x:Key="grey-100">hsl(142, 10%, 99%)</Color>
   <Color x:Key="grey-200">hsl(142, 10%, 94%)</Color>
@@ -29,4 +30,7 @@
   <Color x:Key="error-700">hsl(0, 67%, 32%)</Color>
   <Color x:Key="error-800">hsl(0, 60%, 24%)</Color>
   <Color x:Key="error-900">hsl(0, 70%, 10%)</Color>
+
+  <CornerRadius x:Key="Radius">7</CornerRadius>
+
 </ResourceDictionary>

@@ -1,23 +1,191 @@
 <Styles xmlns="https://github.com/avaloniaui"
+        xmlns:app="using:TransactionQL.DesktopApp.Application"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Design.PreviewWith>
     <Border Padding="20">
       <!-- Add Controls for Previewer Here -->
     </Border>
   </Design.PreviewWith>
-
+  <!-- Generic Controls -->
+  <Style Selector="Window">
+    <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
+  </Style>
   <Style Selector="Window,TextBox,AutoCompleteBox">
     <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+  </Style>
+
+  <Style Selector="TextBox">
+    <Setter Property="SelectionBrush" Value="{DynamicResource SelectionBrush}" />
+  </Style>
+  <Style Selector="TextBox,AutoCompleteBox">
+    <Setter Property="BorderBrush" Value="Transparent" />
+
+    <Style Selector="^:pointerover /template/ ContentPresenter">
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+  </Style>
+
+  <Style Selector="Button /template/ ContentPresenter">
+    <Setter Property="BoxShadow" Value="inset 0 -1 0 #000000, inset 0 1 0 #ffffff" />
   </Style>
 
   <Style Selector="Button.Primary">
     <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
-
+    <Setter Property="Padding" Value="8 8" />
     <Style Selector="^:pointerover /template/ ContentPresenter">
       <Setter Property="Background" Value="{DynamicResource Primary2BackgroundBrush}" />
       <Setter Property="Foreground" Value="White" />
     </Style>
   </Style>
-  <!-- Add Styles Here -->
+
+  <Style Selector="Separator">
+    <Setter Property="Background" Value="{DynamicResource DividerBrush}"/>
+  </Style>
+
+
+  <Style Selector="Grid.TableHeader">
+    <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}"/>
+  </Style>
+  <Style Selector=".TableHeader TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryBackgroundBrush}"/>
+    <Setter Property="TextAlignment" Value="Right" />
+    <Setter Property="FontWeight" Value="500" />
+    <Setter Property="FontSize" Value="10"/>
+    <Setter Property="LetterSpacing" Value="1"/>
+    <Setter Property="Padding" Value="0 10 0 10" />
+  </Style>
+  <Style Selector=".TableHeader Separator">
+    <Setter Property="Background" Value="{DynamicResource DividerBrush}"/>
+    <Setter Property="Height" Value="2"/>
+  </Style>
+  <Style Selector=".Posting Separator">
+    <Setter Property="Margin" Value="-20 0 -20 0" />
+    <Setter Property="Background" Value="{DynamicResource DividerSoftBrush}" />
+  </Style>
+
+  <!-- Text -->
+  <Style Selector="TextBox.h1">
+    <Setter Property="FontSize" Value="24" />
+    <Setter Property="FontWeight" Value="Bold" />
+    <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+  <Style Selector="TextBox:focus Border">
+    <Setter Property="BorderBrush" Value="Transparent" />
+  </Style>
+
+  <Style Selector="TextBlock.h2">
+    <Setter Property="FontSize" Value="20" />
+    <Setter Property="FontWeight" Value="Regular" />
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+  </Style>
+
+  <Style Selector="TextBlock.subtitle">
+    <Setter Property="Foreground" Value="#688878" />
+
+    <Style Selector="^#Currency">
+      <Setter Property="TextAlignment" Value="Right" />
+      <Setter Property="MinWidth" Value="50" />
+    </Style>
+  </Style>
+
+  <Style Selector="TextBox.p">
+    <Setter Property="TextWrapping" Value="Wrap" />
+    <Setter Property="Margin" Value="0,15,0,0" />
+    <Setter Property="LineHeight" Value="25" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+
+    <Style Selector="^#Description">
+      <Setter Property="MaxHeight" Value="100" />
+      <Setter Property="Padding" Value="0,6,6,5" />
+    </Style>
+  </Style>
+
+  <Style Selector="TextBlock.Negative">
+    <Setter Property="Foreground" Value="{DynamicResource ErrorForegroundBrush}" />
+  </Style>
+
+  <Style Selector="TextBox.Cell, AutoCompleteBox.Cell">
+    <Setter Property="Margin" Value="0,3" />
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <!-- Cards -->
+  <Style Selector="Border.Card">
+    <Setter Property="Background" Value="{DynamicResource BaseBackgroundBrush}" />
+    <Setter Property="BoxShadow" Value="{DynamicResource elevate-200}" />
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius}" />
+
+    <Style Selector="^.Padded">
+      <Setter Property="Padding" Value="20" />
+    </Style>
+  </Style>
+
+  <Style Selector="Border.CardAccent">
+    <Setter Property="BorderBrush" Value="{DynamicResource TableHeaderBackgroundBrush}" />
+    <Setter Property="BorderThickness" Value="0 5 0 0" />
+    <Setter Property="ClipToBounds" Value="True" />
+    <Setter Property="CornerRadius" Value="{DynamicResource CornerRadius}" />
+  </Style>
+
+  <!-- Toolbar -->
+  <Style Selector="Border#Toolbar">
+    <Setter Property="Margin" Value="20 0 0 0" />
+  </Style>
+  <Style Selector="Border#Toolbar TextBlock">
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Button.Hidden">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+
+  <Style Selector="Button.IconAction /template/ ContentPresenter">
+    <Setter Property="BoxShadow" Value="none" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+  </Style>
+
+  <!-- Main List -->
+  <Style Selector="Border#Transactions">
+    <Setter Property="Padding" Value="10 20 20 20" />
+  </Style>
+
+  <Style Selector="ListBox#TransactionsList">
+    <Setter Property="Background" Value="{DynamicResource BaseBackgroundBrush}" />
+  </Style>
+  <Style Selector="ListBox#TransactionsList ListBoxItem">
+    <Setter Property="Padding" Value="0" />
+    <Style Selector="^:selected /template/ ContentPresenter, ^:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="{DynamicResource TableHeaderBackgroundBrush}" />
+    </Style>
+    <Style Selector="^:selected /template/ ContentPresenter">
+      <Setter Property="FontWeight" Value="600" />
+    </Style>
+    <Style Selector="^:pointerover Border.ErrorBorder, ^:selected Border.ErrorBorder">
+      <Setter Property="Background" Value="{DynamicResource ErrorBackgroundBrush}" />
+    </Style>
+  </Style>
+  <Style Selector="Border.Indicator">
+    <Setter Property="BorderThickness" Value="2 0 0 0" />
+    <Setter Property="Padding" Value="0 10" />
+
+    <Style Selector="^.ErrorBorder">
+      <Setter Property="BorderBrush" Value="{DynamicResource ErrorForegroundBrush}" />
+    </Style>
+  </Style>
+  <Style Selector="Border.Indicator TextBlock">
+    <Setter Property="Margin" Value="10 0 0 0" />
+  </Style>
+
+  <Style Selector="Border.ErrorBorder TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource ErrorForegroundBrush}" />
+  </Style>
+
+  <Style Selector="ProgressBar">
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryBackgroundBrush}" />
+    <Setter Property="" Value="{DynamicResource PrimaryBackgroundBrush}" />
+  </Style>
+
 </Styles>
