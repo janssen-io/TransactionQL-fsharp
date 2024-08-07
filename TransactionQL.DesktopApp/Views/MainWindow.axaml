@@ -36,11 +36,13 @@
                 <ToolTip.Tip>Export to Ledger (Ctrl+Alt+S)</ToolTip.Tip>
               </Button>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1" Spacing="5">
               <TextBlock Text="Last saved:" FontStyle="Italic" />
               <TextBlock Text="{Binding LastSaved}" FontStyle="Italic" VerticalAlignment="Center" />
+                <!-- Hide the actual numbers for now, but keep indicator at bottom of window -->
+                <!-- Maybe we can make it a settings to hide/show it? -->
               <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-                          IsVisible="{Binding !IsDone}">
+                          IsVisible="False">
                 <TextBlock Text="{Binding NumberOfValidTransactions}" />
                 <TextBlock Text="/" />
                 <TextBlock Text="{Binding BankTransactions.Count}" />
