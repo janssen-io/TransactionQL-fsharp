@@ -33,7 +33,7 @@ public class MainWindowViewModel : ViewModelBase
     [IgnoreDataMember] public ICommand SaveCommand { get; }
     [IgnoreDataMember] public ICommand SaveStateCommand { get; }
 
-    private string _lastSaved = "";
+    private string _lastSaved = "Never";
 
     [IgnoreDataMember]
     public string LastSaved

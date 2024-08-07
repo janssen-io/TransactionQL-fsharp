@@ -153,11 +153,22 @@
     <Setter Property="BoxShadow" Value="none" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="Foreground" Value="{DynamicResource Primary2ForegroundBrush}" />
+    <Setter Property="Transitions">
+      <Transitions>
+        <BrushTransition Property="Foreground" Duration="0:0:0.3"></BrushTransition>
+        <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"></TransformOperationsTransition>
+    </Transitions>
+    </Setter>
     <Setter Property="Padding" Value="0" />
   </Style>
   <Style Selector="Button.IconAction:pointerover /template/ ContentPresenter">
     <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+    <Setter Property="RenderTransform" Value="TranslateY(-2px)" />
     <Setter Property="Cursor" Value="Hand" />
+  </Style>
+  <Style Selector="Button.IconAction:disabled /template/ ContentPresenter">
+    <Setter Property="Foreground" Value="{DynamicResource SubtitleForegroundBrush}" />
+    <Setter Property="Opacity" Value="0.7" />
   </Style>
 
   <!-- Main List -->
@@ -202,6 +213,20 @@
   <Style Selector="ProgressBar">
     <Setter Property="Foreground" Value="{DynamicResource PrimaryBackgroundBrush}" />
     <Setter Property="Background" Value="Transparent" />
+    <Setter Property="ClipToBounds" Value="False" />
+    <Setter Property="MinHeight" Value="2" />
+    <Setter Property="CornerRadius" Value="0" />
+
+  </Style>
+  <Style Selector="ProgressBar:horizontal /template/ Border#ProgressBarRoot">
+    <Setter Property="ClipToBounds" Value="False" />
+  </Style>
+
+  <Style Selector="ProgressBar Border Panel Panel:nth-child(1) Border">
+    <Setter Property="BoxShadow" Value="5 0 15 -5 #4480f465" />
+    <Setter Property="MinHeight" Value="2" />
+    <Setter Property="Height" Value="2" />
+    <Setter Property="BorderThickness" Value="1" />
   </Style>
   <Style Selector="ProgressBar /template/ LayoutTransformControl TextBlock">
     <Setter Property="Padding" Value="5 0" />

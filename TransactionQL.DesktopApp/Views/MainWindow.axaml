@@ -31,25 +31,20 @@
                       i:Attached.Icon="fa-regular fa-floppy-disk">
                 <ToolTip.Tip>Save Progress (Ctrl+S)</ToolTip.Tip>
               </Button>
-              <TextBlock Text=
-                         "{Binding LastSaved}" VerticalAlignment="Center" />
+              <Button Command="{Binding SaveCommand}" Classes="IconAction" HotKey="Ctrl+Alt+S"
+                      IsEnabled="{Binding IsDone}" i:Attached.Icon="fa-solid fa-file-export">
+                <ToolTip.Tip>Export to Ledger (Ctrl+Alt+S)</ToolTip.Tip>
+              </Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1">
+              <TextBlock Text="Last saved:" FontStyle="Italic" />
+              <TextBlock Text="{Binding LastSaved}" FontStyle="Italic" VerticalAlignment="Center" />
               <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
                           IsVisible="{Binding !IsDone}">
                 <TextBlock Text="{Binding NumberOfValidTransactions}" />
                 <TextBlock Text="/" />
                 <TextBlock Text="{Binding BankTransactions.Count}" />
               </StackPanel>
-              <Button Grid.Column="1"
-                      Classes="Primary"
-                      IsVisible="{Binding IsDone}"
-                      Command="{Binding SaveCommand}" HotKey="Ctrl+Alt+S">
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                  <i:Icon Value="fa-check" VerticalAlignment="Center" />
-                  <TextBlock Text="Export" VerticalAlignment="Center"/>
-                </StackPanel>
-              </Button>
               <Button Classes="Hidden" Name="CarouselPrevious" HotKey="Ctrl+Q" i:Attached.Icon="fa-angle-left">
                 <ToolTip.Tip>Previous (Ctrl+Q)</ToolTip.Tip>
               </Button>
@@ -108,9 +103,7 @@
       <DockPanel VerticalAlignment="Bottom" Grid.Row="3">
         <ProgressBar Minimum="0" Maximum="{Binding BankTransactions.Count}"
                      Value="{Binding NumberOfValidTransactions}"
-                     MinHeight="2"
-                     DockPanel.Dock="Bottom" HorizontalAlignment="Stretch"
-                     CornerRadius="0"/>
+                     DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" />
       </DockPanel>
     </Grid>
   </Panel>
