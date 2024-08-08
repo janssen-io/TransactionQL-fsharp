@@ -1,0 +1,59 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:TransactionQL.DesktopApp.Controls"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia" >
+
+  <!--
+    Additional resources 
+    Using Control Themes:
+         https://docs.avaloniaui.net/docs/basics/user-interface/styling/control-themes
+    Using Theme Variants:
+         https://docs.avaloniaui.net/docs/guides/styles-and-resources/how-to-use-theme-variants
+  -->
+
+  <Design.PreviewWith>
+    <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
+      <controls:Dropzone />
+    </Border>
+  </Design.PreviewWith>
+
+  <ControlTheme x:Key="{x:Type controls:Dropzone}" TargetType="controls:Dropzone">
+    <Setter Property="FileDescription" Value="file" />
+    <Setter Property="BrowseForeground" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="Highlight" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="Background" Value="{DynamicResource BaseBackgroundBrush}" />
+    <Setter Property="IconForeground" Value="CadetBlue" />
+    <Setter Property="BoxShadow" Value="{DynamicResource InsetShadow}" />
+    <Setter Property="CornerRadius" Value="7" />
+    <Styles>
+      <Style Selector="Border StackPanel TextBlock Button#Browse">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0 -1 0 0" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Cursor" Value="Hand" />
+      </Style>
+    </Styles>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border 
+          Name="Area"
+          CornerRadius="{TemplateBinding CornerRadius}"
+          Padding="20"
+          MaxWidth="200"
+          Background="{TemplateBinding Background}"
+          BoxShadow="{TemplateBinding BoxShadow}"
+          BorderThickness="1"
+          BorderBrush="Transparent"
+          DragDrop.AllowDrop="True"
+          >
+          <StackPanel Orientation="Vertical" Spacing="20" DragDrop.AllowDrop="True">
+            <i:Icon Value="fa-solid fa-file-import" FontSize="32" Foreground="{TemplateBinding IconForeground}"/>
+            <TextBlock TextWrapping="Wrap" TextAlignment="Center">
+              Drop your <Run Text="{TemplateBinding FileDescription}" /> here or <Button Name="Browse" Foreground="{TemplateBinding BrowseForeground}">browse</Button> to choose a file.
+            </TextBlock>
+          </StackPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>
