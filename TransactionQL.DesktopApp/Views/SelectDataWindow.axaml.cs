@@ -7,6 +7,10 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using ViewModels;
+using Avalonia.Input;
+using System;
+using System.Linq;
+using Avalonia.LogicalTree;
 
 public partial class SelectDataWindow : Window
 {
@@ -20,6 +24,17 @@ public partial class SelectDataWindow : Window
         Transactions = this.FindControl<TextBox>(nameof(Transactions));
         Filters = this.FindControl<TextBox>(nameof(Filters));
         Accounts = this.FindControl<TextBox>(nameof(Accounts));
+
+        this.KeyDown += HandleKeyDown;
+    }
+
+
+    private void HandleKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape)
+        {
+            this.Close();
+        }
     }
 
     public SelectDataWindow(SelectDataWindowViewModel dataContext) : this()

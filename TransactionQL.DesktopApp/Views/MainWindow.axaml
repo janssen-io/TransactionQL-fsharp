@@ -4,6 +4,7 @@
         xmlns:v="using:TransactionQL.DesktopApp.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:dd="using:TransactionQL.DesktopApp"
+        xmlns:c="using:TransactionQL.DesktopApp.Controls"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
         mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="550"
@@ -39,8 +40,8 @@
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1" Spacing="5">
               <TextBlock Text="Last saved:" FontStyle="Italic" />
               <TextBlock Text="{Binding LastSaved}" FontStyle="Italic" VerticalAlignment="Center" />
-                <!-- Hide the actual numbers for now, but keep indicator at bottom of window -->
-                <!-- Maybe we can make it a settings to hide/show it? -->
+              <!-- Hide the actual numbers for now, but keep indicator at bottom of window -->
+              <!-- Maybe we can make it a settings to hide/show it? -->
               <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
                           IsVisible="False">
                 <TextBlock Text="{Binding NumberOfValidTransactions}" />
@@ -84,8 +85,9 @@
         <Border Name="Transactions" Grid.Column="1">
           <Border Classes="Card">
             <DockPanel>
-              <Border Classes="CardAccent" DockPanel.Dock="Top">
-              </Border>
+              <c:Dropzone DockPanel.Dock="Top" FileTypes="*.csv" FileDescription="transactions" />
+              <c:Dropzone DockPanel.Dock="Top" FileTypes="*accounts*.ldg" FileDescription="accounts" />
+              <c:Dropzone DockPanel.Dock="Top" FileTypes="*.tql" FileDescription="filters" />
               <ListBox DockPanel.Dock="Bottom"
                        SelectionMode="Single"
                        Name="TransactionsList" ItemsSource="{Binding BankTransactions}"

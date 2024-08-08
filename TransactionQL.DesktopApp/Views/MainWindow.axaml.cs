@@ -1,8 +1,10 @@
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using ReactiveUI;
@@ -24,6 +26,22 @@ public partial class MainWindow : Window
 
         CarouselNext.Command = ReactiveCommand.Create(() => BankTransactionCarousel.Next());
         CarouselPrevious.Command = ReactiveCommand.Create(() => BankTransactionCarousel.Previous());
+        this.KeyDown += HandleKeyDown;
+    }
+
+    private void HandleKeyDown(object? sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.F11)
+        {
+            if (this.WindowState != WindowState.FullScreen)
+                this.WindowState = WindowState.FullScreen;
+            else
+                this.WindowState = WindowState.Normal;
+        }
+        if (e.Key == Key.Escape && this.WindowState == WindowState.FullScreen)
+        {
+            this.WindowState = WindowState.Normal;
+        }
     }
 
     public MainWindow(MainWindowViewModel vm) : this()

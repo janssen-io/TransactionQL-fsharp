@@ -16,23 +16,16 @@
 
   <Style Selector="TextBox">
     <Setter Property="SelectionBrush" Value="{DynamicResource SelectionBrush}" />
-  </Style>
-  <Style Selector="TextBox,AutoCompleteBox">
     <Setter Property="BorderBrush" Value="Transparent" />
     <Setter Property="Background" Value="Transparent" />
-
-  </Style>
-  <Style Selector="TextBox:focus /template/ Border, TextBox:pointerover /template/ Border">
-    <Setter Property="BorderBrush" Value="Transparent" />
-    <Setter Property="Background" Value="Transparent" />
+    <Style Selector="^:focus /template/ Border, ^:pointerover /template/ Border">
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
   </Style>
 
   <Style Selector="Button:pointerover /template/ ContentPresenter">
     <Setter Property="Cursor" Value="Hand" />
-  </Style>
-
-  <Style Selector="Button /template/ ContentPresenter">
-    <Setter Property="BoxShadow" Value="{DynamicResource ButtonShadow}" />
   </Style>
 
   <Style Selector="Button.Primary">
@@ -76,9 +69,6 @@
     <Setter Property="FontWeight" Value="Bold" />
     <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
     <Setter Property="Padding" Value="0" />
-  </Style>
-  <Style Selector="TextBox:focus Border">
-    <Setter Property="BorderBrush" Value="Transparent" />
   </Style>
 
   <Style Selector="TextBlock.h2">
@@ -210,6 +200,7 @@
     <Setter Property="Foreground" Value="{DynamicResource ErrorForegroundBrush}" />
   </Style>
 
+  <!-- Progress Bar -->
   <Style Selector="ProgressBar">
     <Setter Property="Foreground" Value="{DynamicResource PrimaryBackgroundBrush}" />
     <Setter Property="Background" Value="Transparent" />
@@ -223,7 +214,7 @@
   </Style>
 
   <Style Selector="ProgressBar Border Panel Panel:nth-child(1) Border">
-    <Setter Property="BoxShadow" Value="5 0 15 -5 #4480f465" />
+    <Setter Property="BoxShadow" Value="{DynamicResource PrimaryShadow}" />
     <Setter Property="MinHeight" Value="2" />
     <Setter Property="Height" Value="2" />
     <Setter Property="BorderThickness" Value="1" />
