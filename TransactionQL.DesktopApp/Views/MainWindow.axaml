@@ -85,9 +85,8 @@
         <Border Name="Transactions" Grid.Column="1">
           <Border Classes="Card">
             <DockPanel>
-              <c:Dropzone DockPanel.Dock="Top" FileTypes="*.csv" FileDescription="transactions" />
-              <c:Dropzone DockPanel.Dock="Top" FileTypes="*accounts*.ldg" FileDescription="accounts" />
-              <c:Dropzone DockPanel.Dock="Top" FileTypes="*.tql" FileDescription="filters" />
+              <c:Dropzone Height="150" FileName="Test.csv" />
+              <Border Classes="CardAccent" />
               <ListBox DockPanel.Dock="Bottom"
                        SelectionMode="Single"
                        Name="TransactionsList" ItemsSource="{Binding BankTransactions}"

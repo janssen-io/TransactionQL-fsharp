@@ -41,7 +41,10 @@ public class Dropzone : TemplatedControl
         get { return GetValue(FileNameProperty); }
         set { 
             SetValue(FileNameProperty, value);
-            var icon = this.VisualChildren[0].FindLogicalDescendantOfType<Projektanker.Icons.Avalonia.Icon>();
+            var icon = this.VisualChildren
+                .FirstOrDefault()
+                .FindLogicalDescendantOfType<Projektanker.Icons.Avalonia.Icon>();
+
             if (icon != null)
             {
                 icon.Value = "fa-solid fa-file-circle-check";
@@ -95,9 +98,24 @@ public class Dropzone : TemplatedControl
         AddHandler(DragDrop.DragLeaveEvent, OnDragLeave);
 
         _area = this.GetTemplateChildren().First() as Border;
-        var browse = _area?.FindLogicalDescendantOfType<Button>();
+        if (_area != null)
+        {
+            InitializeControls(_area);
+        }
+    }
+
+    private void InitializeControls(Border root)
+    {
+        var browse = root.FindLogicalDescendantOfType<Button>();
+        var icon = root.FindLogicalDescendantOfType<Projektanker.Icons.Avalonia.Icon>();
+
         if (browse != null)
             browse.Click += SelectFile;
+
+        if (!string.IsNullOrEmpty(FileName) && icon != null)
+        {
+            icon.Value = "fa-solid fa-file-circle-check";
+        }
     }
 
     private void OnDragEnter(object? sender, DragEventArgs e)

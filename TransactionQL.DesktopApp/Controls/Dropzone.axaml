@@ -13,11 +13,14 @@
 
   <Design.PreviewWith>
     <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
-      <controls:Dropzone />
+      <controls:Dropzone FileName="test.xml" />
     </Border>
   </Design.PreviewWith>
 
   <ControlTheme x:Key="{x:Type controls:Dropzone}" TargetType="controls:Dropzone">
+    <ControlTheme.Resources>
+      <controls:FilePathConverter x:Key="filePathConverter"/> 
+    </ControlTheme.Resources>
     <Setter Property="FileDescription" Value="file" />
     <Setter Property="BrowseForeground" Value="{DynamicResource ThemeAccentBrush}" />
     <Setter Property="Highlight" Value="{DynamicResource ThemeAccentBrush}" />
@@ -48,6 +51,10 @@
           >
           <StackPanel Orientation="Vertical" Spacing="20" DragDrop.AllowDrop="True">
             <i:Icon Value="fa-solid fa-file-import" FontSize="32" Foreground="{TemplateBinding IconForeground}"/>
+            <TextBlock Name="FileName"
+                       Text="{TemplateBinding FileName, Converter={StaticResource filePathConverter}}"
+                       FontSize="10"
+                       TextAlignment="Center" />
             <TextBlock TextWrapping="Wrap" TextAlignment="Center">
               Drop your <Run Text="{TemplateBinding FileDescription}" /> here or <Button Name="Browse" Foreground="{TemplateBinding BrowseForeground}">browse</Button> to choose a file.
             </TextBlock>
