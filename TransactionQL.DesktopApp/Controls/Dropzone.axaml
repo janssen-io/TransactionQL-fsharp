@@ -24,7 +24,7 @@
     <Setter Property="FileDescription" Value="file" />
     <Setter Property="BrowseForeground" Value="{DynamicResource ThemeAccentBrush}" />
     <Setter Property="Highlight" Value="{DynamicResource ThemeAccentBrush}" />
-    <Setter Property="Background" Value="{DynamicResource BaseBackgroundBrush}" />
+    <Setter Property="Background" Value="{DynamicResource BaseSoftBackgroundBrush}" />
     <Setter Property="IconForeground" Value="CadetBlue" />
     <Setter Property="BoxShadow" Value="{DynamicResource InsetShadow}" />
     <Setter Property="CornerRadius" Value="7" />
