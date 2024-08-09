@@ -1,0 +1,87 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:TransactionQL.DesktopApp">
+
+  <!--
+    Additional resources 
+    Using Control Themes:
+         https://docs.avaloniaui.net/docs/basics/user-interface/styling/control-themes
+    Using Theme Variants:
+         https://docs.avaloniaui.net/docs/guides/styles-and-resources/how-to-use-theme-variants
+  -->
+
+  <Design.PreviewWith>
+    <Border Background="Gray">
+      <StackPanel>
+        <controls:StepIndicator />
+      </StackPanel>
+    </Border>
+  </Design.PreviewWith>
+  <LinearGradientBrush x:Key="wizardBarBrush" StartPoint="0.5,-1.0" EndPoint="0.5,1.0">
+    <GradientStop Color="#FF191919" Offset="0.25"/>
+    <GradientStop Color="#FF000000" Offset="0.50"/>
+    <GradientStop Color="#FFFFFFFF" Offset="0.75"/>
+  </LinearGradientBrush>
+
+  <ControlTheme x:Key="{x:Type controls:StepIndicator}" TargetType="controls:StepIndicator">
+    <Setter Property="Template">
+      <ControlTemplate >
+        <Border Padding="5">
+          <Panel>
+            <Panel.Effect>
+              <DropShadowEffect Color="#25000000"
+                                BlurRadius="0"
+                                OffsetX="0"
+                                OffsetY="-0.5"
+                                />
+            </Panel.Effect>
+            <StackPanel Orientation="Horizontal">
+              <StackPanel.Effect>
+                <DropShadowEffect Color="#25ffffff"
+                                  BlurRadius="0"
+                                  OffsetX="0"
+                                  OffsetY="0.5"
+                                />
+              </StackPanel.Effect>
+              <Border Classes="Step">
+                <TextBlock>1</TextBlock>
+              </Border>
+              <Border Classes="Line"></Border>
+              <Border Classes="Step">
+                <TextBlock>2</TextBlock>
+              </Border>
+              <Border Classes="Line"></Border>
+              <Border Classes="Step">
+                <TextBlock>3</TextBlock>
+              </Border>
+            </StackPanel>
+          </Panel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Styles>
+      <Style Selector="Panel Border">
+        <Setter Property="Background" Value="LightBlue" />
+      </Style>
+      <Style Selector="Panel StackPanel:nth-child(1)">
+
+        <Style Selector="^ Border.Step">
+          <Setter Property="ZIndex" Value="3" />
+          <Setter Property="CornerRadius" Value="10" />
+          <Setter Property="Width" Value="20" />
+
+          <Style Selector="^ TextBlock">
+            <Setter Property="TextAlignment" Value="Center" />
+          </Style>
+        </Style>
+
+        <Style Selector="^ Border.Line">
+          <Setter Property="ZIndex" Value="1" />
+          <Setter Property="Margin" Value="-2 0 -2 0" />
+          <Setter Property="Width" Value="40" />
+          <Setter Property="Height" Value="5" />
+        </Style>
+      </Style>
+    </Styles>
+  </ControlTheme>
+</ResourceDictionary>

@@ -25,7 +25,7 @@
           <SolidColorBrush x:Key="SubtitleForegroundBrush" Color="{StaticResource grey-600}" />
           <SolidColorBrush x:Key="ErrorForegroundBrush" Color="{StaticResource error-700}" />
           <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="{StaticResource error-200}" />
-          <SolidColorBrush x:Key="BaseBackgroundBrush" Color="White" />
+          <SolidColorBrush x:Key="BaseSoftBackgroundBrush" Color="White" />
           <SolidColorBrush x:Key="TableHeaderBackgroundBrush" Color="{StaticResource primary-200}" />
           <SolidColorBrush x:Key="TableHeaderForegroundBrush" Color="{StaticResource primary-800}" />
           <SolidColorBrush x:Key="DividerSoftBrush" Color="{StaticResource grey-200}" />
@@ -55,6 +55,7 @@
           <SolidColorBrush x:Key="ErrorForegroundBrush" Color="{StaticResource error-300}" />
           <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="{StaticResource error-900}" />
           <SolidColorBrush x:Key="BaseBackgroundBrush" Color="{StaticResource grey-900}" />
+          <SolidColorBrush x:Key="BaseSoftBackgroundBrush" Color="{StaticResource grey-800}" />
           <SolidColorBrush x:Key="TableHeaderBackgroundBrush" Color="{StaticResource primary-900}" />
           <SolidColorBrush x:Key="TableHeaderForegroundBrush" Color="{StaticResource primary-300}" />
           <SolidColorBrush x:Key="DividerSoftBrush" Color="{StaticResource grey-800}" />
