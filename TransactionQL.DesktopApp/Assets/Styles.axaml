@@ -45,46 +45,7 @@
     </Style>
   </Style>
 
-  <Style Selector="Separator">
-    <Setter Property="Background" Value="{DynamicResource DividerBrush}"/>
-  </Style>
-
-  <Style Selector="Grid.Editable, Grid.TableHeader">
-    <Style Selector="^ > TextBlock">
-      <Setter Property="Margin" Value="15 10" />
-    </Style>
-    <Style Selector="^ > TextBox /template/ Border">
-      <Setter Property="Margin" Value="5 5 9 5" />
-    </Style>
-    <Style Selector="^ > AutoCompleteBox /template/ TextBox /template/ Border">
-      <Setter Property="Background" Value="Transparent" />
-      <Setter Property="BorderThickness" Value="0" />
-      <Setter Property="Margin" Value="5 5" />
-    </Style>
-  </Style>
-
-  <Style Selector="Grid.Editable">
-    <Style Selector="^ Separator">
-      <Setter Property="Margin" Value="-20 0 -20 0" />
-      <Setter Property="Background" Value="{DynamicResource DividerSoftBrush}" />
-    </Style>
-  </Style>
-
-  <Style Selector="Grid.TableHeader">
-    <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}"/>
-    <Style Selector="^ TextBlock">
-      <Setter Property="Foreground" Value="{DynamicResource TableHeaderForegroundBrush}"/>
-      <Setter Property="TextAlignment" Value="Right" />
-      <Setter Property="FontWeight" Value="500" />
-      <Setter Property="FontSize" Value="10"/>
-      <Setter Property="LetterSpacing" Value="1"/>
-    </Style>
-    <Style Selector="^ Separator">
-      <Setter Property="Height" Value="2"/>
-      <Setter Property="Margin" Value="0" />
-      <Setter Property="Background" Value="{DynamicResource DividerBrush}" />
-    </Style>
-  </Style>
+  <StyleInclude Source="/Assets/Styles/Grid.axaml" />
 
   <!-- Text -->
   <Style Selector="TextBox.h1">
