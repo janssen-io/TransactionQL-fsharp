@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <AvaloniaXaml Remove="Assets\Styles.axaml" />
+      <AvaloniaXaml Remove="Assets\Styles\Grid.axaml" />
       <AvaloniaXaml Remove="Assets\Styles\RadioButton.axaml" />
       <AvaloniaXaml Remove="Assets\Variables.axaml" />
     </ItemGroup>
@@ -46,6 +47,9 @@
       </AvaloniaResource>
       <AvaloniaResource Update="Assets\lion.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </AvaloniaResource>
+      <AvaloniaResource Update="Assets\Styles\Grid.axaml">
+        <SubType>Designer</SubType>
       </AvaloniaResource>
       <AvaloniaResource Update="Assets\Styles\RadioButton.axaml">
         <SubType>Designer</SubType>
