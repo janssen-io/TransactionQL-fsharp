@@ -2,6 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using System;
+using TransactionQL.DesktopApp.ViewModels;
 
 namespace TransactionQL.DesktopApp;
 
@@ -17,6 +19,13 @@ public partial class DataWizardWindow : Window
         this.KeyDown += HandleKeyDown;
     }
 
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        base.OnDataContextChanged(e);
+        ((SelectDataWindowViewModel)DataContext).DataSelected += (sender, data) => Close();
+        ((SelectDataWindowViewModel)DataContext).SelectionCancelled += (sender, data) => Close();
+    }
+
     public void NextPage(object? sender, RoutedEventArgs e)
     {
         Pages.Next();
@@ -27,11 +36,6 @@ public partial class DataWizardWindow : Window
     {
         Pages.Previous();
         Progress.CurrentStep--;
-    }
-
-    public void Submit(object? sender, RoutedEventArgs e)
-    {
-        // TODO trigger event to send data back?
     }
 
     private void HandleKeyDown(object? sender, KeyEventArgs e)

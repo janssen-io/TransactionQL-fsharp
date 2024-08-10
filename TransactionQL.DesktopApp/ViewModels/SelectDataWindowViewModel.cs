@@ -77,9 +77,7 @@ public class SelectDataWindowViewModel : ViewModelBase
         });
 
         Cancel = ReactiveCommand.Create(() => SelectionCancelled?.Invoke(this, EventArgs.Empty));
-        SelectBank = ReactiveCommand.Create<Module>(module => {
-            Module = module;
-        });
+        SelectBank = ReactiveCommand.Create<Module>(module => Module = module);
     }
 
     public class SelectedData
