@@ -1,11 +1,18 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:app="using:TransactionQL.DesktopApp.Application"
+        xmlns:c="using:TransactionQL.DesktopApp.Controls"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Design.PreviewWith>
-    <Border Padding="20">
-      <!-- Add Controls for Previewer Here -->
-    </Border>
+    <StackPanel Orientation="Horizontal">
+      <ThemeVariantScope RequestedThemeVariant="Light">
+        <c:ThemePreviewStack />
+      </ThemeVariantScope>
+      <ThemeVariantScope RequestedThemeVariant="Dark">
+        <c:ThemePreviewStack />
+      </ThemeVariantScope>
+    </StackPanel>
   </Design.PreviewWith>
+  <StyleInclude Source="/Assets/Styles/RadioButton.axaml" />
   <!-- Generic Controls -->
   <Style Selector="Window">
     <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
@@ -42,25 +49,41 @@
     <Setter Property="Background" Value="{DynamicResource DividerBrush}"/>
   </Style>
 
+  <Style Selector="Grid.Editable, Grid.TableHeader">
+    <Style Selector="^ > TextBlock">
+      <Setter Property="Margin" Value="15 10" />
+    </Style>
+    <Style Selector="^ > TextBox /template/ Border">
+      <Setter Property="Margin" Value="5 5 9 5" />
+    </Style>
+    <Style Selector="^ > AutoCompleteBox /template/ TextBox /template/ Border">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Margin" Value="5 5" />
+    </Style>
+  </Style>
+
+  <Style Selector="Grid.Editable">
+    <Style Selector="^ Separator">
+      <Setter Property="Margin" Value="-20 0 -20 0" />
+      <Setter Property="Background" Value="{DynamicResource DividerSoftBrush}" />
+    </Style>
+  </Style>
 
   <Style Selector="Grid.TableHeader">
     <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}"/>
-  </Style>
-  <Style Selector=".TableHeader TextBlock">
-    <Setter Property="Foreground" Value="{DynamicResource TableHeaderForegroundBrush}"/>
-    <Setter Property="TextAlignment" Value="Right" />
-    <Setter Property="FontWeight" Value="500" />
-    <Setter Property="FontSize" Value="10"/>
-    <Setter Property="LetterSpacing" Value="1"/>
-    <Setter Property="Padding" Value="0 10 0 10" />
-  </Style>
-  <Style Selector=".TableHeader Separator">
-    <Setter Property="Background" Value="{DynamicResource DividerBrush}"/>
-    <Setter Property="Height" Value="2"/>
-  </Style>
-  <Style Selector=".Posting Separator">
-    <Setter Property="Margin" Value="-20 0 -20 0" />
-    <Setter Property="Background" Value="{DynamicResource DividerSoftBrush}" />
+    <Style Selector="^ TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource TableHeaderForegroundBrush}"/>
+      <Setter Property="TextAlignment" Value="Right" />
+      <Setter Property="FontWeight" Value="500" />
+      <Setter Property="FontSize" Value="10"/>
+      <Setter Property="LetterSpacing" Value="1"/>
+    </Style>
+    <Style Selector="^ Separator">
+      <Setter Property="Height" Value="2"/>
+      <Setter Property="Margin" Value="0" />
+      <Setter Property="Background" Value="{DynamicResource DividerBrush}" />
+    </Style>
   </Style>
 
   <!-- Text -->
@@ -102,12 +125,12 @@
     <Setter Property="Foreground" Value="{DynamicResource ErrorForegroundBrush}" />
   </Style>
 
-  <Style Selector="TextBox.Cell, AutoCompleteBox.Cell">
-    <Setter Property="Margin" Value="0,3" />
-    <Setter Property="VerticalAlignment" Value="Center" />
+  <!-- Cards -->
+  <Style Selector="Border.InnerCard">
+    <Setter Property="CornerRadius" Value="{DynamicResource Radius}" />
+    <Setter Property="ClipToBounds" Value="True" />
   </Style>
 
-  <!-- Cards -->
   <Style Selector="Border.Card">
     <Setter Property="Background" Value="{DynamicResource BaseBackgroundBrush}" />
     <Setter Property="BorderBrush" Value="{DynamicResource BackgroundBrush}" />
@@ -147,7 +170,7 @@
       <Transitions>
         <BrushTransition Property="Foreground" Duration="0:0:0.3"></BrushTransition>
         <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"></TransformOperationsTransition>
-    </Transitions>
+      </Transitions>
     </Setter>
     <Setter Property="Padding" Value="0" />
   </Style>

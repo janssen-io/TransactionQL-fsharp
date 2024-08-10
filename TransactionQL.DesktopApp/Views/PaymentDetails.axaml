@@ -11,7 +11,8 @@
              d:DesignWidth="500"
              x:Class="TransactionQL.DesktopApp.Views.PaymentDetails"
              x:DataType="vm:PaymentDetailsViewModel"
-             d:DataContext="{x:Static dd:DesignData.PaymentDetails}">
+             d:DataContext="{x:Static dd:DesignData.PaymentDetails}"
+             Name="Details">
   <Design.DesignStyle>
     <Styles>
       <StyleInclude Source="/Assets/Styles.axaml" />
@@ -59,13 +60,17 @@
                 >
           <DockPanel>
             <Grid ShowGridLines="False"
-                  ColumnDefinitions="7*,2*,2*"
                   RowDefinitions="*,*"
                   DockPanel.Dock="Top"
                   Classes="TableHeader">
-              <TextBlock Grid.Column="0" Grid.Row="0" Text="ACCOUNT" TextAlignment="Left" Margin="20 0 0 0" />
-              <TextBlock Grid.Column="1" Grid.Row="0" Text="CURRENCY" Margin="0 0 19 0"/>
-              <TextBlock Grid.Column="2" Grid.Row="0" Text="AMOUNT" Margin="0 0 26 0"/>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="B" />
+              </Grid.ColumnDefinitions>
+              <TextBlock Grid.Column="0" Grid.Row="0" Text="ACCOUNT" TextAlignment="Left" />
+              <TextBlock Grid.Column="1" Grid.Row="0" Text="CURRENCY" />
+              <TextBlock Grid.Column="2" Grid.Row="0" Text="AMOUNT" />
               <Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0" />
             </Grid>
             <ScrollViewer DockPanel.Dock="Bottom">
@@ -76,44 +81,27 @@
                     <Setter Property="(KeyboardNavigation.TabNavigation)" Value="Continue" />
                   </Style>
                 </ItemsControl.Styles>
-                <ItemsControl.Styles>
-                  <!--<Style Selector="Border.Posting:focus-within">
-                                  <Setter Property="Background" Value="#e2e9e4"></Setter>
-                                </Style>-->
-                </ItemsControl.Styles>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <Border Classes="Posting" Margin="20 5">
-                      <!-- Temporarily disable bindings for the AutoCompleteBox, because otherwise Avalonia cannot find 'ValidAccounts' on DataContext
-                                             As the type is seen as System.Object -->
-                      <Grid ShowGridLines="False" ColumnDefinitions="7*,2*,2*"
-                            RowDefinitions="*,*" >
-                        <AutoCompleteBox
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Padding="0, 5"
-                            Classes="Cell"
-                            x:CompileBindings="False"
-                            BorderBrush="Transparent"
-                            SelectedItem="{Binding Account}"
-                            TextFilter="{Binding AccountAutoCompletePredicate}"
-                            ItemsSource="{Binding Path=DataContext.ValidAccounts,
-                                    RelativeSource={RelativeSource FindAncestor, AncestorType=views:PaymentDetails}}" />
-                        <TextBox
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            Classes="Cell"
-                            Text="{Binding Currency}"
-                            TextAlignment="Right" />
-                        <TextBox
-                            Grid.Row="0"
-                            Grid.Column="2"
-                            Classes="Cell"
-                            Text="{Binding Amount}"
-                            TextAlignment="Right" />
-                        <Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" />
-                      </Grid>
-                    </Border>
+                    <Grid Classes="Editable"
+                          ShowGridLines="False"
+                          RowDefinitions="*,*" >
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="B" />
+                      </Grid.ColumnDefinitions>
+                      <AutoCompleteBox Grid.Row="0" Grid.Column="0"
+                                       BorderBrush="Transparent"
+                                       SelectedItem="{Binding Account}"
+                                       TextFilter="{Binding AccountAutoCompletePredicate}"
+                                       ItemsSource="{Binding Path=#Details.((vm:PaymentDetailsViewModel)DataContext).ValidAccounts}" />
+                      <TextBox Grid.Row="0" Grid.Column="1"
+                               Text="{Binding Currency}" TextAlignment="Right" />
+                      <TextBox Grid.Row="0" Grid.Column="2"
+                               Text="{Binding Amount}" TextAlignment="Right" />
+                      <Separator Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" />
+                    </Grid>
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>

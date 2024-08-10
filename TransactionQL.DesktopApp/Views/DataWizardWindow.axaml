@@ -17,6 +17,9 @@
     <c:EqualityConverter x:Key="equals" />
     <c:FilePathConverter x:Key="filePath" />
   </Window.Resources>
+  <Window.Styles>
+    <StyleInclude Source="/Assets/Styles.axaml" />
+  </Window.Styles>
   <Border Padding="20 40 20 20" Background="{DynamicResource BaseBackgroundBrush}">
     <DockPanel>
       <c:StepIndicator
@@ -39,7 +42,7 @@
               </ItemsControl.ItemsPanel>
               <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="vm:Module">
-                  <RadioButton GroupName="SelectedModule" Padding="-20 0 0 0" BorderBrush="{DynamicResource ForegroundSoftBrush}" Cursor="Hand"
+                  <RadioButton GroupName="SelectedModule" Classes="ToggleButton" Margin="0 0 5 0"
                                Command="{Binding #DataWizard.((vm:SelectDataWindowViewModel)DataContext).SelectBank}" CommandParameter="{Binding $self.DataContext}">
                     <RadioButton.Styles>
                       <Style Selector="RadioButton">
@@ -50,29 +53,8 @@
                           </MultiBinding>
                         </Setter>
                       </Style>
-                      <Style Selector="RadioButton > Border">
-                        <Setter Property="BorderThickness" Value="1" />
-                        <Setter Property="BorderBrush" Value="{DynamicResource grey-300}" />
-                        <Setter Property="Margin" Value="0 0 5 5" />
-                      </Style>
-                      <Style Selector="RadioButton /template/ Grid">
-                        <Style Selector="^ ColumnDefinition:nth-child(1)">
-                          <Setter Property="Width" Value="0" />
-                        </Style>
-                        <Style Selector="^ Grid">
-                          <Setter Property="IsVisible" Value="False" />
-                        </Style>
-                        <Style Selector="^ ContentPresenter">
-                          <Setter Property="Margin" Value="0" />
-                        </Style>
-                      </Style>
-                      <Style Selector="RadioButton:checked Border">
-                        <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}" />
-                      </Style>
                     </RadioButton.Styles>
-                    <Border>
-                      <TextBlock Text="{Binding Title}" Margin="10"/>
-                    </Border>
+                      <TextBlock Text="{Binding Title}" Margin="5"/>
                   </RadioButton>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
@@ -93,7 +75,7 @@
           </RelativePanel>
           <RelativePanel HorizontalAlignment="Stretch">
             <c:Dropzone FileDescription="accounts" FileTypes="*accounts*.ldg" FileName="{Binding AccountsFile, Mode=TwoWay}"
-                        RelativePanel.AlignHorizontalCenterWithPanel="True" HorizontalAlignment="Stretch" Width="260" Height="200" />
+                        RelativePanel.AlignHorizontalCenterWithPanel="True" Width="260" Height="200" />
             <Button Click="NextPage" IsEnabled="{Binding AccountsFile, Converter={StaticResource hasValue}}"
                     RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Next</Button>
             <Button Click="PreviousPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">Previous</Button>
