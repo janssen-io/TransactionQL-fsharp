@@ -1,4 +1,5 @@
-﻿using Avalonia.Data.Converters;
+﻿using Avalonia.Data;
+using Avalonia.Data.Converters;
 using System;
 using System.Globalization;
 using System.IO;
@@ -29,7 +30,7 @@ namespace TransactionQL.DesktopApp.Controls
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return BindingOperations.DoNothing;
         }
     }
 }
