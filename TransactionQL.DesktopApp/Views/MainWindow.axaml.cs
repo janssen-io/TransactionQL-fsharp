@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -45,16 +46,12 @@ public partial class MainWindow : Window
         {
             this.WindowState = WindowState.Normal;
         }
-
-        var steps = this.FindDescendantOfType<StepIndicator>();
-        if (Key.Up == e.Key) steps.CurrentStep++;
-        if (Key.Down == e.Key) steps.CurrentStep--;
     }
 
-    public MainWindow(MainWindowViewModel vm) : this()
+    protected override void OnDataContextChanged(EventArgs e)
     {
-        DataContext = vm;
-        ((MainWindowViewModel)DataContext).Saved += Save;
+        base.OnDataContextChanged(e);
+        ((MainWindowViewModel)DataContext!).Saved += Save;
         ((MainWindowViewModel)DataContext).ErrorThrown += ShowError;
     }
 
@@ -99,7 +96,9 @@ public partial class MainWindow : Window
         {
             AvailableModules = new ObservableCollection<Module>(files.Select(f =>
             {
+#pragma warning disable S3885 // "Assembly.Load" should be used - Load results in an exception
                 var title = Assembly.LoadFrom(f.FullName).GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
+#pragma warning restore S3885 // "Assembly.Load" should be used
                 return new Module(f.Name, title);
             }))
         };
@@ -123,6 +122,6 @@ public partial class MainWindow : Window
 
         var visibleItem = e.AddedItems.OfType<PaymentDetailsViewModel>().FirstOrDefault();
         visibleItem?.Activate();
-        ((MainWindowViewModel)this.DataContext).CountValid();
+        ((MainWindowViewModel)this.DataContext!).CountValid();
     }
 }

@@ -22,7 +22,7 @@ public partial class DataWizardWindow : Window
     protected override void OnDataContextChanged(EventArgs e)
     {
         base.OnDataContextChanged(e);
-        ((SelectDataWindowViewModel)DataContext).DataSelected += (sender, data) => Close();
+        ((SelectDataWindowViewModel)DataContext!).DataSelected += (sender, data) => Close();
         ((SelectDataWindowViewModel)DataContext).SelectionCancelled += (sender, data) => Close();
     }
 

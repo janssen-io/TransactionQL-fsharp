@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace TransactionQL.DesktopApp
 {
     [Serializable]
-    internal class ControlInitializationException : Exception
+    public class ControlInitializationException : Exception
     {
         public ControlInitializationException()
         {

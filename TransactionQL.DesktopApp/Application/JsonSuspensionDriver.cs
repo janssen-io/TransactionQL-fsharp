@@ -4,6 +4,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using Newtonsoft.Json;
 using ReactiveUI;
+using TransactionQL.DesktopApp.ViewModels;
 
 namespace TransactionQL.DesktopApp.Application;
 
@@ -34,7 +35,7 @@ public class JsonSuspensionDriver : ISuspensionDriver
 
         var lines = File.ReadAllText(_file);
         var state = JsonConvert.DeserializeObject<object>(lines, _settings);
-        return Observable.Return(state);
+        return Observable.Return(state ?? new MainWindowViewModel());
     }
 
     public IObservable<Unit> SaveState(object state)

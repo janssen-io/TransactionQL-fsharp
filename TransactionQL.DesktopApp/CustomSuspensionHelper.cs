@@ -12,7 +12,7 @@ namespace TransactionQL.DesktopApp;
 
 public class CustomSuspensionHelper
 {
-    private Subject<Unit> _launching;
+    private readonly Subject<Unit> _launching;
 
     public CustomSuspensionHelper(Subject<IDisposable> shouldPersistState, IApplicationLifetime lifetime)
     {
