@@ -1,12 +1,12 @@
-﻿using ReactiveUI;
-using System;
+﻿using Avalonia.Controls;
+using DynamicData;
+using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
-using Avalonia.Controls;
-using DynamicData;
+using System;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 

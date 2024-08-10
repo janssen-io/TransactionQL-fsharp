@@ -16,6 +16,7 @@
       <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="/Assets/Variables.axaml" />
         <ResourceInclude Source="/Controls/Dropzone.axaml" />
+        <ResourceInclude Source="/Controls/StepIndicator.axaml" />
       </ResourceDictionary.MergedDictionaries>
       <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
