@@ -1,21 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyTitle>ASN</AssemblyTitle>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <None Include="ASN.csv" />
-        <Compile Include="ASN.fs" />
-    </ItemGroup>
+  <ItemGroup>
+    <None Include="ASN.csv" />
+    <Compile Include="ASN.fs" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
-        <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
+    <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Update="FSharp.Core" Version="8.0.301" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="8.0.301" />
+  </ItemGroup>
 
 </Project>

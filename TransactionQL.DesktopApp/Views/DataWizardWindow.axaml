@@ -3,29 +3,99 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:c="using:TransactionQL.DesktopApp.Controls"
-        mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="450"
+        xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
+        xmlns:dd="using:TransactionQL.DesktopApp"
+        mc:Ignorable="d" Width="300" Height="350"
         x:Class="TransactionQL.DesktopApp.DataWizardWindow"
-        Title="DataWizardWindow">
-  <Panel>
-    <Carousel Name="Pages">
-      <Carousel.Items>
-        <Panel>
-          <!-- TODO: for each plugin, show selectable 'box' -->
-          <Button Click="NextPage">Next</Button>
-        </Panel>
-        <StackPanel Spacing="20" Margin="20">
-          <c:Dropzone FileDescription="transactions" FileTypes="*.csv"/>
-          <Button HorizontalAlignment="Right" Click="NextPage">Next</Button>
-        </StackPanel>
-        <Panel>
-          <c:Dropzone FileDescription="filters" FileTypes="*.tql" />
-          <Button Click="NextPage">Next</Button>
-        </Panel>
-        <Panel>
-          <c:Dropzone FileDescription="accounts" FileTypes="*accounts*.ldg" />
-          <Button>Get started</Button>
-        </Panel>
-      </Carousel.Items>
-    </Carousel>
-  </Panel>
+        Title="DataWizardWindow"
+        d:DataContext="{x:Static dd:DesignData.DataWizard}"
+        x:DataType="vm:SelectDataWindowViewModel"
+        Name="DataWizard">
+  <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
+    <DockPanel>
+      <c:StepIndicator
+        Name="Progress" Margin="0 0 0 20"
+        NumberOfSteps="4" StepWidth="55"
+        InactiveBackground="{DynamicResource BackgroundBrush}"
+        DockPanel.Dock="Top" HorizontalAlignment="Center" />
+      <Carousel Name="Pages" DockPanel.Dock="Bottom">
+        <Carousel.PageTransition >
+          <CrossFade Duration="0:00:00.400" />
+        </Carousel.PageTransition>
+        <Carousel.Items>
+          <RelativePanel HorizontalAlignment="Stretch">
+            <TextBlock Name="Header" RelativePanel.AlignTopWithPanel="True" Margin="0 0 0 10">Select your bank</TextBlock>
+            <ItemsControl RelativePanel.Below="Header" ItemsSource="{Binding AvailableModules}" x:DataType="vm:SelectDataWindowViewModel">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:Module">
+                  <RadioButton GroupName="SelectedModule" Padding="-20 0 0 0" BorderBrush="{DynamicResource ForegroundSoftBrush}" Cursor="Hand"
+                               Command="{Binding #DataWizard.((vm:SelectDataWindowViewModel)DataContext).SelectBank}" CommandParameter="{Binding $self.DataContext}">
+                    <RadioButton.Styles>
+                      <Style Selector="RadioButton > Border">
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource grey-300}" />
+                        <Setter Property="Margin" Value="0 0 5 5" />
+                      </Style>
+                      <Style Selector="RadioButton /template/ Grid">
+                        <Style Selector="^ ColumnDefinition:nth-child(1)">
+                          <Setter Property="Width" Value="0" />
+                        </Style>
+                        <Style Selector="^ Grid">
+                          <Setter Property="IsVisible" Value="False" />
+                        </Style>
+                        <Style Selector="^ ContentPresenter">
+                          <Setter Property="Margin" Value="0" />
+                        </Style>
+                      </Style>
+                      <Style Selector="RadioButton:checked Border">
+                        <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}" />
+                      </Style>
+                    </RadioButton.Styles>
+                    <Border>
+                      <TextBlock Text="{Binding Title}" Margin="10"/>
+                    </Border>
+                  </RadioButton>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Button Click="NextPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Next</Button>
+          </RelativePanel>
+          <RelativePanel HorizontalAlignment="Stretch">
+            <c:Dropzone FileDescription="transactions" FileTypes="*.csv"  FileName="{Binding TransactionsFile, Mode=TwoWay}"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True" HorizontalAlignment="Stretch" Width="260" Height="200" />
+            <Button Click="NextPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Next</Button>
+            <Button Click="PreviousPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">Previous</Button>
+          </RelativePanel>
+          <RelativePanel HorizontalAlignment="Stretch">
+            <c:Dropzone FileDescription="accounts" FileTypes="*accounts*.ldg" FileName="{Binding AccountsFile, Mode=TwoWay}"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True" HorizontalAlignment="Stretch" Width="260" Height="200" />
+            <Button Click="NextPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Next</Button>
+            <Button Click="PreviousPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">Previous</Button>
+          </RelativePanel>
+          <RelativePanel HorizontalAlignment="Stretch">
+            <c:Dropzone FileDescription="filters" FileTypes="*.tql" FileName="{Binding FiltersFile, Mode=TwoWay}"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True" HorizontalAlignment="Stretch" Width="260" Height="200" />
+            <Button Click="NextPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Next</Button>
+            <Button Click="PreviousPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">Previous</Button>
+          </RelativePanel>
+          <RelativePanel HorizontalAlignment="Stretch">
+            <StackPanel Orientation="Vertical">
+              <TextBlock RelativePanel.AlignTopWithPanel="True" Margin="0 0 0 10" Text="{Binding TransactionsFile}" TextTrimming="LeadingCharacterEllipsis" />
+              <TextBlock RelativePanel.AlignTopWithPanel="True" Margin="0 0 0 10" Text="{Binding AccountsFile}" TextTrimming="LeadingCharacterEllipsis" />
+              <TextBlock RelativePanel.AlignTopWithPanel="True" Margin="0 0 0 10" Text="{Binding FiltersFile}" TextTrimming="LeadingCharacterEllipsis" />
+              <TextBlock RelativePanel.AlignTopWithPanel="True" Margin="0 0 0 10" Text="{Binding Module.Title}" TextTrimming="LeadingCharacterEllipsis" />
+            </StackPanel>
+
+            <Button Click="Submit" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Get Started</Button>
+            <Button Click="PreviousPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">Previous</Button>
+          </RelativePanel>
+        </Carousel.Items>
+      </Carousel>
+    </DockPanel>
+  </Border>
 </Window>

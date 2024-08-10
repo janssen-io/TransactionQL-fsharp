@@ -1,11 +1,11 @@
-﻿using System.Collections.ObjectModel;
+﻿using ReactiveUI;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using System;
+using System.IO;
 
 namespace TransactionQL.DesktopApp.ViewModels;
-
-using ReactiveUI;
-using System;
 
 public class SelectDataWindowViewModel : ViewModelBase
 {
@@ -43,17 +43,17 @@ public class SelectDataWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _accountsFile, value);
     }
 
-    private string? _module = "";
+    private Module? _module;
 
-    public string? Module
+    public Module? Module
     {
         get => _module;
         set => this.RaiseAndSetIfChanged(ref _module, value);
     }
 
-    private ObservableCollection<string> _availableModules = new();
+    private ObservableCollection<Module> _availableModules = new();
 
-    public ObservableCollection<string> AvailableModules
+    public ObservableCollection<Module> AvailableModules
     {
         get => _availableModules;
         set
@@ -65,6 +65,7 @@ public class SelectDataWindowViewModel : ViewModelBase
 
     public ICommand Submit { get; }
     public ICommand Cancel { get; }
+    public ICommand SelectBank { get; }
 
     public SelectDataWindowViewModel()
     {
@@ -72,10 +73,13 @@ public class SelectDataWindowViewModel : ViewModelBase
         {
             // TODO: disable button/show message if not everything is selected.
             DataSelected?.Invoke(this,
-                new SelectedData(TransactionsFile, HasHeader, FiltersFile, AccountsFile, Module));
+                new SelectedData(TransactionsFile, HasHeader, FiltersFile, AccountsFile, Module!.FileName));
         });
 
         Cancel = ReactiveCommand.Create(() => SelectionCancelled?.Invoke(this, EventArgs.Empty));
+        SelectBank = ReactiveCommand.Create<Module>(module => {
+            Module = module;
+        });
     }
 
     public class SelectedData
@@ -95,5 +99,35 @@ public class SelectDataWindowViewModel : ViewModelBase
             AccountsFile = accountsFile;
             Module = module;
         }
+    }
+}
+public class Module : ViewModelBase
+{
+    private string _title = "";
+
+    public string Title
+    {
+        get => _title;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _title, value);
+        }
+    }
+
+    private string _fileName = "";
+
+    public string FileName
+    {
+        get => _fileName;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _fileName, value);
+        }
+    }
+
+    public Module(string fileName, string? title)
+    {
+        FileName = fileName;
+        Title = title ?? Path.GetFileNameWithoutExtension(fileName);
     }
 }

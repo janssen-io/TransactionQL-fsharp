@@ -1,6 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="using:TransactionQL.DesktopApp">
+        xmlns:controls="using:TransactionQL.DesktopApp.Controls"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia">
 
   <!--
     Additional resources 
@@ -11,77 +12,106 @@
   -->
 
   <Design.PreviewWith>
-    <Border Background="Gray">
-      <StackPanel>
-        <controls:StepIndicator />
-      </StackPanel>
+    <Border Width="500" Background="Gray">
+      <controls:StepIndicator
+        InactiveBackground="White"
+        NumberOfSteps="5"
+        CurrentStep="2" />
     </Border>
   </Design.PreviewWith>
-  <LinearGradientBrush x:Key="wizardBarBrush" StartPoint="0.5,-1.0" EndPoint="0.5,1.0">
-    <GradientStop Color="#FF191919" Offset="0.25"/>
-    <GradientStop Color="#FF000000" Offset="0.50"/>
-    <GradientStop Color="#FFFFFFFF" Offset="0.75"/>
-  </LinearGradientBrush>
 
   <ControlTheme x:Key="{x:Type controls:StepIndicator}" TargetType="controls:StepIndicator">
+    <Setter Property="InactiveBackground" Value="{DynamicResource BaseBackgroundBrush}" />
+    <Setter Property="ActiveBackground" Value="{DynamicResource ThemeAccentBrush}" />
     <Setter Property="Template">
-      <ControlTemplate >
+      <ControlTemplate>
         <Border Padding="5">
-          <Panel>
-            <Panel.Effect>
+          <Border.Styles>
+            <Style Selector="Border.Step, Border.Line">
+              <Setter Property="Background" Value="{Binding InactiveBackground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:StepIndicator}}}" />
+            </Style>
+            <Style Selector="Border.Active">
+              <Setter Property="Background" Value="{Binding ActiveBackground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:StepIndicator}}}" />
+            </Style>
+            <Style Selector="i|Icon">
+              <Setter Property="FontSize" Value="10" />
+              <Setter Property="VerticalAlignment" Value="Center" />
+              <Setter Property="HorizontalAlignment" Value="Center" />
+            </Style>
+            <Style Selector="TextBlock">
+              <Setter Property="FontSize" Value="12" />
+              <Setter Property="VerticalAlignment" Value="Center" />
+              <Setter Property="HorizontalAlignment" Value="Center" />
+            </Style>
+
+            <Style Selector="controls|StepIndicator">
+              <Style Selector="^ Border.Step">
+                <Setter Property="ZIndex" Value="3" />
+                <Setter Property="CornerRadius" Value="10" />
+                <Setter Property="Width" Value="20" />
+                <Setter Property="Height" Value="20" />
+              </Style>
+
+              <Style Selector="^ Border.Line">
+                <Setter Property="ZIndex" Value="1" />
+                <Setter Property="Margin" Value="0" />
+                <Setter Property="MinWidth" Value="{Binding StepWidth, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:StepIndicator}}}" />
+                <Setter Property="Height" Value="5" />
+                <Setter Property="HorizontalAlignment" Value="Stretch" />
+              </Style>
+            </Style>
+            <Style Selector="StackPanel.Part:nth-child(1) Border.Line">
+              <Setter Property="Width" Value="0" />
+            </Style>
+          </Border.Styles>
+          <Border>
+            <Border.Effect>
               <DropShadowEffect Color="#25000000"
                                 BlurRadius="0"
                                 OffsetX="0"
                                 OffsetY="-0.5"
                                 />
-            </Panel.Effect>
-            <StackPanel Orientation="Horizontal">
-              <StackPanel.Effect>
+            </Border.Effect>
+            <Border HorizontalAlignment="Stretch">
+              <Border.Effect>
                 <DropShadowEffect Color="#25ffffff"
                                   BlurRadius="0"
                                   OffsetX="0"
                                   OffsetY="0.5"
                                 />
-              </StackPanel.Effect>
-              <Border Classes="Step">
-                <TextBlock>1</TextBlock>
-              </Border>
-              <Border Classes="Line"></Border>
-              <Border Classes="Step">
-                <TextBlock>2</TextBlock>
-              </Border>
-              <Border Classes="Line"></Border>
-              <Border Classes="Step">
-                <TextBlock>3</TextBlock>
-              </Border>
-            </StackPanel>
-          </Panel>
+              </Border.Effect>
+              <ItemsControl ItemsSource="{TemplateBinding Items}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal">
+                    </StackPanel>
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate DataType="controls:Step">
+                    <StackPanel Orientation="Horizontal">
+                      <Border Classes="Line"
+                              Classes.Active="{Binding IsCompleted}"
+                              IsVisible="{Binding !IsLeader}"
+                              Grid.Column="0" />
+                      <Border Classes="Step"
+                              Classes.Active="{Binding IsCompleted}"
+                              Grid.Column="1">
+                        <UniformGrid>
+                          <TextBlock Text="{Binding Name}" IsVisible="{Binding !IsCompleted}" />
+                          <i:Icon Value="fa-solid fa-check" IsVisible="{Binding IsCompleted}" />
+                        </UniformGrid>
+                      </Border>
+                    </StackPanel>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </Border>
+          </Border>
         </Border>
       </ControlTemplate>
     </Setter>
     <Styles>
-      <Style Selector="Panel Border">
-        <Setter Property="Background" Value="LightBlue" />
-      </Style>
-      <Style Selector="Panel StackPanel:nth-child(1)">
-
-        <Style Selector="^ Border.Step">
-          <Setter Property="ZIndex" Value="3" />
-          <Setter Property="CornerRadius" Value="10" />
-          <Setter Property="Width" Value="20" />
-
-          <Style Selector="^ TextBlock">
-            <Setter Property="TextAlignment" Value="Center" />
-          </Style>
-        </Style>
-
-        <Style Selector="^ Border.Line">
-          <Setter Property="ZIndex" Value="1" />
-          <Setter Property="Margin" Value="-2 0 -2 0" />
-          <Setter Property="Width" Value="40" />
-          <Setter Property="Height" Value="5" />
-        </Style>
-      </Style>
     </Styles>
   </ControlTheme>
 </ResourceDictionary>

@@ -42,7 +42,6 @@
           Name="Area"
           CornerRadius="{TemplateBinding CornerRadius}"
           Padding="20"
-          MaxWidth="200"
           Background="{TemplateBinding Background}"
           BoxShadow="{TemplateBinding BoxShadow}"
           BorderThickness="1"

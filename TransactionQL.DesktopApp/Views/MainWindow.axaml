@@ -11,7 +11,7 @@
         Width="1000"
         x:Class="TransactionQL.DesktopApp.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Title="TransactionQL Desktop"
+        Title="Ledger Leo"
         Icon="/Assets/lion.ico"
         ExtendClientAreaToDecorationsHint="True"
         DataContext="{x:Static dd:DesignData.MainWindow}">
@@ -41,7 +41,7 @@
               <TextBlock Text="Last saved:" FontStyle="Italic" />
               <TextBlock Text="{Binding LastSaved}" FontStyle="Italic" VerticalAlignment="Center" />
               <!-- Hide the actual numbers for now, but keep indicator at bottom of window -->
-              <!-- Maybe we can make it a settings to hide/show it? -->
+              <!-- Maybe we can make it a setting to hide/show it? -->
               <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
                           IsVisible="False">
                 <TextBlock Text="{Binding NumberOfValidTransactions}" />
@@ -85,7 +85,6 @@
         <Border Name="Transactions" Grid.Column="1">
           <Border Classes="Card">
             <DockPanel>
-              <c:Dropzone Height="150" FileName="Test.csv" />
               <Border Classes="CardAccent" />
               <ListBox DockPanel.Dock="Bottom"
                        SelectionMode="Single"

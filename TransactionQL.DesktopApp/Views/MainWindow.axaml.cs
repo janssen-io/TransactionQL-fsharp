@@ -1,14 +1,17 @@
-using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using Avalonia.VisualTree;
 using ReactiveUI;
+using TransactionQL.DesktopApp.Controls;
 using TransactionQL.DesktopApp.ViewModels;
+using Module = TransactionQL.DesktopApp.ViewModels.Module;
 
 namespace TransactionQL.DesktopApp.Views;
 
@@ -42,6 +45,10 @@ public partial class MainWindow : Window
         {
             this.WindowState = WindowState.Normal;
         }
+
+        var steps = this.FindDescendantOfType<StepIndicator>();
+        if (Key.Up == e.Key) steps.CurrentStep++;
+        if (Key.Down == e.Key) steps.CurrentStep--;
     }
 
     public MainWindow(MainWindowViewModel vm) : this()
@@ -87,16 +94,22 @@ public partial class MainWindow : Window
     {
         var pluginDirectory = TransactionQL.Application.Configuration.createAndGetPluginDir;
         var dir = new DirectoryInfo(pluginDirectory);
-        var files = dir.GetFiles("*.dll").Select(f => f.Name);
+        var files = dir.GetFiles("*.dll");
         var selectDataVm = new SelectDataWindowViewModel()
         {
-            AvailableModules = new ObservableCollection<string>(files)
+            AvailableModules = new ObservableCollection<Module>(files.Select(f =>
+            {
+                var title = Assembly.LoadFrom(f.FullName).GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
+                return new Module(f.Name, title);
+            }))
         };
+
         selectDataVm.DataSelected += (_, data) => ((MainWindowViewModel)DataContext!).Parse(data);
 
-        var selectWindow = new SelectDataWindow(selectDataVm)
+        var selectWindow = new DataWizardWindow()
         {
-            WindowStartupLocation = WindowStartupLocation.CenterOwner
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            DataContext = selectDataVm,
         };
         selectWindow.Closed += (_, _) => IsEnabled = true;
 

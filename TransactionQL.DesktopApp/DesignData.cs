@@ -44,4 +44,13 @@ public static class DesignData
     {
         BankTransactions = [PaymentDetails, PaymentDetails2 ]
     };
+
+    public static readonly SelectDataWindowViewModel DataWizard = new()
+    {
+        AvailableModules = [
+            new("asn.dll", "ASN"),
+            new("ing.dll", "ING"),
+            new("triodos.dll", "Triodos"),
+        ],
+    };
 }

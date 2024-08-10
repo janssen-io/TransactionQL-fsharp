@@ -1,23 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyTitle>ING</AssemblyTitle>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <None Include="ing.csv">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <Compile Include="ING.fs" />
-    </ItemGroup>
+  <ItemGroup>
+    <None Include="ing.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Compile Include="ING.fs" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
-        <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
+    <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Update="FSharp.Core" Version="8.0.301" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="8.0.301" />
+  </ItemGroup>
 
 </Project>

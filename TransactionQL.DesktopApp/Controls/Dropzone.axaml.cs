@@ -39,7 +39,7 @@ public class Dropzone : TemplatedControl
     public string FileName
     {
         get { return GetValue(FileNameProperty); }
-        set { 
+        set {
             SetValue(FileNameProperty, value);
             var icon = this.VisualChildren
                 .FirstOrDefault()
