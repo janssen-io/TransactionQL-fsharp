@@ -100,12 +100,9 @@ public class StepIndicator : TemplatedControl
         }
     }
 
-    Control? _root;
-
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-        _root = this.GetTemplateChildren().FirstOrDefault() as Control;
 
         Items.Clear();
         for (uint i = 1; i <= NumberOfSteps; i++)
