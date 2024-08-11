@@ -43,12 +43,12 @@
           <SolidColorBrush x:Key="Primary2ForegroundBrush" Color="{StaticResource primary-800}" />
           <SolidColorBrush x:Key="SoftForegroundBrush" Color="{StaticResource grey-100}" />
           <BoxShadows x:Key="RaisedShadow">inset 0 -1 0 #000000, inset 0 1 0 #ffffff </BoxShadows>
-          <BoxShadows x:Key="PrimaryShadow">5 0 15 -5 #4480f465</BoxShadows>
+          <BoxShadows x:Key="PrimaryShadow">0 0 15 5 #4480f465</BoxShadows>
           <BoxShadows x:Key="InsetShadow">inset 0 -2 0 0 #55ffffff, inset 0 2 3 0 #25000000</BoxShadows>
-          <BoxShadows x:Key="elevate-100">0 2 3 #dfe4df</BoxShadows>
-          <BoxShadows x:Key="elevate-200">0 5 15 #090f240f, 0 2 4 #190f240f</BoxShadows>
-          <BoxShadows x:Key="elevate-300">0 7 15 #490f240f, 0 12 8 -11 #29dfe4df</BoxShadows>
-          <BoxShadows x:Key="elevate-400">0 9 20 #890f240f, 0 15 10 -13 #290f240f</BoxShadows>
+          <BoxShadows x:Key="elevate-100">0 1 3 #18171c1a, 0 1 2 #3d171c1a</BoxShadows>
+          <BoxShadows x:Key="elevate-200">0 3 6 #28171c1a, 0 3 6 #39171c1a</BoxShadows>
+          <BoxShadows x:Key="elevate-300">0 6 6 #39171c1a, 0 10 20 #30171c1a</BoxShadows>
+          <BoxShadows x:Key="elevate-400">0 14 28 #44171c1a, 0 10 10 #3f171c1a</BoxShadows>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
           <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource primary-800}" />
