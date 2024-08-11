@@ -12,14 +12,23 @@
   -->
 
   <Design.PreviewWith>
-    <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
-      <controls:Dropzone FileName="test.xml" />
-    </Border>
+    <StackPanel Orientation="Horizontal" Spacing="3" Background="{DynamicResource PrimaryForegroundBrush}">
+      <ThemeVariantScope RequestedThemeVariant="Light">
+        <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
+          <controls:Dropzone FileName="test.xml" />
+        </Border>
+      </ThemeVariantScope>
+      <ThemeVariantScope RequestedThemeVariant="Dark">
+        <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
+          <controls:Dropzone FileName="test.xml" />
+        </Border>
+      </ThemeVariantScope>
+    </StackPanel>
   </Design.PreviewWith>
 
   <ControlTheme x:Key="{x:Type controls:Dropzone}" TargetType="controls:Dropzone">
     <ControlTheme.Resources>
-      <controls:FilePathConverter x:Key="filePathConverter"/> 
+      <controls:FilePathConverter x:Key="filePathConverter"/>
     </ControlTheme.Resources>
     <Setter Property="FileDescription" Value="file" />
     <Setter Property="BrowseForeground" Value="{DynamicResource ThemeAccentBrush}" />
@@ -38,16 +47,15 @@
     </Styles>
     <Setter Property="Template">
       <ControlTemplate>
-        <Border 
+        <Border
           Name="Area"
           CornerRadius="{TemplateBinding CornerRadius}"
           Padding="20"
           Background="{TemplateBinding Background}"
           BoxShadow="{TemplateBinding BoxShadow}"
-          BorderThickness="1"
-          BorderBrush="Transparent"
-          DragDrop.AllowDrop="True"
-          >
+          BorderThickness="2"
+          BorderBrush="{DynamicResource BackgroundBrush}"
+          DragDrop.AllowDrop="True" >
           <StackPanel Orientation="Vertical" Spacing="20" DragDrop.AllowDrop="True">
             <i:Icon Value="fa-solid fa-file-import" FontSize="32" Foreground="{TemplateBinding IconForeground}"/>
             <TextBlock Name="FileName"
