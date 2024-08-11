@@ -1,9 +1,18 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Design.PreviewWith>
-    <Border Padding="20">
-      <!-- Add Controls for Previewer Here -->
-    </Border>
+    <StackPanel Orientation="Vertical" Spacing="3" Background="{DynamicResource PrimaryForegroundBrush}">
+      <ThemeVariantScope RequestedThemeVariant="Light">
+        <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
+          <ProgressBar Classes="Glow" Value="3" Maximum="10" HorizontalAlignment="Stretch" />
+        </Border>
+      </ThemeVariantScope>
+      <ThemeVariantScope RequestedThemeVariant="Dark">
+        <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
+          <ProgressBar Classes="Glow" Value="3" Maximum="10" HorizontalAlignment="Stretch" />
+        </Border>
+      </ThemeVariantScope>
+    </StackPanel>
   </Design.PreviewWith>
 
   <Style Selector="ProgressBar.Glow">
