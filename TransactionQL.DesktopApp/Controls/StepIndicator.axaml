@@ -12,12 +12,22 @@
   -->
 
   <Design.PreviewWith>
-    <Border Width="500" Background="Gray">
+    <StackPanel Orientation="Horizontal" Spacing="3" Background="{DynamicResource PrimaryForegroundBrush}">
+      <ThemeVariantScope RequestedThemeVariant="Light">
+        <Border Padding="20" Background="{DynamicResource BackgroundBrush}">
       <controls:StepIndicator
-        InactiveBackground="White"
         NumberOfSteps="5"
         CurrentStep="2" />
-    </Border>
+        </Border>
+      </ThemeVariantScope>
+      <ThemeVariantScope RequestedThemeVariant="Dark">
+        <Border Padding="20" Background="{DynamicResource BackgroundBrush}">
+      <controls:StepIndicator
+        NumberOfSteps="5"
+        CurrentStep="2" />
+        </Border>
+      </ThemeVariantScope>
+    </StackPanel>
   </Design.PreviewWith>
 
   <ControlTheme x:Key="{x:Type controls:StepIndicator}" TargetType="controls:StepIndicator">
