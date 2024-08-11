@@ -105,6 +105,7 @@
       <DockPanel VerticalAlignment="Bottom" Grid.Row="3">
         <ProgressBar Minimum="0" Maximum="{Binding BankTransactions.Count}"
                      Value="{Binding NumberOfValidTransactions}"
+                     Classes="Glow"
                      DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" />
       </DockPanel>
     </Grid>

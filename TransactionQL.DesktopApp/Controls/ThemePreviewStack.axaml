@@ -24,6 +24,7 @@
         <RadioButton Classes="ToggleButton" GroupName="Preview">Option 2</RadioButton>
       </StackPanel>
       <ProgressBar Minimum="0" Maximum="10"  Value="3" />
+      <ProgressBar Minimum="0" Maximum="10"  Value="3" Classes="Glow" />
       <Border Classes="Card">
         <Border Classes="InnerCard">
           <StackPanel Orientation="Vertical">

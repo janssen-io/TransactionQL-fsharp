@@ -16,7 +16,9 @@
 
     <ItemGroup>
       <AvaloniaXaml Remove="Assets\Styles.axaml" />
+      <AvaloniaXaml Remove="Assets\Styles\Cards.axaml" />
       <AvaloniaXaml Remove="Assets\Styles\Grid.axaml" />
+      <AvaloniaXaml Remove="Assets\Styles\ProgressBar.axaml" />
       <AvaloniaXaml Remove="Assets\Styles\RadioButton.axaml" />
       <AvaloniaXaml Remove="Assets\Variables.axaml" />
     </ItemGroup>
@@ -48,7 +50,13 @@
       <AvaloniaResource Update="Assets\lion.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </AvaloniaResource>
+      <AvaloniaResource Update="Assets\Styles\Cards.axaml">
+        <SubType>Designer</SubType>
+      </AvaloniaResource>
       <AvaloniaResource Update="Assets\Styles\Grid.axaml">
+        <SubType>Designer</SubType>
+      </AvaloniaResource>
+      <AvaloniaResource Update="Assets\Styles\ProgressBar.axaml">
         <SubType>Designer</SubType>
       </AvaloniaResource>
       <AvaloniaResource Update="Assets\Styles\RadioButton.axaml">
