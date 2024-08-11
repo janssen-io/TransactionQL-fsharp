@@ -5,7 +5,11 @@
     <StackPanel Orientation="Horizontal">
       <ThemeVariantScope RequestedThemeVariant="Light">
         <StackPanel Orientation="Vertical" Background="{DynamicResource BackgroundBrush}">
-          <Border Classes="Card" BoxShadow="{DynamicResource elevate-100}" Width="100" Height="100" Margin="20" />
+          <Border Classes="Card" BoxShadow="{DynamicResource elevate-100}" Width="100" Height="100" Margin="20">
+            <Border Classes="CardAccent">
+              <Border />
+            </Border>
+          </Border>
           <Border Classes="Card" BoxShadow="{DynamicResource elevate-200}" Width="100" Height="100" Margin="20" />
           <Border Classes="Card" BoxShadow="{DynamicResource elevate-300}" Width="100" Height="100" Margin="20" />
           <Border Classes="Card" BoxShadow="{DynamicResource elevate-400}" Width="100" Height="100" Margin="20" />
@@ -13,7 +17,11 @@
       </ThemeVariantScope>
       <ThemeVariantScope RequestedThemeVariant="Dark">
         <StackPanel Orientation="Vertical" Background="{DynamicResource BackgroundBrush}">
-          <Border Classes="Card" BoxShadow="{DynamicResource elevate-100}" Width="100" Height="100" Margin="20" />
+          <Border Classes="Card" BoxShadow="{DynamicResource elevate-100}" Width="100" Height="100" Margin="20">
+            <Border Classes="CardAccent">
+              <Border />
+            </Border>
+          </Border>
           <Border Classes="Card" BoxShadow="{DynamicResource elevate-200}" Width="100" Height="100" Margin="20" />
           <Border Classes="Card" BoxShadow="{DynamicResource elevate-300}" Width="100" Height="100" Margin="20" />
           <Border Classes="Card" BoxShadow="{DynamicResource elevate-400}" Width="100" Height="100" Margin="20" />
@@ -22,11 +30,9 @@
     </StackPanel>
   </Design.PreviewWith>
 
-  <Style Selector="Border">
-    <Style Selector="^.Card">
+  <Style Selector="Border.Card">
       <Setter Property="Background" Value="{DynamicResource BaseBackgroundBrush}" />
       <Setter Property="BorderBrush" Value="{DynamicResource BackgroundBrush}" />
-      <Setter Property="BorderThickness" Value="1" />
       <Setter Property="BoxShadow" Value="{DynamicResource elevate-200}" />
       <Setter Property="CornerRadius" Value="{DynamicResource Radius}" />
 
@@ -40,11 +46,13 @@
       </Style>
 
       <Style Selector="^ Border.CardAccent">
-        <Setter Property="BorderBrush" Value="{DynamicResource TableHeaderBackgroundBrush}" />
-        <Setter Property="BorderThickness" Value="0 5 0 0" />
         <Setter Property="ClipToBounds" Value="True" />
         <Setter Property="CornerRadius" Value="{DynamicResource AccentRadius}" />
+        <Style Selector="^ > Border">
+
+          <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBackgroundBrush}" />
+          <Setter Property="BorderThickness" Value="0 5 0 0" />
+        </Style>
       </Style>
-    </Style>
   </Style>
 </Styles>
