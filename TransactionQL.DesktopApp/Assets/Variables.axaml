@@ -42,6 +42,6 @@
   <Color x:Key="opacity-90">hsla(0, 0%, 0%, 90%)</Color>
 
   <CornerRadius x:Key="Radius">7</CornerRadius>
-  <CornerRadius x:Key="AccentRadius">7 7 0 0</CornerRadius>
+  <CornerRadius x:Key="AccentRadius">5 0</CornerRadius>
 
 </ResourceDictionary>

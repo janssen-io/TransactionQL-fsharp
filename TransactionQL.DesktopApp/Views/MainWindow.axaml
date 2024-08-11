@@ -85,8 +85,11 @@
         <Border Name="Transactions" Grid.Column="1">
           <Border Classes="Card">
             <DockPanel>
-              <Border Classes="CardAccent" />
+              <!--<Border Classes="CardAccent" DockPanel.Dock="Top">
+                <Border />
+              </Border>-->
               <ListBox DockPanel.Dock="Bottom"
+                       CornerRadius="{DynamicResource Radius}"
                        SelectionMode="Single"
                        Name="TransactionsList" ItemsSource="{Binding BankTransactions}"
                        SelectedIndex="{Binding BankTransactionIndex}" >
