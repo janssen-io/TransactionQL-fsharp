@@ -20,7 +20,14 @@
       </ResourceDictionary.MergedDictionaries>
       <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Light">
-          <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource primary-200}" />
+          <SolidColorBrush x:Key="SelectionBrush">
+            <SolidColorBrush.Color>
+              <MultiBinding Converter="{x:Static app:ColourMixer.MixOpacity}">
+                <Binding Source="{StaticResource primary-500}" />
+                <Binding Source="{StaticResource opacity-50}" />
+              </MultiBinding>
+            </SolidColorBrush.Color>
+          </SolidColorBrush>
           <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource grey-100}" />
           <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource grey-900}" />
           <SolidColorBrush x:Key="ForegroundSoftBrush" Color="{StaticResource grey-300}" />
@@ -51,7 +58,14 @@
           <BoxShadows x:Key="elevate-400">0 14 28 #44171c1a, 0 10 10 #3f171c1a</BoxShadows>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Dark">
-          <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource primary-800}" />
+          <SolidColorBrush x:Key="SelectionBrush">
+            <SolidColorBrush.Color>
+              <MultiBinding Converter="{x:Static app:ColourMixer.MixOpacity}">
+                <Binding Source="{StaticResource primary-500}" />
+                <Binding Source="{StaticResource opacity-50}" />
+              </MultiBinding>
+            </SolidColorBrush.Color>
+          </SolidColorBrush>
           <SolidColorBrush x:Key="BackgroundBrush" Color="hsl(155, 15%, 5%)" />
           <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource grey-200}" />
           <SolidColorBrush x:Key="ForegroundSoftBrush" Color="{StaticResource grey-700}" />

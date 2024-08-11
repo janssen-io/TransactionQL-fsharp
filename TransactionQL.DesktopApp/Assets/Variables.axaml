@@ -31,6 +31,16 @@
   <Color x:Key="error-800">hsl(0, 60%, 24%)</Color>
   <Color x:Key="error-900">hsl(0, 70%, 10%)</Color>
 
+  <Color x:Key="opacity-10">hsla(0, 0%, 0%, 10%)</Color>
+  <Color x:Key="opacity-20">hsla(0, 0%, 0%, 20%)</Color>
+  <Color x:Key="opacity-30">hsla(0, 0%, 0%, 30%)</Color>
+  <Color x:Key="opacity-40">hsla(0, 0%, 0%, 40%)</Color>
+  <Color x:Key="opacity-50">hsla(0, 0%, 0%, 50%)</Color>
+  <Color x:Key="opacity-60">hsla(0, 0%, 0%, 60%)</Color>
+  <Color x:Key="opacity-70">hsla(0, 0%, 0%, 70%)</Color>
+  <Color x:Key="opacity-80">hsla(0, 0%, 0%, 80%)</Color>
+  <Color x:Key="opacity-90">hsla(0, 0%, 0%, 90%)</Color>
+
   <CornerRadius x:Key="Radius">7</CornerRadius>
   <CornerRadius x:Key="AccentRadius">7 7 0 0</CornerRadius>
 
