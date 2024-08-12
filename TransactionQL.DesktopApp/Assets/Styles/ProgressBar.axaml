@@ -4,19 +4,25 @@
     <StackPanel Orientation="Vertical" Spacing="3" Background="{DynamicResource PrimaryForegroundBrush}">
       <ThemeVariantScope RequestedThemeVariant="Light">
         <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
-          <ProgressBar Classes="Glow" Value="3" Maximum="10" HorizontalAlignment="Stretch" />
+          <StackPanel Orientation="Vertical" Spacing="30">
+            <ProgressBar Classes="Glow" Value="3" Maximum="10" HorizontalAlignment="Stretch" />
+            <ProgressBar Classes="Glow" Value="5" Maximum="10" HorizontalAlignment="Stretch" ShowProgressText="True" />
+          </StackPanel>
         </Border>
       </ThemeVariantScope>
       <ThemeVariantScope RequestedThemeVariant="Dark">
         <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
-          <ProgressBar Classes="Glow" Value="3" Maximum="10" HorizontalAlignment="Stretch" />
+          <StackPanel Orientation="Vertical" Spacing="30">
+            <ProgressBar Classes="Glow" Value="3" Maximum="10" HorizontalAlignment="Stretch" />
+            <ProgressBar Classes="Glow" Value="5" Maximum="10" HorizontalAlignment="Stretch" ShowProgressText="True" />
+          </StackPanel>
         </Border>
       </ThemeVariantScope>
     </StackPanel>
   </Design.PreviewWith>
 
   <Style Selector="ProgressBar.Glow">
-    <Setter Property="Foreground" Value="{DynamicResource PrimaryBackgroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource ThemeAccentBrush}" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="ClipToBounds" Value="False" />
     <Setter Property="MinHeight" Value="2" />
@@ -34,7 +40,7 @@
     </Style>
     <Style Selector="^ /template/ LayoutTransformControl TextBlock">
       <Setter Property="Padding" Value="5 0" />
-      <Setter Property="Background" Value="{DynamicResource TransparentBackgroundBrush}" />
+      <Setter Property="Background" Value="Transparent" />
     </Style>
   </Style>
 </Styles>

@@ -1,0 +1,55 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:app="using:TransactionQL.DesktopApp.Controls">
+  <Design.PreviewWith>
+    <ThemeVariantScope RequestedThemeVariant="Light">
+      <app:ThemePreviewStack />
+    </ThemeVariantScope>
+  </Design.PreviewWith>
+  <ResourceDictionary.ThemeDictionaries>
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="SelectionBrush">
+        <SolidColorBrush.Color>
+          <MultiBinding Converter="{x:Static app:ColourMixer.MixOpacity}">
+            <Binding Source="{StaticResource primary-500}" />
+            <Binding Source="{StaticResource opacity-50}" />
+          </MultiBinding>
+        </SolidColorBrush.Color>
+      </SolidColorBrush>
+      <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource grey-100}" />
+      <SolidColorBrush x:Key="BaseBackgroundBrush" Color="White" />
+
+      <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource grey-900}" />
+      <SolidColorBrush x:Key="ForegroundSoftBrush" Color="{StaticResource grey-300}" />
+      <SolidColorBrush x:Key="SubtitleForegroundBrush" Color="{StaticResource grey-600}" />
+
+      <SolidColorBrush x:Key="ErrorForegroundBrush" Color="{StaticResource error-700}" />
+      <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="{StaticResource error-200}" />
+
+      <SolidColorBrush x:Key="TableHeaderBackgroundBrush" Color="{StaticResource primary-200}" />
+      <SolidColorBrush x:Key="TableHeaderForegroundBrush" Color="{StaticResource primary-800}" />
+
+      <SolidColorBrush x:Key="DividerSoftBrush" Color="{StaticResource grey-200}" />
+      <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource primary-600}" />
+
+      <SolidColorBrush x:Key="ThemeAccentBrush" Color="{StaticResource primary-600}" />
+      <SolidColorBrush x:Key="Primary2BackgroundBrush" Color="{StaticResource primary-700}" />
+
+      <SolidColorBrush x:Key="PrimarySoftBrush" Color="{StaticResource primary-200}" />
+      <SolidColorBrush x:Key="PrimarySoft2Brush" Color="{StaticResource primary-300}" />
+      <SolidColorBrush x:Key="PrimarySoft3Brush" Color="{StaticResource primary-500}" />
+
+      <SolidColorBrush x:Key="PrimaryForegroundBrush" Color="{StaticResource primary-700}" />
+      <SolidColorBrush x:Key="Primary2ForegroundBrush" Color="{StaticResource primary-800}" />
+
+
+      <BoxShadows x:Key="RaisedShadow">inset 0 -1 0 #000000, inset 0 1 0 #ffffff </BoxShadows>
+      <BoxShadows x:Key="PrimaryShadow">0 0 15 5 #4480f465</BoxShadows>
+      <BoxShadows x:Key="InsetShadow">inset 0 -2 0 0 #55ffffff, inset 0 2 3 0 #25000000</BoxShadows>
+      <BoxShadows x:Key="elevate-100">0 1 3 #18171c1a, 0 1 2 #3d171c1a</BoxShadows>
+      <BoxShadows x:Key="elevate-200">0 3 6 #28171c1a, 0 3 6 #39171c1a</BoxShadows>
+      <BoxShadows x:Key="elevate-300">0 6 6 #39171c1a, 0 10 20 #30171c1a</BoxShadows>
+      <BoxShadows x:Key="elevate-400">0 14 28 #44171c1a, 0 10 10 #3f171c1a</BoxShadows>
+    </ResourceDictionary>
+  </ResourceDictionary.ThemeDictionaries>
+</ResourceDictionary>

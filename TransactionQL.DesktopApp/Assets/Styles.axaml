@@ -40,7 +40,7 @@
   </Style>
 
   <Style Selector="Button.Primary">
-    <Setter Property="Background" Value="{DynamicResource PrimaryBackgroundBrush}" />
+    <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}" />
     <Setter Property="Foreground" Value="{DynamicResource Primary2ForegroundBrush}" />
     <Setter Property="Padding" Value="8 8" />
     <Style Selector="^:pointerover /template/ ContentPresenter">
