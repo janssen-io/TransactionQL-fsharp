@@ -53,10 +53,14 @@
           </StackPanel>
         </Border>
       </Border>
-      <StackPanel Orientation="Horizontal">
+      <StackPanel Orientation="Horizontal" Spacing="10">
         <Button>Regular Button</Button>
-        <Button Classes="Primary">Regular Button</Button>
+        <Button Classes="Primary">Primary Button</Button>
+        <Button IsEnabled="False">Disabled Button</Button>
       </StackPanel>
+      <Border Classes="Indicator ErrorBorder" Background="{DynamicResource BG.Base.Error}">
+          <TextBlock>Error</TextBlock>
+      </Border>
     </StackPanel>
   </Border>
 </UserControl>
