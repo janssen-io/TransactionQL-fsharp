@@ -22,7 +22,7 @@
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles.axaml" />
   </Window.Styles>
-    <DockPanel Background="{DynamicResource BaseBackgroundBrush}">
+    <DockPanel Background="{DynamicResource BG.Elevated.Neutral}">
       <Grid ColumnDefinitions="*,Auto" DockPanel.Dock="Top">
         <!-- Transparent backgrounds are not targetable,  so set it to parent background colour -->
         <Border Name="Dragbar" Height="20" Cursor="SizeAll" Background="{Binding Background, RelativeSource={RelativeSource AncestorType=DockPanel}}"
@@ -30,7 +30,7 @@
                 />
         <Button Grid.Column="1" i:Attached.Icon="fa-solid fa-x" 
                 Background="Transparent" RelativePanel.AlignRightWithPanel="True" 
-                FontSize="8" Foreground="{DynamicResource ForegroundSoftBrush}"
+                FontSize="8" Foreground="{DynamicResource FG.Soft.Neutral}"
                 Click="Close" />
       </Grid>
       <Border Padding="20 5 20 20">
@@ -38,7 +38,7 @@
           <c:StepIndicator
             Name="Progress" Margin="0 0 0 20"
             NumberOfSteps="4" StepWidth="55"
-            InactiveBackground="{DynamicResource BackgroundBrush}"
+            InactiveBackground="{DynamicResource BG.Base.Neutral}"
             DockPanel.Dock="Top" HorizontalAlignment="Center" />
           <Carousel Name="Pages" DockPanel.Dock="Bottom">
             <Carousel.PageTransition >

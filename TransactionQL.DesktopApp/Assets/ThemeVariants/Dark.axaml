@@ -1,9 +1,13 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:app="using:TransactionQL.DesktopApp.Controls">
+                    xmlns:tql="using:TransactionQL.DesktopApp"
+                    xmlns:app="using:TransactionQL.DesktopApp.Controls"
+                    xmlns:view="using:TransactionQL.DesktopApp.Views">
   <Design.PreviewWith>
     <ThemeVariantScope RequestedThemeVariant="Dark">
-      <app:ThemePreviewStack />
+      <StackPanel Orientation="Horizontal" Background="{StaticResource BG.Base.Neutral}">
+        <app:ThemePreviewStack />
+      </StackPanel>
     </ThemeVariantScope>
   </Design.PreviewWith>
   <ResourceDictionary.ThemeDictionaries>
@@ -16,25 +20,24 @@
           </MultiBinding>
         </SolidColorBrush.Color>
       </SolidColorBrush>
-      <SolidColorBrush x:Key="BackgroundBrush" Color="hsl(155, 15%, 5%)" />
-      <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource grey-200}" />
-      <SolidColorBrush x:Key="ForegroundSoftBrush" Color="{StaticResource grey-700}" />
-      <SolidColorBrush x:Key="SubtitleForegroundBrush" Color="{StaticResource grey-400}" />
-      <SolidColorBrush x:Key="ErrorForegroundBrush" Color="{StaticResource error-300}" />
-      <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="{StaticResource error-900}" />
-      <SolidColorBrush x:Key="BaseBackgroundBrush" Color="{StaticResource grey-900}" />
-      <SolidColorBrush x:Key="TableHeaderBackgroundBrush" Color="{StaticResource primary-900}" />
-      <SolidColorBrush x:Key="TableHeaderForegroundBrush" Color="{StaticResource primary-300}" />
-      <SolidColorBrush x:Key="DividerSoftBrush" Color="{StaticResource grey-800}" />
-      <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource primary-600}" />
-      <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{StaticResource primary-600}" />
-      <SolidColorBrush x:Key="ThemeAccentBrush" Color="{StaticResource primary-600}" />
-      <SolidColorBrush x:Key="Primary2BackgroundBrush" Color="{StaticResource primary-700}" />
-      <SolidColorBrush x:Key="PrimarySoftBrush" Color="{StaticResource primary-800}" />
-      <SolidColorBrush x:Key="PrimarySoft2Brush" Color="{StaticResource primary-700}" />
-      <SolidColorBrush x:Key="PrimaryForegroundBrush" Color="{StaticResource primary-300}" />
-      <SolidColorBrush x:Key="Primary2ForegroundBrush" Color="{StaticResource primary-200}" />
-      <SolidColorBrush x:Key="SoftForegroundBrush" Color="{StaticResource grey-900}" />
+
+      <!-- Key=Type.Intensity.Style -->
+      <SolidColorBrush x:Key="BG.Base.Error" Color="{StaticResource error-900}" />
+      <SolidColorBrush x:Key="BG.Base.Neutral" Color="hsl(155, 15%, 5%)" />
+      <SolidColorBrush x:Key="BG.Base.Primary" Color="{StaticResource primary-800}" />
+      <SolidColorBrush x:Key="BG.Elevated.Neutral" Color="{StaticResource grey-900}" />
+      <SolidColorBrush x:Key="BG.Elevated.Primary" Color="{StaticResource primary-700}" />
+      <SolidColorBrush x:Key="Border.Base.Error" />
+      <SolidColorBrush x:Key="Border.Base.Primary" Color="{StaticResource primary-600}" />
+      <SolidColorBrush x:Key="Border.Soft.Neutral" Color="{StaticResource grey-800}" />
+      <SolidColorBrush x:Key="FG.Base.Error" Color="{StaticResource error-300}" />
+      <SolidColorBrush x:Key="FG.Base.Neutral" Color="{StaticResource grey-200}" />
+      <SolidColorBrush x:Key="FG.Base.Primary" Color="{StaticResource primary-200}" />
+      <SolidColorBrush x:Key="FG.Elevated.Neutral" Color="{StaticResource grey-100}" />
+      <SolidColorBrush x:Key="FG.Elevated.Primary" Color="{StaticResource primary-600}" />
+      <SolidColorBrush x:Key="FG.Soft.Neutral" Color="{StaticResource grey-700}" />
+      <SolidColorBrush x:Key="FG.Subtle.Neutral" Color="{StaticResource grey-400}" />
+
       <BoxShadows x:Key="RaisedShadow">none</BoxShadows>
       <BoxShadows x:Key="PrimaryShadow">5 0 15 -5 #4480f465</BoxShadows>
       <BoxShadows x:Key="InsetShadow">inset 0 -2 0 0 #25ffffff, inset 0 2 3 0 #85000000</BoxShadows>

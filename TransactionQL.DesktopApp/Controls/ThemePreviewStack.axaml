@@ -8,7 +8,7 @@
   <UserControl.Styles>
     <StyleInclude Source="/Assets/Styles.axaml" />
   </UserControl.Styles>
-  <Border Padding="20" Background="{DynamicResource BackgroundBrush}">
+  <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}">
     <StackPanel Spacing="10">
       <Border Classes="Card Padded">
         <StackPanel Orientation="Vertical" Spacing="10">
@@ -53,7 +53,10 @@
           </StackPanel>
         </Border>
       </Border>
-      <Button>Regular Button</Button>
+      <StackPanel Orientation="Horizontal">
+        <Button>Regular Button</Button>
+        <Button Classes="Primary">Regular Button</Button>
+      </StackPanel>
     </StackPanel>
   </Border>
 </UserControl>

@@ -19,10 +19,10 @@
 
   <!-- Generic Controls -->
   <Style Selector="Window">
-    <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
+    <Setter Property="Background" Value="{DynamicResource BG.Base.Neutral}" />
   </Style>
   <Style Selector="Window,TextBox,AutoCompleteBox">
-    <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource FG.Base.Neutral}" />
   </Style>
 
   <Style Selector="TextBox">
@@ -40,12 +40,11 @@
   </Style>
 
   <Style Selector="Button.Primary">
-    <Setter Property="Background" Value="{DynamicResource ThemeAccentBrush}" />
-    <Setter Property="Foreground" Value="{DynamicResource Primary2ForegroundBrush}" />
+    <Setter Property="Background" Value="{DynamicResource Border.Base.Primary}" />
+    <Setter Property="Foreground" Value="{DynamicResource FG.Base.Neutral}" />
     <Setter Property="Padding" Value="8 8" />
     <Style Selector="^:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="{DynamicResource Primary2BackgroundBrush}" />
-      <Setter Property="Foreground" Value="{DynamicResource Primary2ForegroundBrush}" />
+      <Setter Property="Background" Value="{DynamicResource BG.Elevated.Primary}" />
     </Style>
   </Style>
 
@@ -56,7 +55,7 @@
   <Style Selector="Button.IconAction /template/ ContentPresenter">
     <Setter Property="BoxShadow" Value="none" />
     <Setter Property="Background" Value="Transparent" />
-    <Setter Property="Foreground" Value="{DynamicResource Primary2ForegroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource FG.Base.Primary}" />
     <Setter Property="Transitions">
       <Transitions>
         <BrushTransition Property="Foreground" Duration="0:0:0.3"></BrushTransition>
@@ -66,12 +65,12 @@
     <Setter Property="Padding" Value="0" />
   </Style>
   <Style Selector="Button.IconAction:pointerover /template/ ContentPresenter">
-    <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryFG.Base.Neutral}" />
     <Setter Property="RenderTransform" Value="TranslateY(-2px)" />
     <Setter Property="Cursor" Value="Hand" />
   </Style>
   <Style Selector="Button.IconAction:disabled /template/ ContentPresenter">
-    <Setter Property="Foreground" Value="{DynamicResource SubtitleForegroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource FG.Subtle.Neutral}" />
     <Setter Property="Opacity" Value="0.7" />
   </Style>
 
@@ -79,14 +78,14 @@
   <Style Selector="TextBox.h1">
     <Setter Property="FontSize" Value="24" />
     <Setter Property="FontWeight" Value="Bold" />
-    <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource FG.Base.Neutral}" />
     <Setter Property="Padding" Value="0" />
   </Style>
 
   <Style Selector="TextBlock.h2">
     <Setter Property="FontSize" Value="20" />
     <Setter Property="FontWeight" Value="Regular" />
-    <Setter Property="Foreground" Value="{DynamicResource PrimaryForegroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource PrimaryFG.Base.Neutral}" />
   </Style>
 
   <Style Selector="TextBlock.subtitle">
@@ -111,7 +110,7 @@
   </Style>
 
   <Style Selector="TextBlock.Negative">
-    <Setter Property="Foreground" Value="{DynamicResource ErrorForegroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource FG.Base.Error}" />
   </Style>
 
   <!-- Toolbar -->
@@ -128,12 +127,12 @@
   </Style>
 
   <Style Selector="ListBox#TransactionsList">
-    <Setter Property="Background" Value="{DynamicResource BaseBackgroundBrush}" />
+    <Setter Property="Background" Value="{DynamicResource BG.Elevated.Neutral}" />
   </Style>
   <Style Selector="ListBox#TransactionsList ListBoxItem">
     <Setter Property="Padding" Value="0" />
     <Style Selector="^:selected /template/ ContentPresenter, ^:pointerover /template/ ContentPresenter">
-      <Setter Property="Background" Value="{DynamicResource TableHeaderBackgroundBrush}" />
+      <Setter Property="Background" Value="{DynamicResource BG.Base.Primary}" />
     </Style>
     <Style Selector="^:selected /template/ ContentPresenter">
       <Setter Property="FontWeight" Value="600" />
@@ -142,7 +141,7 @@
       <Setter Property="Cursor" Value="Hand" />
     </Style>
     <Style Selector="^:pointerover Border.ErrorBorder, ^:selected Border.ErrorBorder">
-      <Setter Property="Background" Value="{DynamicResource ErrorBackgroundBrush}" />
+      <Setter Property="Background" Value="{DynamicResource BG.Base.Error}" />
     </Style>
   </Style>
   <Style Selector="Border.Indicator">
@@ -150,7 +149,7 @@
     <Setter Property="Padding" Value="0 10" />
 
     <Style Selector="^.ErrorBorder">
-      <Setter Property="BorderBrush" Value="{DynamicResource ErrorForegroundBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource FG.Base.Error}" />
     </Style>
   </Style>
   <Style Selector="Border.Indicator TextBlock">
@@ -158,6 +157,6 @@
   </Style>
 
   <Style Selector="Border.ErrorBorder TextBlock">
-    <Setter Property="Foreground" Value="{DynamicResource ErrorForegroundBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource FG.Base.Error}" />
   </Style>
 </Styles>

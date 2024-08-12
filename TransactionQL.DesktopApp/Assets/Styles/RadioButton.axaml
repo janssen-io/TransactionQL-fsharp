@@ -1,7 +1,7 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Design.PreviewWith>
-    <Border Padding="20" Background="{DynamicResource BackgroundBrush}">
+    <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}">
       <StackPanel Orientation="Horizontal">
         <RadioButton Classes="ToggleButton" GroupName="A">Pick Me</RadioButton>
         <RadioButton Classes="ToggleButton" GroupName="A">Or Me</RadioButton>
@@ -13,7 +13,7 @@
 
     <Style Selector="^ > Border">
       <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="BorderBrush" Value="{DynamicResource ForegroundSoftBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource FG.Soft.Neutral}" />
       <Setter Property="Margin" Value="0 0 5 5" />
       <Setter Property="Padding" Value="-15 5 5 5" />
       <Setter Property="Cursor" Value="Hand" />
@@ -30,7 +30,7 @@
       </Style>
     </Style>
     <Style Selector="^:checked Border">
-      <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Border.Base.Primary}" />
     </Style>
   </Style>
 </Styles>

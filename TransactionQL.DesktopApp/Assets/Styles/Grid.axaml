@@ -22,14 +22,14 @@
   <Style Selector="Grid.Editable">
     <Style Selector="^ Separator">
       <Setter Property="Margin" Value="-20 0 -20 0" />
-      <Setter Property="Background" Value="{DynamicResource DividerSoftBrush}" />
+      <Setter Property="Background" Value="{DynamicResource Border.Soft.Neutral}" />
     </Style>
   </Style>
 
   <Style Selector="Grid.TableHeader">
-    <Setter Property="Background" Value="{DynamicResource PrimarySoftBrush}"/>
+    <Setter Property="Background" Value="{DynamicResource BG.Base.Primary}"/>
     <Style Selector="^ TextBlock">
-      <Setter Property="Foreground" Value="{DynamicResource TableHeaderForegroundBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource FG.Base.Primary}"/>
       <Setter Property="TextAlignment" Value="Right" />
       <Setter Property="FontWeight" Value="500" />
       <Setter Property="FontSize" Value="10"/>
@@ -38,7 +38,7 @@
     <Style Selector="^ Separator">
       <Setter Property="Height" Value="2"/>
       <Setter Property="Margin" Value="0" />
-      <Setter Property="Background" Value="{DynamicResource DividerBrush}" />
+      <Setter Property="Background" Value="{DynamicResource Border.Base.Primary}" />
     </Style>
   </Style>
 </Styles>

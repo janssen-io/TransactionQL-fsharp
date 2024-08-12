@@ -4,7 +4,7 @@
   <Design.PreviewWith>
     <StackPanel Orientation="Horizontal">
       <ThemeVariantScope RequestedThemeVariant="Light">
-        <StackPanel Orientation="Vertical" Background="{DynamicResource BackgroundBrush}">
+        <StackPanel Orientation="Vertical" Background="{DynamicResource BG.Base.Neutral}">
           <Border Classes="Card" BoxShadow="{DynamicResource elevate-100}" Width="100" Height="100" Margin="20">
             <Border Classes="CardAccent">
               <Border />
@@ -16,7 +16,7 @@
         </StackPanel>
       </ThemeVariantScope>
       <ThemeVariantScope RequestedThemeVariant="Dark">
-        <StackPanel Orientation="Vertical" Background="{DynamicResource BackgroundBrush}">
+        <StackPanel Orientation="Vertical" Background="{DynamicResource BG.Base.Neutral}">
           <Border Classes="Card" BoxShadow="{DynamicResource elevate-100}" Width="100" Height="100" Margin="20">
             <Border Classes="CardAccent">
               <Border />
@@ -31,8 +31,8 @@
   </Design.PreviewWith>
 
   <Style Selector="Border.Card">
-      <Setter Property="Background" Value="{DynamicResource BaseBackgroundBrush}" />
-      <Setter Property="BorderBrush" Value="{DynamicResource BackgroundBrush}" />
+      <Setter Property="Background" Value="{DynamicResource BG.Elevated.Neutral}" />
+      <Setter Property="BorderBrush" Value="{DynamicResource BG.Base.Neutral}" />
       <Setter Property="BoxShadow" Value="{DynamicResource elevate-200}" />
       <Setter Property="CornerRadius" Value="{DynamicResource Radius}" />
 
@@ -50,7 +50,7 @@
         <Setter Property="CornerRadius" Value="{DynamicResource AccentRadius}" />
         <Style Selector="^ > Border">
 
-          <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}" />
+          <Setter Property="BorderBrush" Value="{DynamicResource Border.Base.Primary}" />
           <Setter Property="BorderThickness" Value="0 5 0 0" />
         </Style>
       </Style>
