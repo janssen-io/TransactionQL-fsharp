@@ -16,34 +16,25 @@
           </MultiBinding>
         </SolidColorBrush.Color>
       </SolidColorBrush>
-      <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource grey-100}" />
-      <SolidColorBrush x:Key="BaseBackgroundBrush" Color="White" />
 
-      <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource grey-900}" />
-      <SolidColorBrush x:Key="ForegroundSoftBrush" Color="{StaticResource grey-300}" />
-      <SolidColorBrush x:Key="SubtitleForegroundBrush" Color="{StaticResource grey-600}" />
+      <!-- Key=Type.Intensity.Style -->
+      <SolidColorBrush x:Key="BG.Base.Error" Color="{StaticResource error-200}" />
+      <SolidColorBrush x:Key="BG.Base.Neutral" Color="{StaticResource grey-100}" />
+      <SolidColorBrush x:Key="BG.Base.Primary" Color="{StaticResource primary-200}" />
+      <SolidColorBrush x:Key="BG.Elevated.Neutral" Color="White" />
+      <SolidColorBrush x:Key="BG.Elevated.Primary" Color="{StaticResource primary-500}" />
+      <SolidColorBrush x:Key="Border.Base.Error" />
+      <SolidColorBrush x:Key="Border.Base.Primary" Color="{StaticResource primary-600}" />
+      <SolidColorBrush x:Key="Border.Soft.Neutral" Color="{StaticResource grey-200}" />
+      <SolidColorBrush x:Key="FG.Base.Error" Color="{StaticResource error-700}" />
+      <SolidColorBrush x:Key="FG.Base.Neutral" Color="{StaticResource grey-900}" />
+      <SolidColorBrush x:Key="FG.Base.Primary" Color="{StaticResource primary-800}" />
+      <SolidColorBrush x:Key="FG.Elevated.Neutral" Color="{StaticResource grey-700}" />
+      <SolidColorBrush x:Key="FG.Elevated.Primary" Color="{StaticResource primary-800}" />
+      <SolidColorBrush x:Key="FG.Soft.Neutral" Color="{StaticResource grey-300}" />
+      <SolidColorBrush x:Key="FG.Subtle.Neutral" Color="{StaticResource grey-600}" />
 
-      <SolidColorBrush x:Key="ErrorForegroundBrush" Color="{StaticResource error-700}" />
-      <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="{StaticResource error-200}" />
-
-      <SolidColorBrush x:Key="TableHeaderBackgroundBrush" Color="{StaticResource primary-200}" />
-      <SolidColorBrush x:Key="TableHeaderForegroundBrush" Color="{StaticResource primary-800}" />
-
-      <SolidColorBrush x:Key="DividerSoftBrush" Color="{StaticResource grey-200}" />
-      <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource primary-600}" />
-
-      <SolidColorBrush x:Key="ThemeAccentBrush" Color="{StaticResource primary-600}" />
-      <SolidColorBrush x:Key="Primary2BackgroundBrush" Color="{StaticResource primary-700}" />
-
-      <SolidColorBrush x:Key="PrimarySoftBrush" Color="{StaticResource primary-200}" />
-      <SolidColorBrush x:Key="PrimarySoft2Brush" Color="{StaticResource primary-300}" />
-      <SolidColorBrush x:Key="PrimarySoft3Brush" Color="{StaticResource primary-500}" />
-
-      <SolidColorBrush x:Key="PrimaryForegroundBrush" Color="{StaticResource primary-700}" />
-      <SolidColorBrush x:Key="Primary2ForegroundBrush" Color="{StaticResource primary-800}" />
-
-
-      <BoxShadows x:Key="RaisedShadow">inset 0 -1 0 #000000, inset 0 1 0 #ffffff </BoxShadows>
+      <BoxShadows x:Key="RaisedShadow">inset 0 -1 0 #000000, inset 0 1 0 #ffffff</BoxShadows>
       <BoxShadows x:Key="PrimaryShadow">0 0 15 5 #4480f465</BoxShadows>
       <BoxShadows x:Key="InsetShadow">inset 0 -2 0 0 #55ffffff, inset 0 2 3 0 #25000000</BoxShadows>
       <BoxShadows x:Key="elevate-100">0 1 3 #18171c1a, 0 1 2 #3d171c1a</BoxShadows>

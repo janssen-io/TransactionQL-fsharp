@@ -12,14 +12,14 @@
   -->
 
   <Design.PreviewWith>
-    <StackPanel Orientation="Horizontal" Spacing="3" Background="{DynamicResource PrimaryForegroundBrush}">
+    <StackPanel Orientation="Horizontal" Spacing="3" Background="{DynamicResource BG.Elevated.Neutral}">
       <ThemeVariantScope RequestedThemeVariant="Light">
-        <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
+        <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}">
           <controls:Dropzone FileName="test.xml" />
         </Border>
       </ThemeVariantScope>
       <ThemeVariantScope RequestedThemeVariant="Dark">
-        <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
+        <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}">
           <controls:Dropzone FileName="test.xml" />
         </Border>
       </ThemeVariantScope>
@@ -31,10 +31,10 @@
       <controls:FilePathConverter x:Key="filePathConverter"/>
     </ControlTheme.Resources>
     <Setter Property="FileDescription" Value="file" />
-    <Setter Property="BrowseForeground" Value="{DynamicResource ThemeAccentBrush}" />
-    <Setter Property="Highlight" Value="{DynamicResource ThemeAccentBrush}" />
-    <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
-    <Setter Property="IconForeground" Value="CadetBlue" />
+    <Setter Property="BrowseForeground" Value="{DynamicResource Border.Base.Primary}" />
+    <Setter Property="Highlight" Value="{DynamicResource Border.Base.Primary}" />
+    <Setter Property="Background" Value="{DynamicResource BG.Base.Neutral}" />
+    <Setter Property="IconForeground" Value="{DynamicResource FG.Elevated.Primary}" />
     <Setter Property="BoxShadow" Value="{DynamicResource InsetShadow}" />
     <Setter Property="CornerRadius" Value="7" />
     <Styles>

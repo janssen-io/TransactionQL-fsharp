@@ -1,9 +1,9 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Design.PreviewWith>
-    <StackPanel Orientation="Vertical" Spacing="3" Background="{DynamicResource PrimaryForegroundBrush}">
+    <StackPanel Orientation="Vertical" Spacing="3" Background="{DynamicResource PrimaryFG.Base.Neutral}">
       <ThemeVariantScope RequestedThemeVariant="Light">
-        <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
+        <Border Padding="20" Background="{DynamicResource BG.Elevated.Neutral}">
           <StackPanel Orientation="Vertical" Spacing="30">
             <ProgressBar Classes="Glow" Value="3" Maximum="10" HorizontalAlignment="Stretch" />
             <ProgressBar Classes="Glow" Value="5" Maximum="10" HorizontalAlignment="Stretch" ShowProgressText="True" />
@@ -11,7 +11,7 @@
         </Border>
       </ThemeVariantScope>
       <ThemeVariantScope RequestedThemeVariant="Dark">
-        <Border Padding="20" Background="{DynamicResource BaseBackgroundBrush}">
+        <Border Padding="20" Background="{DynamicResource BG.Elevated.Neutral}">
           <StackPanel Orientation="Vertical" Spacing="30">
             <ProgressBar Classes="Glow" Value="3" Maximum="10" HorizontalAlignment="Stretch" />
             <ProgressBar Classes="Glow" Value="5" Maximum="10" HorizontalAlignment="Stretch" ShowProgressText="True" />
@@ -22,7 +22,7 @@
   </Design.PreviewWith>
 
   <Style Selector="ProgressBar.Glow">
-    <Setter Property="Foreground" Value="{DynamicResource ThemeAccentBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource Border.Base.Primary}" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="ClipToBounds" Value="False" />
     <Setter Property="MinHeight" Value="2" />
