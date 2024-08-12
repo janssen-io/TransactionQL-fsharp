@@ -18,9 +18,9 @@
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles.axaml" />
   </Window.Styles>
-  <Panel>
+  <DockPanel>
     <Grid RowDefinitions="Auto,Auto,*" ColumnDefinitions="*">
-      <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+      <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
         <Border Grid.Column="0" Name="Toolbar">
           <Grid ColumnDefinitions="*,*,*">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="20">
@@ -63,6 +63,12 @@
           </Grid>
         </Border>
       </Grid>
+      <Border Margin="0 10 0 0" Grid.Row="1">
+        <ProgressBar Minimum="0" Maximum="{Binding BankTransactions.Count}"
+                     Value="{Binding NumberOfValidTransactions}"
+                     Orientation="Horizontal" Classes="Glow"
+                     VerticalAlignment="Stretch" />
+      </Border>
       <Grid Name="Main" ColumnDefinitions="5*,3*"
             Grid.Row="2" >
         <Carousel Grid.Column="0"
@@ -105,12 +111,6 @@
           </Border>
         </Border>
       </Grid>
-      <DockPanel VerticalAlignment="Bottom" Grid.Row="3">
-        <ProgressBar Minimum="0" Maximum="{Binding BankTransactions.Count}"
-                     Value="{Binding NumberOfValidTransactions}"
-                     Classes="Glow"
-                     DockPanel.Dock="Bottom" HorizontalAlignment="Stretch" />
-      </DockPanel>
     </Grid>
-  </Panel>
+  </DockPanel>
 </Window>

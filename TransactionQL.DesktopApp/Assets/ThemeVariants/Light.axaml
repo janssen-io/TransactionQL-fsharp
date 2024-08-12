@@ -35,7 +35,7 @@
       <SolidColorBrush x:Key="FG.Soft.Neutral" Color="{StaticResource grey-300}" />
       <SolidColorBrush x:Key="FG.Subtle.Neutral" Color="{StaticResource grey-600}" />
 
-      <BoxShadows x:Key="PrimaryShadow">0 0 15 5 #4480f465</BoxShadows>
+      <BoxShadows x:Key="PrimaryShadow">0 0 0 0 #4480f465</BoxShadows>
       <BoxShadows x:Key="InsetShadow">inset 0 -2 0 0 #55ffffff, inset 0 2 3 0 #25000000</BoxShadows>
       <BoxShadows x:Key="elevate-100">0 1 3 #18171c1a, 0 1 2 #3d171c1a</BoxShadows>
       <BoxShadows x:Key="elevate-200">0 3 6 #28171c1a, 0 3 6 #39171c1a</BoxShadows>
