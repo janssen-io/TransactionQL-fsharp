@@ -50,7 +50,7 @@
         <Setter Property="CornerRadius" Value="{DynamicResource AccentRadius}" />
         <Style Selector="^ > Border">
 
-          <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBackgroundBrush}" />
+          <Setter Property="BorderBrush" Value="{DynamicResource ThemeAccentBrush}" />
           <Setter Property="BorderThickness" Value="0 5 0 0" />
         </Style>
       </Style>

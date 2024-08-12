@@ -5,8 +5,6 @@
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              x:Class="TransactionQL.DesktopApp.App"
              RequestedThemeVariant="Default">
-  <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
   <Application.DataTemplates>
     <local:ViewLocator />
   </Application.DataTemplates>
@@ -17,101 +15,23 @@
         <ResourceInclude Source="/Assets/Variables.axaml" />
         <ResourceInclude Source="/Controls/Dropzone.axaml" />
         <ResourceInclude Source="/Controls/StepIndicator.axaml" />
+        <ResourceInclude Source="/Assets/ThemeVariants/Light.axaml" />
+        <ResourceInclude Source="/Assets/ThemeVariants/Dark.axaml" />
       </ResourceDictionary.MergedDictionaries>
-      <ResourceDictionary.ThemeDictionaries>
-        <ResourceDictionary x:Key="Light">
-          <SolidColorBrush x:Key="SelectionBrush">
-            <SolidColorBrush.Color>
-              <MultiBinding Converter="{x:Static app:ColourMixer.MixOpacity}">
-                <Binding Source="{StaticResource primary-500}" />
-                <Binding Source="{StaticResource opacity-50}" />
-              </MultiBinding>
-            </SolidColorBrush.Color>
-          </SolidColorBrush>
-          <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource grey-100}" />
-          <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource grey-900}" />
-          <SolidColorBrush x:Key="ForegroundSoftBrush" Color="{StaticResource grey-300}" />
-          <SolidColorBrush x:Key="SubtitleForegroundBrush" Color="{StaticResource grey-600}" />
-          <SolidColorBrush x:Key="ErrorForegroundBrush" Color="{StaticResource error-700}" />
-          <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="{StaticResource error-200}" />
-          <SolidColorBrush x:Key="BaseBackgroundBrush" Color="White" />
-          <SolidColorBrush x:Key="BaseSoftBackgroundBrush" Color="White" />
-          <SolidColorBrush x:Key="TableHeaderBackgroundBrush" Color="{StaticResource primary-200}" />
-          <SolidColorBrush x:Key="TableHeaderForegroundBrush" Color="{StaticResource primary-800}" />
-          <SolidColorBrush x:Key="DividerSoftBrush" Color="{StaticResource grey-200}" />
-          <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource primary-600}" />
-          <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{StaticResource primary-600}" />
-          <SolidColorBrush x:Key="ThemeAccentBrush" Color="{StaticResource primary-600}" />
-          <SolidColorBrush x:Key="Primary2BackgroundBrush" Color="{StaticResource primary-700}" />
-          <SolidColorBrush x:Key="PrimarySoftBrush" Color="{StaticResource primary-200}" />
-          <SolidColorBrush x:Key="PrimarySoft2Brush" Color="{StaticResource primary-300}" />
-          <SolidColorBrush x:Key="PrimarySoft3Brush" Color="{StaticResource primary-500}" />
-          <SolidColorBrush x:Key="PrimaryForegroundBrush" Color="{StaticResource primary-700}" />
-          <SolidColorBrush x:Key="Primary2ForegroundBrush" Color="{StaticResource primary-800}" />
-          <SolidColorBrush x:Key="SoftForegroundBrush" Color="{StaticResource grey-100}" />
-          <BoxShadows x:Key="RaisedShadow">inset 0 -1 0 #000000, inset 0 1 0 #ffffff </BoxShadows>
-          <BoxShadows x:Key="PrimaryShadow">0 0 15 5 #4480f465</BoxShadows>
-          <BoxShadows x:Key="InsetShadow">inset 0 -2 0 0 #55ffffff, inset 0 2 3 0 #25000000</BoxShadows>
-          <BoxShadows x:Key="elevate-100">0 1 3 #18171c1a, 0 1 2 #3d171c1a</BoxShadows>
-          <BoxShadows x:Key="elevate-200">0 3 6 #28171c1a, 0 3 6 #39171c1a</BoxShadows>
-          <BoxShadows x:Key="elevate-300">0 6 6 #39171c1a, 0 10 20 #30171c1a</BoxShadows>
-          <BoxShadows x:Key="elevate-400">0 14 28 #44171c1a, 0 10 10 #3f171c1a</BoxShadows>
-        </ResourceDictionary>
-        <ResourceDictionary x:Key="Dark">
-          <SolidColorBrush x:Key="SelectionBrush">
-            <SolidColorBrush.Color>
-              <MultiBinding Converter="{x:Static app:ColourMixer.MixOpacity}">
-                <Binding Source="{StaticResource primary-500}" />
-                <Binding Source="{StaticResource opacity-50}" />
-              </MultiBinding>
-            </SolidColorBrush.Color>
-          </SolidColorBrush>
-          <SolidColorBrush x:Key="BackgroundBrush" Color="hsl(155, 15%, 5%)" />
-          <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource grey-200}" />
-          <SolidColorBrush x:Key="ForegroundSoftBrush" Color="{StaticResource grey-700}" />
-          <SolidColorBrush x:Key="SubtitleForegroundBrush" Color="{StaticResource grey-400}" />
-          <SolidColorBrush x:Key="ErrorForegroundBrush" Color="{StaticResource error-300}" />
-          <SolidColorBrush x:Key="ErrorBackgroundBrush" Color="{StaticResource error-900}" />
-          <SolidColorBrush x:Key="BaseBackgroundBrush" Color="{StaticResource grey-900}" />
-          <SolidColorBrush x:Key="BaseSoftBackgroundBrush" Color="{StaticResource grey-800}" />
-          <SolidColorBrush x:Key="TableHeaderBackgroundBrush" Color="{StaticResource primary-900}" />
-          <SolidColorBrush x:Key="TableHeaderForegroundBrush" Color="{StaticResource primary-300}" />
-          <SolidColorBrush x:Key="DividerSoftBrush" Color="{StaticResource grey-800}" />
-          <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource primary-600}" />
-          <SolidColorBrush x:Key="PrimaryBackgroundBrush" Color="{StaticResource primary-600}" />
-          <SolidColorBrush x:Key="ThemeAccentBrush" Color="{StaticResource primary-600}" />
-          <SolidColorBrush x:Key="Primary2BackgroundBrush" Color="{StaticResource primary-700}" />
-          <SolidColorBrush x:Key="PrimarySoftBrush" Color="{StaticResource primary-800}" />
-          <SolidColorBrush x:Key="PrimarySoft2Brush" Color="{StaticResource primary-700}" />
-          <SolidColorBrush x:Key="PrimaryForegroundBrush" Color="{StaticResource primary-300}" />
-          <SolidColorBrush x:Key="Primary2ForegroundBrush" Color="{StaticResource primary-200}" />
-          <SolidColorBrush x:Key="SoftForegroundBrush" Color="{StaticResource grey-900}" />
-          <SolidColorBrush x:Key="TransparentBackgroundBrush" Color="hsla(155, 15%, 5%, 33%)" />
-          <BoxShadows x:Key="RaisedShadow">none</BoxShadows>
-          <BoxShadows x:Key="PrimaryShadow">5 0 15 -5 #4480f465</BoxShadows>
-          <BoxShadows x:Key="InsetShadow">inset 0 -2 0 0 #25ffffff, inset 0 2 3 0 #85000000</BoxShadows>
-          <BoxShadows x:Key="elevate-100">0 0 0 1 #59dfe9df</BoxShadows>
-          <BoxShadows x:Key="elevate-200">0 0 0 1 #59dfe9df</BoxShadows>
-          <BoxShadows x:Key="elevate-300">0 0 0 1 #59dfe9df</BoxShadows>
-          <BoxShadows x:Key="elevate-400">0 0 0 1 #59dfe9df</BoxShadows>
-        </ResourceDictionary>
-      </ResourceDictionary.ThemeDictionaries>
     </ResourceDictionary>
   </Application.Resources>
 
   <Application.Styles>
     <FluentTheme >
     <FluentTheme.Palettes>
-      <!-- Palette for Dark theme variant -->
-      <ColorPaletteResources x:Key="Dark" 
-                             Accent="{StaticResource primary-500}"
-                             RegionColor="Black"
-                             ErrorText="{StaticResource error-300}" />
-      <!-- Palette for Light theme variant -->
       <ColorPaletteResources x:Key="Light" 
                              Accent="{StaticResource primary-500}"
                              RegionColor="White"
                              ErrorText="{StaticResource error-700}" />
+      <ColorPaletteResources x:Key="Dark" 
+                             Accent="{StaticResource primary-500}"
+                             RegionColor="Black"
+                             ErrorText="{StaticResource error-300}" />
     </FluentTheme.Palettes>
     </FluentTheme>
     <StyleInclude Source="avares://TransactionQL.DesktopApp/Icons.axaml" />

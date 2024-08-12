@@ -20,6 +20,8 @@
       <AvaloniaXaml Remove="Assets\Styles\Grid.axaml" />
       <AvaloniaXaml Remove="Assets\Styles\ProgressBar.axaml" />
       <AvaloniaXaml Remove="Assets\Styles\RadioButton.axaml" />
+      <AvaloniaXaml Remove="Assets\ThemeVariants\Dark.axaml" />
+      <AvaloniaXaml Remove="Assets\ThemeVariants\Light.axaml" />
       <AvaloniaXaml Remove="Assets\Variables.axaml" />
     </ItemGroup>
 
@@ -60,6 +62,12 @@
         <SubType>Designer</SubType>
       </AvaloniaResource>
       <AvaloniaResource Update="Assets\Styles\RadioButton.axaml">
+        <SubType>Designer</SubType>
+      </AvaloniaResource>
+      <AvaloniaResource Update="Assets\ThemeVariants\Dark.axaml">
+        <SubType>Designer</SubType>
+      </AvaloniaResource>
+      <AvaloniaResource Update="Assets\ThemeVariants\Light.axaml">
         <SubType>Designer</SubType>
       </AvaloniaResource>
       <AvaloniaResource Update="Assets\Variables.axaml">

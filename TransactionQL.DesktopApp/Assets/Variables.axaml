@@ -1,6 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-                    <Design.PreviewWith><Border Padding="20" /></Design.PreviewWith>
+                    <Design.PreviewWith><Border Padding="0" /></Design.PreviewWith>
   <Color x:Key="primary-100">hsl(152, 90%, 99%)</Color>
   <Color x:Key="primary-200">hsl(152, 81%, 94%)</Color>
   <Color x:Key="primary-300">hsl(151, 67%, 80%)</Color>

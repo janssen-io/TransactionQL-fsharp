@@ -33,7 +33,7 @@
     <Setter Property="FileDescription" Value="file" />
     <Setter Property="BrowseForeground" Value="{DynamicResource ThemeAccentBrush}" />
     <Setter Property="Highlight" Value="{DynamicResource ThemeAccentBrush}" />
-    <Setter Property="Background" Value="{DynamicResource BaseSoftBackgroundBrush}" />
+    <Setter Property="Background" Value="{DynamicResource BackgroundBrush}" />
     <Setter Property="IconForeground" Value="CadetBlue" />
     <Setter Property="BoxShadow" Value="{DynamicResource InsetShadow}" />
     <Setter Property="CornerRadius" Value="7" />
@@ -53,7 +53,7 @@
           Padding="20"
           Background="{TemplateBinding Background}"
           BoxShadow="{TemplateBinding BoxShadow}"
-          BorderThickness="2"
+          BorderThickness="0"
           BorderBrush="{DynamicResource BackgroundBrush}"
           DragDrop.AllowDrop="True" >
           <StackPanel Orientation="Vertical" Spacing="20" DragDrop.AllowDrop="True">
