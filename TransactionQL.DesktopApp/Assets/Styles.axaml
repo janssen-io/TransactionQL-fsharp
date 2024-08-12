@@ -40,10 +40,11 @@
   </Style>
 
   <Style Selector="Button.Primary">
-    <Setter Property="Background" Value="{DynamicResource Border.Base.Primary}" />
+    <Setter Property="Background" Value="{DynamicResource BG.Base.Primary}" />
     <Setter Property="Foreground" Value="{DynamicResource FG.Contrast.Neutral}" />
     <Style Selector="^:pointerover /template/ ContentPresenter">
       <Setter Property="Background" Value="{DynamicResource BG.Elevated.Primary}" />
+      <Setter Property="Foreground" Value="{DynamicResource FG.Contrast.Neutral}" />
     </Style>
   </Style>
 

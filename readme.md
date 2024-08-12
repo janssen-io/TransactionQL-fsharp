@@ -165,7 +165,12 @@ The desktop application (`TransactionQL.DesktopApp`) runs on multiple operating 
 When you open the application, you can select transactions, filters and existing accounts using `Ctrl+O` or by clicking on the _folder_ icon in the top left.
 The existings accounts must be in [Ledger CLI](https://ledger-cli.org/doc/ledger3.html#Keeping-it-Consistent-1) format (`account My:Account:Name`).
 
-![img/select-data.png](img/select-data.png)
+The plugins for the banks (ASN, Bunq and ING in the screenshot below) are loaded from the `ApplicationData` directory.
+- Windows: `%AppData/tql/plugins`
+- Linux: `~/.config/tql/plugins`.
+
+![img/select_bank.png](img/select_bank.png)
+![img/select_transactions.png](img/select_transactions.png)
 
 ### Updating transactions 
 The app uses the same filters to automatically categorize transactions. Any transactions that could not be categorized automatically are marked with a red dot in the list.
