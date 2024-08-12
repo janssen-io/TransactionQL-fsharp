@@ -1,11 +1,8 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Templates;
 using Avalonia.Media;
 using ReactiveUI;
 using System.Collections.ObjectModel;
-using System.Linq;
 using TransactionQL.DesktopApp.ViewModels;
 
 namespace TransactionQL.DesktopApp.Controls;
@@ -39,7 +36,6 @@ public class Step : ViewModelBase
 }
 public class StepIndicator : TemplatedControl
 {
-
     public static readonly StyledProperty<IBrush> InactiveBackgroundProperty =
         AvaloniaProperty.Register<StepIndicator, IBrush>(nameof(InactiveBackground));
 
@@ -77,7 +73,7 @@ public class StepIndicator : TemplatedControl
     }
 
     public static readonly StyledProperty<ObservableCollection<Step>> ItemsProperty =
-        AvaloniaProperty.Register<StepIndicator, ObservableCollection<Step>>(nameof(Items), [new Step(1)]);
+        AvaloniaProperty.Register<StepIndicator, ObservableCollection<Step>>(nameof(Items), []);
 
     public ObservableCollection<Step> Items
     {
@@ -100,11 +96,10 @@ public class StepIndicator : TemplatedControl
         }
     }
 
-    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    protected override void OnInitialized()
     {
-        base.OnApplyTemplate(e);
-
-        Items.Clear();
+        base.OnInitialized();
+        Items = [];
         for (uint i = 1; i <= NumberOfSteps; i++)
         {
             Items.Add(new Step(i));
