@@ -27,7 +27,7 @@
       <SolidColorBrush x:Key="BG.Base.Primary" Color="{StaticResource primary-800}" />
       <SolidColorBrush x:Key="BG.Elevated.Neutral" Color="{StaticResource grey-900}" />
       <SolidColorBrush x:Key="BG.Elevated.Primary" Color="{StaticResource primary-700}" />
-      <SolidColorBrush x:Key="Border.Base.Error" />
+      <SolidColorBrush x:Key="Border.Base.Error" Color="{StaticResource error-600}" />
       <SolidColorBrush x:Key="Border.Base.Primary" Color="{StaticResource primary-600}" />
       <SolidColorBrush x:Key="Border.Soft.Neutral" Color="{StaticResource grey-800}" />
       <SolidColorBrush x:Key="FG.Base.Error" Color="{StaticResource error-300}" />
@@ -35,10 +35,10 @@
       <SolidColorBrush x:Key="FG.Base.Primary" Color="{StaticResource primary-200}" />
       <SolidColorBrush x:Key="FG.Elevated.Neutral" Color="{StaticResource grey-100}" />
       <SolidColorBrush x:Key="FG.Elevated.Primary" Color="{StaticResource primary-600}" />
+      <SolidColorBrush x:Key="FG.Contrast.Neutral" Color="{StaticResource primary-100}" />
       <SolidColorBrush x:Key="FG.Soft.Neutral" Color="{StaticResource grey-700}" />
       <SolidColorBrush x:Key="FG.Subtle.Neutral" Color="{StaticResource grey-400}" />
 
-      <BoxShadows x:Key="RaisedShadow">none</BoxShadows>
       <BoxShadows x:Key="PrimaryShadow">5 0 15 -5 #4480f465</BoxShadows>
       <BoxShadows x:Key="InsetShadow">inset 0 -2 0 0 #25ffffff, inset 0 2 3 0 #85000000</BoxShadows>
       <BoxShadows x:Key="elevate-100">0 0 0 1 #59dfe9df</BoxShadows>
