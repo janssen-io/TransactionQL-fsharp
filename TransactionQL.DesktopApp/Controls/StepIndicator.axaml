@@ -15,16 +15,12 @@
     <StackPanel Orientation="Horizontal" Spacing="3" Background="{DynamicResource PrimaryFG.Base.Neutral}">
       <ThemeVariantScope RequestedThemeVariant="Light">
         <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}">
-      <controls:StepIndicator
-        NumberOfSteps="5"
-        CurrentStep="2" />
+          <controls:StepIndicator NumberOfSteps="5" CurrentStep="2" />
         </Border>
       </ThemeVariantScope>
       <ThemeVariantScope RequestedThemeVariant="Dark">
         <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}">
-      <controls:StepIndicator
-        NumberOfSteps="5"
-        CurrentStep="2" />
+          <controls:StepIndicator NumberOfSteps="5" CurrentStep="2" />
         </Border>
       </ThemeVariantScope>
     </StackPanel>
