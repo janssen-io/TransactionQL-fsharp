@@ -1,0 +1,17 @@
+# Smart Grocer
+
+Description matches /Smart Grocer/
+or Description matches /sg2go/
+
+posting {
+    Assets:Checking     EUR (amount)
+    Expenses:Living:Food
+}
+
+# My Bank
+Description matches /Monthly Banking Fee/
+
+posting {
+    Assets:Checking     EUR (amount)
+    Expenses:Living:Subscriptions
+}

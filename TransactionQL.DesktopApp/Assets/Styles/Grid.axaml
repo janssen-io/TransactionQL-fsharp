@@ -27,7 +27,7 @@
   </Style>
 
   <Style Selector="Grid.TableHeader">
-    <Setter Property="Background" Value="{DynamicResource BG.Base.Primary}"/>
+    <Setter Property="Background" Value="{DynamicResource BG.Soft.Primary}"/>
     <Style Selector="^ TextBlock">
       <Setter Property="Foreground" Value="{DynamicResource FG.Base.Primary}"/>
       <Setter Property="TextAlignment" Value="Right" />

@@ -20,9 +20,10 @@
       <!-- Key=Type.Intensity.Style -->
       <SolidColorBrush x:Key="BG.Base.Error" Color="{StaticResource error-200}" />
       <SolidColorBrush x:Key="BG.Base.Neutral" Color="{StaticResource grey-100}" />
-      <SolidColorBrush x:Key="BG.Base.Primary" Color="{StaticResource primary-200}" />
+      <SolidColorBrush x:Key="BG.Base.Primary" Color="{StaticResource primary-500}" />
       <SolidColorBrush x:Key="BG.Elevated.Neutral" Color="White" />
-      <SolidColorBrush x:Key="BG.Elevated.Primary" Color="{StaticResource primary-500}" />
+      <SolidColorBrush x:Key="BG.Elevated.Primary" Color="{StaticResource primary-400}" />
+      <SolidColorBrush x:Key="BG.Soft.Primary" Color="{StaticResource primary-200}" />
       <SolidColorBrush x:Key="Border.Base.Error" Color="{StaticResource error-700}" />
       <SolidColorBrush x:Key="Border.Base.Primary" Color="{StaticResource primary-600}" />
       <SolidColorBrush x:Key="Border.Soft.Neutral" Color="{StaticResource grey-200}" />
