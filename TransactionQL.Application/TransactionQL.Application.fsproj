@@ -1,29 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-        <RootNamespace>TransactionQL.CsharpApi</RootNamespace>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RootNamespace>TransactionQL.CsharpApi</RootNamespace>
+    <AssemblyVersion>2.1.2</AssemblyVersion>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <Compile Include="Formatter.fs" />
-        <Compile Include="API.fs" />
-        <Compile Include="Configuration.fs" />
-    </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Formatter.fs" />
+    <Compile Include="API.fs" />
+    <Compile Include="Configuration.fs" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="FParsec" Version="1.1.1" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FParsec" Version="1.1.1" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
-        <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
-        <ProjectReference Include="..\TransactionQL.Shared\TransactionQL.Shared.fsproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
+    <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
+    <ProjectReference Include="..\TransactionQL.Shared\TransactionQL.Shared.fsproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Update="FSharp.Core" Version="8.0.301" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="8.0.301" />
+  </ItemGroup>
 
 </Project>

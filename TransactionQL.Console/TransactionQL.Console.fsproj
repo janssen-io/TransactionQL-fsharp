@@ -1,29 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <PackAsTool>True</PackAsTool>
-        <ToolCommandName>tql</ToolCommandName>
-        <PackageOutputPath>./nupkg</PackageOutputPath>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>net8.0</TargetFramework>
-    </PropertyGroup>
+  <PropertyGroup>
+    <PackAsTool>True</PackAsTool>
+    <ToolCommandName>tql</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyVersion>2.1.3</AssemblyVersion>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <Compile Include="Program.fs" />
-    </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.fs" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Argu" Version="6.2.4" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Argu" Version="6.2.4" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\TransactionQL.Application\TransactionQL.Application.fsproj" />
-        <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
-        <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TransactionQL.Application\TransactionQL.Application.fsproj" />
+    <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
+    <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <PackageReference Update="FSharp.Core" Version="8.0.301" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="8.0.301" />
+  </ItemGroup>
 
 </Project>

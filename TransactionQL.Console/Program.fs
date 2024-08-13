@@ -1,5 +1,7 @@
 ﻿namespace TransactionQL.Console
 
+open System.Reflection
+
 module Program =
     open Argu
     open System
@@ -40,16 +42,18 @@ module Program =
 
     type Arguments =
         | [<MainCommand; ExactlyOnce; Last>] Files of ``transactions.csv``: string * ``filter.tql``: string
-        | [<AltCommandLine("-d")>] Date of format: string
-        | [<AltCommandLine("-p")>] Precision of int
-        | [<AltCommandLine("-c")>] Comment of chars: string
+        | [<AltCommandLine("-d"); Unique>] Date of format: string
+        | [<AltCommandLine("-p"); Unique>] Precision of int
+        | [<AltCommandLine("-c"); Unique>] Comment of chars: string
         | [<AltCommandLine("-m"); ExactlyOnce>] Converter of string
-        | [<AltCommandLine("-h")>] HasHeader of bool
-        | [<AltCommandLine("-l")>] Locale of string
-        | [<AltCommandLine("--desc")>] AddDescription of AddDescriptionFlag
+        | [<AltCommandLine("-h"); Unique>] HasHeader of bool
+        | [<AltCommandLine("-l"); Unique>] Locale of string
+        | [<AltCommandLine("--desc"); Unique>] AddDescription of AddDescriptionFlag
+        | [<Unique>] Version
 
         interface IArgParserTemplate with
             member s.Usage =
+                let v = Assembly.GetExecutingAssembly().GetCustomAttribute(typeof<AssemblyFileVersionAttribute>) :?> AssemblyFileVersionAttribute
                 match s with
                 | Files _ -> "the paths to the transactions and filter files"
                 | Date _ -> $"the date output format (default: %s{defaultOpts.Format.Date})"
@@ -63,6 +67,7 @@ module Program =
                 | Locale _ -> $"the locale used to parse decimal values (default: %s{defaultOpts.Locale})"
                 | AddDescription _ ->
                     $"add the transaction's description below the header (default: %A{defaultOpts.AddDescription})"
+                | Version -> $"You're running tql {v.Version}"
 
     let parseFilters options =
         let filter = QLParser.parse ((new StreamReader(options.FilterFile)).ReadToEnd())
@@ -145,6 +150,7 @@ module Program =
             | HasHeader h -> mapArgs { options with HasHeader = h } args'
             | Locale l -> mapArgs { options with Locale = l } args'
             | AddDescription wd -> mapArgs { options with AddDescription = wd } args'
+            | Version -> mapArgs options args'
 
     [<EntryPoint>]
     let main argv =

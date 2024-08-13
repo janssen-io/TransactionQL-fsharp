@@ -1,101 +1,102 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <OutputType>WinExe</OutputType>
-        <TargetFramework>net8.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <ApplicationManifest>app.manifest</ApplicationManifest>
-        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <ApplicationIcon>Assets\lion.ico</ApplicationIcon>
-    </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <ApplicationIcon>Assets\lion.ico</ApplicationIcon>
+    <AssemblyVersion>2.1.2</AssemblyVersion>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <Folder Include="Models\" />
-        <AvaloniaResource Include="Assets\**" />
-    </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <AvaloniaXaml Remove="Assets\Styles.axaml" />
-      <AvaloniaXaml Remove="Assets\Styles\Cards.axaml" />
-      <AvaloniaXaml Remove="Assets\Styles\Grid.axaml" />
-      <AvaloniaXaml Remove="Assets\Styles\ProgressBar.axaml" />
-      <AvaloniaXaml Remove="Assets\Styles\RadioButton.axaml" />
-      <AvaloniaXaml Remove="Assets\ThemeVariants\Dark.axaml" />
-      <AvaloniaXaml Remove="Assets\ThemeVariants\Light.axaml" />
-      <AvaloniaXaml Remove="Assets\Variables.axaml" />
-    </ItemGroup>
+  <ItemGroup>
+    <AvaloniaXaml Remove="Assets\Styles.axaml" />
+    <AvaloniaXaml Remove="Assets\Styles\Cards.axaml" />
+    <AvaloniaXaml Remove="Assets\Styles\Grid.axaml" />
+    <AvaloniaXaml Remove="Assets\Styles\ProgressBar.axaml" />
+    <AvaloniaXaml Remove="Assets\Styles\RadioButton.axaml" />
+    <AvaloniaXaml Remove="Assets\ThemeVariants\Dark.axaml" />
+    <AvaloniaXaml Remove="Assets\ThemeVariants\Light.axaml" />
+    <AvaloniaXaml Remove="Assets\Variables.axaml" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.1.2" />
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.1.2" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.1.2" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.2" />
-        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.2" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.1.2" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="Projektanker.Icons.Avalonia" Version="9.4.0" />
-        <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.4.0" />
-    </ItemGroup>
-
-
-    <ItemGroup>
-        <ProjectReference Include="..\TransactionQL.Application\TransactionQL.Application.fsproj" />
-        <ProjectReference Include="..\TransactionQL.Shared\TransactionQL.Shared.fsproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.1.2" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.1.2" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.1.2" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.2" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.2" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="11.1.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Projektanker.Icons.Avalonia" Version="9.4.0" />
+    <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.4.0" />
+  </ItemGroup>
 
 
-    <ItemGroup>
-      <AvaloniaResource Update="Assets\ledgerleo.ico">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </AvaloniaResource>
-      <AvaloniaResource Update="Assets\lion.png">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </AvaloniaResource>
-      <AvaloniaResource Update="Assets\Styles\Cards.axaml">
-        <SubType>Designer</SubType>
-      </AvaloniaResource>
-      <AvaloniaResource Update="Assets\Styles\Grid.axaml">
-        <SubType>Designer</SubType>
-      </AvaloniaResource>
-      <AvaloniaResource Update="Assets\Styles\ProgressBar.axaml">
-        <SubType>Designer</SubType>
-      </AvaloniaResource>
-      <AvaloniaResource Update="Assets\Styles\RadioButton.axaml">
-        <SubType>Designer</SubType>
-      </AvaloniaResource>
-      <AvaloniaResource Update="Assets\ThemeVariants\Dark.axaml">
-        <SubType>Designer</SubType>
-      </AvaloniaResource>
-      <AvaloniaResource Update="Assets\ThemeVariants\Light.axaml">
-        <SubType>Designer</SubType>
-      </AvaloniaResource>
-      <AvaloniaResource Update="Assets\Variables.axaml">
-        <SubType>Designer</SubType>
-      </AvaloniaResource>
-      <AvaloniaResource Update="Assets\Styles.axaml">
-        <SubType>Designer</SubType>
-      </AvaloniaResource>
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TransactionQL.Application\TransactionQL.Application.fsproj" />
+    <ProjectReference Include="..\TransactionQL.Shared\TransactionQL.Shared.fsproj" />
+  </ItemGroup>
 
 
-    <ItemGroup>
-        <Compile Update="Controls\Dropzone.axaml.cs">
-          <DependentUpon>Dropzone.axaml</DependentUpon>
-        </Compile>
-        <Compile Update="Views\PaymentDetails.axaml.cs">
-            <DependentUpon>PaymentDetails.axaml</DependentUpon>
-        </Compile>
-    </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Update="Assets\ledgerleo.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\lion.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles\Cards.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles\Grid.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles\ProgressBar.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles\RadioButton.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\ThemeVariants\Dark.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\ThemeVariants\Light.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Variables.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <AvaloniaResource Update="Assets\Styles.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+  </ItemGroup>
 
 
-    <ItemGroup>
-      <None Remove="Assets\lion.ico" />
-      <None Remove="Assets\lion.png" />
-    </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Controls\Dropzone.axaml.cs">
+      <DependentUpon>Dropzone.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\PaymentDetails.axaml.cs">
+      <DependentUpon>PaymentDetails.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 
 
-    <ItemGroup>
-      <AvaloniaResource Remove="Assets\ledgerleo.ico" />
-    </ItemGroup>
+  <ItemGroup>
+    <None Remove="Assets\lion.ico" />
+    <None Remove="Assets\lion.png" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <AvaloniaResource Remove="Assets\ledgerleo.ico" />
+  </ItemGroup>
 </Project>
