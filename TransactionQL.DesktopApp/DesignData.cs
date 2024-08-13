@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using TransactionQL.DesktopApp.ViewModels;
 
 namespace TransactionQL.DesktopApp;
@@ -53,4 +54,6 @@ public static class DesignData
             new("triodos.dll", "Triodos"),
         ],
     };
+
+    public static readonly SettingsViewModel Settings = new() { Version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "No version" };
 }

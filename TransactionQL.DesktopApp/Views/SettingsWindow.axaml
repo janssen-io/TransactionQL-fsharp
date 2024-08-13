@@ -1,0 +1,44 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
+        xmlns:app="using:TransactionQL.DesktopApp"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TransactionQL.DesktopApp.SettingsWindow"
+        Title="SettingsWindow"
+        x:DataType="vm:SettingsViewModel"
+        DataContext="{x:Static app:DesignData.Settings}">
+  <Window.Styles>
+    <StyleInclude Source="/Assets/Styles.axaml" />
+    <Style Selector="Window">
+
+    </Style>
+    <Style Selector="Border.Section">
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Border.Base.Neutral}" />
+      <Setter Property="Margin" Value="10" />
+
+      <Style Selector="^ Border.Body">
+        <Setter Property="Margin" Value="5 0 0 0" />
+        <Setter Property="Padding" Value="5 5" />
+      </Style>
+
+      <Style Selector="^ StackPanel TextBlock.Title">
+        <Setter Property="Margin" Value="5 -10 5 0" />
+        <Setter Property="Padding" Value="5 0" />
+        <Setter Property="Background" Value="{DynamicResource BG.Base.Neutral}" />
+      </Style>
+    </Style>
+  </Window.Styles>
+  <Panel>
+    <Border Classes="Section" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+      <StackPanel Orientation="Vertical">
+        <TextBlock Grid.Row="0" Classes="Title" HorizontalAlignment="Left">Version</TextBlock>
+        <Border Classes="Body">
+          <TextBlock Grid.Row="1" Text="{Binding Version}" />
+        </Border>
+      </StackPanel>
+    </Border>
+  </Panel>
+</Window>
