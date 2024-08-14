@@ -1,0 +1,97 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:TransactionQL.DesktopApp.Controls">
+
+  <!--
+    Additional resources 
+    Using Control Themes:
+         https://docs.avaloniaui.net/docs/basics/user-interface/styling/control-themes
+    Using Theme Variants:
+         https://docs.avaloniaui.net/docs/guides/styles-and-resources/how-to-use-theme-variants
+  -->
+
+  <Design.PreviewWith>
+    <StackPanel Orientation="Horizontal" Spacing="3" Background="{DynamicResource BG.Base.Primary}">
+      <StackPanel.Styles>
+        <Style Selector="controls|TitledBorder">
+          <Setter Property="Width" Value="150" />
+        </Style>
+      </StackPanel.Styles>
+      <ThemeVariantScope RequestedThemeVariant="Light">
+        <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}">
+          <StackPanel Orientation="Vertical">
+            <controls:TitledBorder Title="My Section">
+              <StackPanel Orientation="Vertical" Spacing="20">
+                <TextBox Watermark="Name">Hello</TextBox>
+                <CheckBox>Hello</CheckBox>
+              </StackPanel>
+            </controls:TitledBorder>
+            <controls:TitledBorder Title="My Section" BorderThickness="3" BorderBrush="{DynamicResource Border.Base.Primary}">
+              <StackPanel Orientation="Vertical" Spacing="20">
+                <TextBox Watermark="Name">Hello</TextBox>
+                <CheckBox>Hello</CheckBox>
+              </StackPanel>
+            </controls:TitledBorder>
+          </StackPanel>
+        </Border>
+      </ThemeVariantScope>
+      <ThemeVariantScope RequestedThemeVariant="Dark">
+        <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}">
+          <StackPanel Orientation="Vertical">
+            <controls:TitledBorder Title="My Section">
+              <StackPanel Orientation="Vertical" Spacing="20">
+                <TextBox Watermark="Name">Hello</TextBox>
+                <CheckBox>Hello</CheckBox>
+              </StackPanel>
+            </controls:TitledBorder>
+            <controls:TitledBorder Title="My Section" BorderThickness="3" BorderBrush="{DynamicResource Border.Base.Primary}">
+              <StackPanel Orientation="Vertical" Spacing="20">
+                <TextBox Watermark="Name">Hello</TextBox>
+                <CheckBox>Hello</CheckBox>
+              </StackPanel>
+            </controls:TitledBorder>
+          </StackPanel>
+        </Border>
+      </ThemeVariantScope>
+    </StackPanel>
+  </Design.PreviewWith>
+
+  <ControlTheme x:Key="{x:Type controls:TitledBorder}" TargetType="controls:TitledBorder">
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Border.Base.Neutral}" />
+    <Styles>
+
+
+      <Style Selector="Border.Section">
+        <Setter Property="BorderThickness" Value="{TemplateBinding BorderThickness}" />
+        <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />
+        <Setter Property="Margin" Value="10" />
+
+        <Style Selector="^ Border.Body">
+          <Setter Property="Margin" Value="5 0 0 0" />
+          <Setter Property="Padding" Value="5 5" />
+        </Style>
+
+        <Style Selector="^ StackPanel TextBlock.Title">
+          <Setter Property="Margin" Value="5 -10 5 0" />
+          <Setter Property="Padding" Value="5 0" />
+          <Setter Property="Background" Value="{DynamicResource BG.Base.Neutral}" />
+        </Style>
+      </Style>
+    </Styles>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Classes="Section" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+          <StackPanel Orientation="Vertical">
+            <TextBlock Classes="Title" Text="{TemplateBinding Title}"
+                       Grid.Row="0" HorizontalAlignment="Left" />
+            <Border Classes="Body">
+              <ContentPresenter Content="{TemplateBinding Content}"
+                          ContentTemplate="{TemplateBinding ContentTemplate}"/>
+            </Border>
+          </StackPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>
