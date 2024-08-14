@@ -116,6 +116,15 @@ public partial class MainWindow : Window
         selectWindow.Show(this);
     }
 
+    private void OpenSettings(object? sender, RoutedEventArgs ea)
+    {
+        var settings = new SettingsWindow
+        {
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+        };
+        settings.Show(this);
+    }
+
     private void BankTransactionCarousel_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         foreach (var item in e.RemovedItems.OfType<PaymentDetailsViewModel>()) item.Deactivate();

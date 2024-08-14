@@ -6,10 +6,12 @@
         xmlns:controls="using:TransactionQL.DesktopApp.Controls"
         xmlns:app="using:TransactionQL.DesktopApp"
         xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
-        mc:Ignorable="d" MinWidth="300"
+        mc:Ignorable="d" MinWidth="300" MaxWidth="500"
         x:Class="TransactionQL.DesktopApp.SettingsWindow"
         Title="SettingsWindow"
         x:DataType="vm:SettingsViewModel"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaToDecorationsHint="True"
         DataContext="{x:Static app:DesignData.Settings}">
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles.axaml" />
@@ -18,6 +20,10 @@
   <!-- TODO: Create sections with a menu on the left -->
 
   <StackPanel Orientation="Vertical" Spacing="10">
+    <Button Grid.Column="1" i:Attached.Icon="fa-solid fa-x"
+            Background="Transparent" RelativePanel.AlignRightWithPanel="True"
+            FontSize="8" Foreground="{DynamicResource FG.Soft.Neutral}"
+            Click="Close" HorizontalAlignment="Right" />
     <controls:TitledBorder Title="Version">
       <TextBlock Text="{Binding Version}" />
     </controls:TitledBorder>
