@@ -5,7 +5,8 @@
         xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
         xmlns:controls="using:TransactionQL.DesktopApp.Controls"
         xmlns:app="using:TransactionQL.DesktopApp"
-        mc:Ignorable="d" MinWidth="300" d:DesignHeight="300"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        mc:Ignorable="d" MinWidth="300"
         x:Class="TransactionQL.DesktopApp.SettingsWindow"
         Title="SettingsWindow"
         x:DataType="vm:SettingsViewModel"
@@ -13,9 +14,50 @@
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles.axaml" />
   </Window.Styles>
-  <Panel>
+  <!-- TODO: bind to viewmodel, save and apply -->
+  <!-- TODO: Create sections with a menu on the left -->
+
+  <StackPanel Orientation="Vertical" Spacing="10">
     <controls:TitledBorder Title="Version">
       <TextBlock Text="{Binding Version}" />
     </controls:TitledBorder>
-  </Panel>
+    <controls:TitledBorder Title="Progress">
+      <CheckBox IsChecked="True">Progress is saved upon exit</CheckBox>
+    </controls:TitledBorder>
+
+    <Separator Background="{DynamicResource Border.Soft.Neutral}"/>
+
+    <!-- Locale -->
+    <TextBlock Margin="10 0" Foreground="{DynamicResource FG.Base.Neutral}" FontWeight="Bold">
+      <i:Icon Value="fa-solid fa-globe" Foreground="{DynamicResource FG.Elevated.Neutral}" FontSize="10" Margin="0 2 0 0" />
+      Locale
+    </TextBlock>
+    <StackPanel Orientation="Vertical" Spacing="10">
+      <controls:TitledBorder Title="Default Currency">
+        <TextBox Watermark="€" />
+      </controls:TitledBorder>
+      <controls:TitledBorder Title="Default Checking Account">
+        <TextBox Watermark="Assets:Checking" />
+      </controls:TitledBorder>
+      <controls:TitledBorder Title="Locale">
+        <TextBox Watermark="en-us" />
+      </controls:TitledBorder>
+    </StackPanel>
+
+    <Separator Background="{DynamicResource Border.Soft.Neutral}"/>
+
+    <!-- Executables -->
+    <TextBlock Margin="10 0" Foreground="{DynamicResource FG.Base.Neutral}" FontWeight="Bold">
+      <i:Icon Value="fa-solid fa-wrench" Foreground="{DynamicResource FG.Elevated.Neutral}" FontSize="10" Margin="0 2 0 0" />
+      Advanced Settings
+    </TextBlock>
+    <StackPanel Orientation="Vertical" Spacing="10">
+      <controls:TitledBorder Title="TransactionQL Location">
+        <TextBox Watermark="%appdata%/tql" />
+      </controls:TitledBorder>
+      <controls:TitledBorder Title="Plugin directory">
+        <TextBox Watermark="%appdata%/tql/plugins" />
+      </controls:TitledBorder>
+    </StackPanel>
+  </StackPanel>
 </Window>

@@ -14,7 +14,7 @@
     <StackPanel Orientation="Horizontal" Spacing="3" Background="{DynamicResource BG.Base.Primary}">
       <StackPanel.Styles>
         <Style Selector="controls|TitledBorder">
-          <Setter Property="Width" Value="150" />
+          <Setter Property="Width" Value="200" />
         </Style>
       </StackPanel.Styles>
       <ThemeVariantScope RequestedThemeVariant="Light">
@@ -26,12 +26,15 @@
                 <CheckBox>Hello</CheckBox>
               </StackPanel>
             </controls:TitledBorder>
-            <controls:TitledBorder Title="My Section" BorderThickness="3" BorderBrush="{DynamicResource Border.Base.Primary}">
+            <controls:TitledBorder Title="My Custom Section" TitleAlignment="Right"
+                                   BorderThickness="3" BorderBrush="{DynamicResource Border.Base.Primary}"
+                                   FocusBorderBrush="Red">
               <StackPanel Orientation="Vertical" Spacing="20">
                 <TextBox Watermark="Name">Hello</TextBox>
                 <CheckBox>Hello</CheckBox>
               </StackPanel>
             </controls:TitledBorder>
+
           </StackPanel>
         </Border>
       </ThemeVariantScope>
@@ -44,7 +47,9 @@
                 <CheckBox>Hello</CheckBox>
               </StackPanel>
             </controls:TitledBorder>
-            <controls:TitledBorder Title="My Section" BorderThickness="3" BorderBrush="{DynamicResource Border.Base.Primary}">
+            <controls:TitledBorder Title="My Custom Section" TitleAlignment="Right"
+                                   BorderThickness="3" BorderBrush="{DynamicResource Border.Base.Primary}"
+                                   FocusBorderBrush="Red">
               <StackPanel Orientation="Vertical" Spacing="20">
                 <TextBox Watermark="Name">Hello</TextBox>
                 <CheckBox>Hello</CheckBox>
@@ -59,13 +64,19 @@
   <ControlTheme x:Key="{x:Type controls:TitledBorder}" TargetType="controls:TitledBorder">
     <Setter Property="BorderThickness" Value="1"/>
     <Setter Property="BorderBrush" Value="{DynamicResource Border.Base.Neutral}" />
+    <Setter Property="FocusBorderBrush" Value="{DynamicResource Border.Base.Primary}" />
     <Styles>
-
 
       <Style Selector="Border.Section">
         <Setter Property="BorderThickness" Value="{TemplateBinding BorderThickness}" />
         <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />
         <Setter Property="Margin" Value="10" />
+
+        <Style Selector="^:focus-within">
+          <Setter Property="BorderBrush" Value="Red">
+            <Binding RelativeSource="{RelativeSource AncestorType={x:Type controls:TitledBorder}}" Path="FocusBorderBrush" />
+          </Setter>
+        </Style>
 
         <Style Selector="^ Border.Body">
           <Setter Property="Margin" Value="5 0 0 0" />
@@ -76,6 +87,9 @@
           <Setter Property="Margin" Value="5 -10 5 0" />
           <Setter Property="Padding" Value="5 0" />
           <Setter Property="Background" Value="{DynamicResource BG.Base.Neutral}" />
+          <Setter Property="HorizontalAlignment">
+            <Binding RelativeSource="{RelativeSource AncestorType={x:Type controls:TitledBorder}}" Path="TitleAlignment" />
+          </Setter>
         </Style>
       </Style>
     </Styles>

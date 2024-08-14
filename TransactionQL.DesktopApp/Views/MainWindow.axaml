@@ -36,6 +36,10 @@
                       IsEnabled="{Binding IsDone}" i:Attached.Icon="fa-solid fa-file-export">
                 <ToolTip.Tip>Export to Ledger (Ctrl+Alt+S)</ToolTip.Tip>
               </Button>
+              <Button Classes="IconAction" HotKey="Ctrl+I"
+                      i:Attached.Icon="fa-solid fa-sliders">
+                <ToolTip.Tip>Configure Preferences</ToolTip.Tip>
+              </Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1" Spacing="5">
               <TextBlock Text="Last saved:" FontStyle="Italic" />
