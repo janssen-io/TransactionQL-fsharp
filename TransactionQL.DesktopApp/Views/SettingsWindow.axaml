@@ -6,64 +6,119 @@
         xmlns:controls="using:TransactionQL.DesktopApp.Controls"
         xmlns:app="using:TransactionQL.DesktopApp"
         xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
-        mc:Ignorable="d" MinWidth="300" MaxWidth="500"
+        mc:Ignorable="d" Width="400" Height="400"
         x:Class="TransactionQL.DesktopApp.SettingsWindow"
-        Title="SettingsWindow"
+        Title="Settings"
         x:DataType="vm:SettingsViewModel"
         ExtendClientAreaChromeHints="NoChrome"
+        RequestedThemeVariant="Dark"
         ExtendClientAreaToDecorationsHint="True"
         DataContext="{x:Static app:DesignData.Settings}">
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles.axaml" />
+    <Style Selector="Expander">
+      <Setter Property="Background" Value="{DynamicResource BG.Elevated.Neutral}" />
+
+      <Style Selector="^ /template/ ToggleButton#ExpanderHeader">
+        <Setter Property="Background" Value="{DynamicResource BG.Base.Neutral}" />
+      </Style>
+
+      <Style Selector="^ > StackPanel">
+        <Setter Property="Spacing" Value="10" />
+
+        <Style Selector="^ > controls|TitledBorder">
+          <Setter Property="Background">
+            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type Expander}}" Path="Background" />
+          </Setter>
+        </Style>
+      </Style>
+
+      <Style Selector="^ TextBlock.SectionHeader">
+        <Setter Property="Margin" Value="10 0" />
+
+        <Style Selector="^ i|Icon">
+          <Setter Property="Foreground" Value="{DynamicResource FG.Elevated.Neutral}" />
+        </Style>
+        <Style Selector="^ Image">
+          <Setter Property="Margin" Value="0 2 12 0" />
+        </Style>
+      </Style>
+    </Style>
+
   </Window.Styles>
   <!-- TODO: bind to viewmodel, save and apply -->
-  <!-- TODO: Create sections with a menu on the left -->
 
-  <StackPanel Orientation="Vertical" Spacing="10">
-    <Button Grid.Column="1" i:Attached.Icon="fa-solid fa-x"
-            Background="Transparent" RelativePanel.AlignRightWithPanel="True"
-            FontSize="8" Foreground="{DynamicResource FG.Soft.Neutral}"
-            Click="Close" HorizontalAlignment="Right" />
-    <controls:TitledBorder Title="Version">
-      <TextBlock Text="{Binding Version}" />
-    </controls:TitledBorder>
-    <controls:TitledBorder Title="Progress">
-      <CheckBox IsChecked="True">Progress is saved upon exit</CheckBox>
-    </controls:TitledBorder>
+  <DockPanel>
+    <DockPanel Margin="10 5 0 5" DockPanel.Dock="Top">
+      <TextBlock Text="Settings" HorizontalAlignment="Left" />
+      <Button Grid.Column="1" i:Attached.Icon="fa-solid fa-x"
+              Background="Transparent" RelativePanel.AlignRightWithPanel="True"
+              FontSize="8" Foreground="{DynamicResource FG.Soft.Neutral}"
+              Click="Close" HorizontalAlignment="Right" />
+    </DockPanel>
+    <ScrollViewer>
+      <StackPanel Orientation="Vertical" Spacing="10">
 
-    <Separator Background="{DynamicResource Border.Soft.Neutral}"/>
+        <Expander HorizontalAlignment="Stretch" IsExpanded="True">
+          <Expander.Header>
+            <TextBlock Classes="SectionHeader">
+              <Image Source="/Assets/lion.ico" Height="{Binding $parent.FontSize}"/> App
+            </TextBlock>
+          </Expander.Header>
+          <StackPanel Orientation="Vertical">
+            <controls:TitledBorder Title="Version" Foreground="{DynamicResource FG.Soft.Neutral}" BorderBrush="{Binding $self.Foreground}">
+              <TextBlock Text="{Binding Version}" />
+            </controls:TitledBorder>
 
-    <!-- Locale -->
-    <TextBlock Margin="10 0" Foreground="{DynamicResource FG.Base.Neutral}" FontWeight="Bold">
-      <i:Icon Value="fa-solid fa-globe" Foreground="{DynamicResource FG.Elevated.Neutral}" FontSize="10" Margin="0 2 0 0" />
-      Locale
-    </TextBlock>
-    <StackPanel Orientation="Vertical" Spacing="10">
-      <controls:TitledBorder Title="Default Currency">
-        <TextBox Watermark="€" />
-      </controls:TitledBorder>
-      <controls:TitledBorder Title="Default Checking Account">
-        <TextBox Watermark="Assets:Checking" />
-      </controls:TitledBorder>
-      <controls:TitledBorder Title="Locale">
-        <TextBox Watermark="en-us" />
-      </controls:TitledBorder>
-    </StackPanel>
+            <controls:TitledBorder Title="GitHub" Foreground="{DynamicResource FG.Soft.Neutral}" BorderBrush="{Binding $self.Foreground}">
+              <HyperlinkButton NavigateUri="https://github.com/janssen-io/TransactionQL-fsharp">
+                <TextBlock>
+                  <i:Icon Value="fa-brands fa-github" /> janssen-io/TransactionQL-fsharp
+                </TextBlock>
+              </HyperlinkButton>
+              <!--<TextBlock>https://github.com/janssen-io/TransactionQL-fsharp</TextBlock>-->
+            </controls:TitledBorder>
+            <controls:TitledBorder Title="Progress">
+              <CheckBox IsChecked="True">Progress is saved upon exit</CheckBox>
+            </controls:TitledBorder>
+          </StackPanel>
+        </Expander>
 
-    <Separator Background="{DynamicResource Border.Soft.Neutral}"/>
+        <Expander HorizontalAlignment="Stretch">
+          <Expander.Header>
+            <TextBlock Classes="SectionHeader">
+              <i:Icon Value="fa-solid fa-globe" /> Locale
+            </TextBlock>
+          </Expander.Header>
+          <StackPanel Orientation="Vertical">
+            <controls:TitledBorder Title="Default Currency">
+              <TextBox Watermark="€" />
+            </controls:TitledBorder>
+            <controls:TitledBorder Title="Default Checking Account">
+              <TextBox Watermark="Assets:Checking" />
+            </controls:TitledBorder>
+            <controls:TitledBorder Title="Locale">
+              <TextBox Watermark="en-us" />
+            </controls:TitledBorder>
+          </StackPanel>
+        </Expander>
 
-    <!-- Executables -->
-    <TextBlock Margin="10 0" Foreground="{DynamicResource FG.Base.Neutral}" FontWeight="Bold">
-      <i:Icon Value="fa-solid fa-wrench" Foreground="{DynamicResource FG.Elevated.Neutral}" FontSize="10" Margin="0 2 0 0" />
-      Advanced Settings
-    </TextBlock>
-    <StackPanel Orientation="Vertical" Spacing="10">
-      <controls:TitledBorder Title="TransactionQL Location">
-        <TextBox Watermark="%appdata%/tql" />
-      </controls:TitledBorder>
-      <controls:TitledBorder Title="Plugin directory">
-        <TextBox Watermark="%appdata%/tql/plugins" />
-      </controls:TitledBorder>
-    </StackPanel>
-  </StackPanel>
+        <Expander HorizontalAlignment="Stretch">
+          <Expander.Header>
+            <TextBlock Classes="SectionHeader">
+              <i:Icon Value="fa-solid fa-wrench" /> Advanced Settings
+            </TextBlock>
+          </Expander.Header>
+          <StackPanel Orientation="Vertical">
+            <controls:TitledBorder Title="TransactionQL Location">
+              <TextBox Watermark="%appdata%/tql" />
+            </controls:TitledBorder>
+            <controls:TitledBorder Title="Plugin directory">
+              <TextBox Watermark="%appdata%/tql/plugins" />
+            </controls:TitledBorder>
+          </StackPanel>
+        </Expander>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
 </Window>
