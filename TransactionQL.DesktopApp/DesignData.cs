@@ -55,5 +55,5 @@ public static class DesignData
         ],
     };
 
-    public static readonly SettingsViewModel Settings = SettingsViewModel.From(Models.Settings.Default);
+    public static readonly AboutViewModel About = AboutViewModel.From(Models.About.Default);
 }

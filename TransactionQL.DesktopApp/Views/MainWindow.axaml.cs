@@ -117,19 +117,10 @@ public partial class MainWindow : Window
 
     private void OpenSettings(object? sender, RoutedEventArgs ea)
     {
-        // TODO: keep track of last opened accounts-file and check that folder for config
-        var file = Path.Join(
-            Configuration.createAndGetAppDir,
-            Models.Settings.ConfigFileName);
-
-        var settings = File.Exists(file)
-            ? Models.Settings.FromConfig(new Uri(file))
-            : Models.Settings.Default;
-
-        new SettingsWindow
+        new AboutWindow
         {
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            DataContext = SettingsViewModel.From(settings),
+            DataContext = AboutViewModel.From(Models.About.Default),
         }.Show(this);
     }
 

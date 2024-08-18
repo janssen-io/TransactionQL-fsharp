@@ -6,13 +6,13 @@
         xmlns:controls="using:TransactionQL.DesktopApp.Controls"
         xmlns:app="using:TransactionQL.DesktopApp"
         xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
-        mc:Ignorable="d" Width="400" Height="400"
-        x:Class="TransactionQL.DesktopApp.SettingsWindow"
-        Title="Settings"
-        x:DataType="vm:SettingsViewModel"
+        mc:Ignorable="d" Width="420" Height="520"
+        x:Class="TransactionQL.DesktopApp.AboutWindow"
+        Title="About Ledger Leo"
+        x:DataType="vm:AboutViewModel"
         ExtendClientAreaChromeHints="NoChrome"
         ExtendClientAreaToDecorationsHint="True"
-        DataContext="{x:Static app:DesignData.Settings}">
+        DataContext="{x:Static app:DesignData.About}">
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles.axaml" />
     <Style Selector="Expander">
@@ -43,13 +43,11 @@
         </Style>
       </Style>
     </Style>
-
   </Window.Styles>
-  <!-- TODO: bind to viewmodel, save and apply -->
 
   <DockPanel>
     <DockPanel Margin="10 5 0 5" DockPanel.Dock="Top">
-      <TextBlock Text="Settings" HorizontalAlignment="Left" />
+      <TextBlock Text="About Ledger Leo" HorizontalAlignment="Left" />
       <Button Grid.Column="1" i:Attached.Icon="fa-solid fa-x"
               Background="Transparent" RelativePanel.AlignRightWithPanel="True"
               FontSize="8" Foreground="{DynamicResource FG.Soft.Neutral}"
@@ -75,34 +73,11 @@
                   <i:Icon Value="fa-brands fa-github" /> janssen-io/TransactionQL-fsharp
                 </TextBlock>
               </HyperlinkButton>
-              <!--<TextBlock>https://github.com/janssen-io/TransactionQL-fsharp</TextBlock>-->
-            </controls:TitledBorder>
-            <controls:TitledBorder Title="Progress">
-              <CheckBox IsChecked="{Binding ShouldSaveProgressOnExit}">Progress is saved upon exit</CheckBox>
             </controls:TitledBorder>
           </StackPanel>
         </Expander>
 
-        <Expander HorizontalAlignment="Stretch">
-          <Expander.Header>
-            <TextBlock Classes="SectionHeader">
-              <i:Icon Value="fa-solid fa-globe" /> Locale
-            </TextBlock>
-          </Expander.Header>
-          <StackPanel Orientation="Vertical">
-            <controls:TitledBorder Title="Default Currency">
-              <TextBox Watermark="€" Text="{Binding DefaultCurrency}" />
-            </controls:TitledBorder>
-            <controls:TitledBorder Title="Default Payment Account">
-              <TextBox Watermark="Assets:Checking" Text="{Binding DefaultCheckingAccount}" />
-            </controls:TitledBorder>
-            <controls:TitledBorder Title="Locale">
-              <TextBox Watermark="en-us" Text="{Binding Locale}" />
-            </controls:TitledBorder>
-          </StackPanel>
-        </Expander>
-
-        <Expander HorizontalAlignment="Stretch">
+        <Expander HorizontalAlignment="Stretch" IsExpanded="True">
           <Expander.Header>
             <TextBlock Classes="SectionHeader">
               <i:Icon Value="fa-solid fa-wrench" /> Advanced Settings
@@ -110,10 +85,10 @@
           </Expander.Header>
           <StackPanel Orientation="Vertical">
             <controls:TitledBorder Title="TransactionQL Binary Location">
-              <TextBox Watermark="%appdata%/tql" Text="{Binding TqlBinaryLocation}" />
+              <TextBox IsReadOnly="True" Watermark="%appdata%/tql" Text="{Binding TqlBinaryLocation}" />
             </controls:TitledBorder>
             <controls:TitledBorder Title="Plugin directory">
-              <TextBox Watermark="%appdata%/tql/plugins" Text="{Binding PluginDirectory}" />
+              <TextBox IsReadOnly="True" Watermark="%appdata%/tql/plugins" Text="{Binding PluginDirectory}" />
             </controls:TitledBorder>
           </StackPanel>
         </Expander>

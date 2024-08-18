@@ -46,7 +46,7 @@
             <controls:TitledBorder Title="My Custom Section" TitleAlignment="Right"
                                    BorderThickness="3" BorderBrush="{DynamicResource Border.Base.Primary}"
                                    FocusBorderBrush="Red" Background="{DynamicResource Border.Base.Primary}"
-                                   Foreground="{DynamicResource FG.Contrast.Neutral}">
+                                   Foreground="{DynamicResource FG.Contrast.Neutral}" >
               <StackPanel Orientation="Vertical" Spacing="20">
                 <TextBox Watermark="Name">Hello</TextBox>
                 <CheckBox>Hello</CheckBox>
