@@ -43,6 +43,22 @@ public class SelectDataWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _accountsFile, value);
     }
 
+    private string _defaultCheckingAccount = "Assets:Checking";
+
+    public string DefaultCheckingAccount
+    {
+        get => _defaultCheckingAccount;
+        set => this.RaiseAndSetIfChanged(ref _defaultCheckingAccount, value);
+    }
+
+    private string _defaultCurrency = "EUR";
+
+    public string DefaultCurrency
+    {
+        get => _defaultCurrency;
+        set => this.RaiseAndSetIfChanged(ref _defaultCurrency, value);
+    }
+
     private Module? _module;
 
     public Module? Module

@@ -8,9 +8,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using Avalonia.VisualTree;
 using ReactiveUI;
-using TransactionQL.DesktopApp.Controls;
+using TransactionQL.Application;
 using TransactionQL.DesktopApp.ViewModels;
 using Module = TransactionQL.DesktopApp.ViewModels.Module;
 

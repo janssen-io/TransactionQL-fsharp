@@ -12,13 +12,8 @@
 
   <Design.PreviewWith>
     <StackPanel Orientation="Horizontal" Spacing="3" Background="{DynamicResource BG.Base.Primary}">
-      <StackPanel.Styles>
-        <Style Selector="controls|TitledBorder">
-          <Setter Property="Width" Value="200" />
-        </Style>
-      </StackPanel.Styles>
       <ThemeVariantScope RequestedThemeVariant="Light">
-        <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}">
+        <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}" Width="250">
           <StackPanel Orientation="Vertical">
             <controls:TitledBorder Title="My Section">
               <StackPanel Orientation="Vertical" Spacing="20">
@@ -40,7 +35,7 @@
         </Border>
       </ThemeVariantScope>
       <ThemeVariantScope RequestedThemeVariant="Dark">
-        <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}">
+        <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}" Width="600">
           <StackPanel Orientation="Vertical">
             <controls:TitledBorder Title="My Section">
               <StackPanel Orientation="Vertical" Spacing="20">
@@ -100,13 +95,13 @@
     </Styles>
     <Setter Property="Template">
       <ControlTemplate>
-        <Border Classes="Section" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <Border Classes="Section" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="Top">
           <StackPanel Orientation="Vertical">
             <TextBlock Classes="Title" Text="{TemplateBinding Title}"
-                       Grid.Row="0" HorizontalAlignment="Left" />
+                       Grid.Row="0" />
             <Border Classes="Body">
               <ContentPresenter Content="{TemplateBinding Content}"
-                          ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                          ContentTemplate="{TemplateBinding ContentTemplate}" />
             </Border>
           </StackPanel>
         </Border>
