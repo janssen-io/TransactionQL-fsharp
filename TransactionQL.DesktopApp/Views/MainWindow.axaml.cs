@@ -117,11 +117,20 @@ public partial class MainWindow : Window
 
     private void OpenSettings(object? sender, RoutedEventArgs ea)
     {
-        var settings = new SettingsWindow
+        // TODO: keep track of last opened accounts-file and check that folder for config
+        var file = Path.Join(
+            Configuration.createAndGetAppDir,
+            Models.Settings.ConfigFileName);
+
+        var settings = File.Exists(file)
+            ? Models.Settings.FromConfig(new Uri(file))
+            : Models.Settings.Default;
+
+        new SettingsWindow
         {
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
-        };
-        settings.Show(this);
+            DataContext = SettingsViewModel.From(settings),
+        }.Show(this);
     }
 
     private void BankTransactionCarousel_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)

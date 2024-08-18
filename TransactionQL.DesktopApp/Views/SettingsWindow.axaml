@@ -78,7 +78,7 @@
               <!--<TextBlock>https://github.com/janssen-io/TransactionQL-fsharp</TextBlock>-->
             </controls:TitledBorder>
             <controls:TitledBorder Title="Progress">
-              <CheckBox IsChecked="True">Progress is saved upon exit</CheckBox>
+              <CheckBox IsChecked="{Binding ShouldSaveProgressOnExit}">Progress is saved upon exit</CheckBox>
             </controls:TitledBorder>
           </StackPanel>
         </Expander>
@@ -91,13 +91,13 @@
           </Expander.Header>
           <StackPanel Orientation="Vertical">
             <controls:TitledBorder Title="Default Currency">
-              <TextBox Watermark="€" />
+              <TextBox Watermark="€" Text="{Binding DefaultCurrency}" />
             </controls:TitledBorder>
-            <controls:TitledBorder Title="Default Checking Account">
-              <TextBox Watermark="Assets:Checking" />
+            <controls:TitledBorder Title="Default Payment Account">
+              <TextBox Watermark="Assets:Checking" Text="{Binding DefaultCheckingAccount}" />
             </controls:TitledBorder>
             <controls:TitledBorder Title="Locale">
-              <TextBox Watermark="en-us" />
+              <TextBox Watermark="en-us" Text="{Binding Locale}" />
             </controls:TitledBorder>
           </StackPanel>
         </Expander>
@@ -109,11 +109,11 @@
             </TextBlock>
           </Expander.Header>
           <StackPanel Orientation="Vertical">
-            <controls:TitledBorder Title="TransactionQL Location">
-              <TextBox Watermark="%appdata%/tql" />
+            <controls:TitledBorder Title="TransactionQL Binary Location">
+              <TextBox Watermark="%appdata%/tql" Text="{Binding TqlBinaryLocation}" />
             </controls:TitledBorder>
             <controls:TitledBorder Title="Plugin directory">
-              <TextBox Watermark="%appdata%/tql/plugins" />
+              <TextBox Watermark="%appdata%/tql/plugins" Text="{Binding PluginDirectory}" />
             </controls:TitledBorder>
           </StackPanel>
         </Expander>

@@ -43,7 +43,7 @@ public static class DesignData
 
     public static readonly MainWindowViewModel MainWindow = new()
     {
-        BankTransactions = [PaymentDetails, PaymentDetails2 ]
+        BankTransactions = [PaymentDetails, PaymentDetails2]
     };
 
     public static readonly SelectDataWindowViewModel DataWizard = new()
@@ -55,5 +55,5 @@ public static class DesignData
         ],
     };
 
-    public static readonly SettingsViewModel Settings = new() { Version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyFileVersionAttribute>()?.Version ?? "No version" };
+    public static readonly SettingsViewModel Settings = SettingsViewModel.From(Models.Settings.Default);
 }

@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using TransactionQL.DesktopApp.ViewModels;
 
 namespace TransactionQL.DesktopApp;
 
@@ -14,6 +15,7 @@ public partial class SettingsWindow : Window
 
     public void Close(object? sender, RoutedEventArgs ea)
     {
+        ((SettingsViewModel?)this.DataContext)!.Persist();
         this.Close();
     }
 
