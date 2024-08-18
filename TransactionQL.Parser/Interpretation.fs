@@ -25,3 +25,8 @@ module Interpretation =
                 Interpretation(newEnv, folder currentResult newResult))
             seed
             list
+
+    let map
+        (f: ('a -> 'b))
+        (Interpretation(e, r): Interpretation<'a>)
+        : Interpretation<'b> = Interpretation(e, f(r))

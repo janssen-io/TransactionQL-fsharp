@@ -133,8 +133,10 @@ module QLParser =
         orGroup
 
     let qpayee: Parser<Payee, unit> =
-        let isNewline = fun c -> List.contains c [ "\n"; "\r" ]
-        (pchar '#' .>> spaces1) >>. manySatisfy (not << isNewline << string) |>> Payee
+        let pexpr = (qexpression |>> Payee.Expression)
+         // TODO: unit tests
+        let pinterpolation = (many1Till (either pexpr (pword |>> Payee)) newline) |>> Payee.Interpolation
+        (pchar '#' .>> spaces1) >>. pinterpolation
 
     let qquery =
         let payee = qpayee .>> newline

@@ -135,7 +135,13 @@ module QLInterpreter =
 
         | OrGroup filters -> Interpretation.fold evalFilter (||) (Interpretation(env, false)) filters
 
-    let evalQuery env (Query(Payee payee, filters, posting)) =
+    let rec evalPayee env payee =
+        match payee with
+        | Payee p -> Interpretation(env, p)
+        | Expression e -> map string (eval env e)
+        | Interpolation xs -> Interpretation.fold evalPayee (fun l r -> l + r) (Interpretation(env, "")) xs
+
+    let evalQuery env (Query(payee, filters, posting)) =
         let (Interpretation(envFilter, isMatch)) =
             Interpretation.fold evalFilter (&&) (Interpretation(env, true)) filters
 
@@ -154,7 +160,9 @@ module QLInterpreter =
                 System.DateTime.ParseExact(Map.find "Date" env.Row, env.DateFormat, CultureInfo.InvariantCulture)
 
             // TODO: (20240818) Check if Payee contains variables (for example 'Recipient', 'Name' or 'Receiver')
-            let header = Header(date, payee)
+            //       In progress: updated the AST, next step is update parser and write unit tests
+            let payeeString = (evalPayee env payee) |> Interpretation.result
+            let header = Header(date, payeeString)
 
             let comments =
                 [ if Map.containsKey "Description" envFilter.Row then
@@ -177,7 +185,6 @@ module QLInterpreter =
                       Lines = postingLines
                       Comments = newComments }
             )
-
 
     let rec evalProgram env queries =
         match queries with
