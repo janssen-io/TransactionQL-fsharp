@@ -87,9 +87,18 @@ public class SelectDataWindowViewModel : ViewModelBase
     {
         Submit = ReactiveCommand.Create(() =>
         {
-            // TODO: disable button/show message if not everything is selected.
-            DataSelected?.Invoke(this,
-                new SelectedData(TransactionsFile, HasHeader, FiltersFile, AccountsFile, Module!.FileName));
+            SelectedData data = new()
+            {
+                TransactionsFile = TransactionsFile,
+                HasHeader = HasHeader,
+                FiltersFile = FiltersFile,
+                AccountsFile = AccountsFile,
+                Module = Module!.FileName,
+                DefaultCheckingAccount = string.IsNullOrEmpty(DefaultCheckingAccount) ? "Assets:Checking" : DefaultCheckingAccount,
+                DefaultCurrency = string.IsNullOrEmpty(DefaultCurrency) ? "EUR" : DefaultCurrency,
+            };
+
+            DataSelected?.Invoke(this, data);
         });
 
         Cancel = ReactiveCommand.Create(() => SelectionCancelled?.Invoke(this, EventArgs.Empty));
@@ -98,23 +107,16 @@ public class SelectDataWindowViewModel : ViewModelBase
 
     public class SelectedData
     {
-        public string TransactionsFile { get; }
-        public bool HasHeader { get; }
-        public string FiltersFile { get; }
-        public string AccountsFile { get; }
-        public string Module { get; }
-
-        public SelectedData(string transactionsFile, bool hasHeader, string filtersFile, string accountsFile,
-            string module)
-        {
-            TransactionsFile = transactionsFile;
-            HasHeader = hasHeader;
-            FiltersFile = filtersFile;
-            AccountsFile = accountsFile;
-            Module = module;
-        }
+        public required string TransactionsFile { get; init; }
+        public required bool HasHeader { get; init; }
+        public required string FiltersFile { get; init;  }
+        public required string AccountsFile { get; init;  }
+        public required string Module { get; init; }
+        public required string DefaultCheckingAccount { get; init; }
+        public required string DefaultCurrency { get; init; }
     }
 }
+
 public class Module : ViewModelBase
 {
     private string _title = "";

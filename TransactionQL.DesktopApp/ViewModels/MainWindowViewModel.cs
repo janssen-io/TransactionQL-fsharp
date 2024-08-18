@@ -142,8 +142,7 @@ public class MainWindowViewModel : ViewModelBase
                 var amount = decimal.Parse(rows[i]["Amount"],
                     NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
 
-                // TODO: fix hard-coded EUR
-                var transaction = new PaymentDetailsViewModel(title, date, description, "EUR", amount, validAccounts)
+                var transaction = new PaymentDetailsViewModel(title, date, description, data.DefaultCurrency, amount, validAccounts)
                 {
                     Postings = new ObservableCollection<Posting>(entry.Lines.Select(line =>
                     {
@@ -167,9 +166,10 @@ public class MainWindowViewModel : ViewModelBase
                 var amount = decimal.Parse(row["Amount"],
                     NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
                 BankTransactions.Add(
-                    new PaymentDetailsViewModel(title, date, description, "EUR", amount, validAccounts)
+                    new PaymentDetailsViewModel(title, date, description, data.DefaultCurrency, amount, validAccounts)
                     {
-                        HasError = true
+                        HasError = true,
+                        Postings = { new Posting { Account = data.DefaultCheckingAccount, Currency = data.DefaultCurrency, Amount = amount } }
                     });
             }
         }
