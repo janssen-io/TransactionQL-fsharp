@@ -1,0 +1,98 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
+        xmlns:controls="using:TransactionQL.DesktopApp.Controls"
+        xmlns:app="using:TransactionQL.DesktopApp"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        mc:Ignorable="d" Width="420" Height="520"
+        x:Class="TransactionQL.DesktopApp.AboutWindow"
+        Title="About Ledger Leo"
+        x:DataType="vm:AboutViewModel"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaToDecorationsHint="True"
+        DataContext="{x:Static app:DesignData.About}">
+  <Window.Styles>
+    <StyleInclude Source="/Assets/Styles.axaml" />
+    <Style Selector="Expander">
+      <Setter Property="Background" Value="{DynamicResource BG.Elevated.Neutral}" />
+
+      <Style Selector="^ /template/ ToggleButton#ExpanderHeader">
+        <Setter Property="Background" Value="{DynamicResource BG.Base.Neutral}" />
+      </Style>
+
+      <Style Selector="^ > StackPanel">
+        <Setter Property="Spacing" Value="10" />
+
+        <Style Selector="^ > controls|TitledBorder">
+          <Setter Property="Background">
+            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type Expander}}" Path="Background" />
+          </Setter>
+        </Style>
+      </Style>
+
+      <Style Selector="^ TextBlock.SectionHeader">
+        <Setter Property="Margin" Value="10 0" />
+
+        <Style Selector="^ i|Icon">
+          <Setter Property="Foreground" Value="{DynamicResource FG.Elevated.Neutral}" />
+        </Style>
+        <Style Selector="^ Image">
+          <Setter Property="Margin" Value="0 2 12 0" />
+        </Style>
+      </Style>
+    </Style>
+  </Window.Styles>
+
+  <DockPanel>
+    <DockPanel Margin="10 5 0 5" DockPanel.Dock="Top">
+      <TextBlock Text="About Ledger Leo" HorizontalAlignment="Left" />
+      <Button Grid.Column="1" i:Attached.Icon="fa-solid fa-x"
+              Background="Transparent" RelativePanel.AlignRightWithPanel="True"
+              FontSize="8" Foreground="{DynamicResource FG.Soft.Neutral}"
+              Click="Close" HorizontalAlignment="Right" />
+    </DockPanel>
+    <ScrollViewer>
+      <StackPanel Orientation="Vertical" Spacing="10">
+
+        <Expander HorizontalAlignment="Stretch" IsExpanded="True">
+          <Expander.Header>
+            <TextBlock Classes="SectionHeader">
+              <Image Source="/Assets/lion.ico" Height="{Binding $parent.FontSize}"/> App
+            </TextBlock>
+          </Expander.Header>
+          <StackPanel Orientation="Vertical">
+            <controls:TitledBorder Title="Version" Foreground="{DynamicResource FG.Soft.Neutral}" BorderBrush="{Binding $self.Foreground}">
+              <TextBlock Text="{Binding Version}" />
+            </controls:TitledBorder>
+
+            <controls:TitledBorder Title="GitHub" Foreground="{DynamicResource FG.Soft.Neutral}" BorderBrush="{Binding $self.Foreground}">
+              <HyperlinkButton NavigateUri="https://github.com/janssen-io/TransactionQL-fsharp">
+                <TextBlock>
+                  <i:Icon Value="fa-brands fa-github" /> janssen-io/TransactionQL-fsharp
+                </TextBlock>
+              </HyperlinkButton>
+            </controls:TitledBorder>
+          </StackPanel>
+        </Expander>
+
+        <Expander HorizontalAlignment="Stretch" IsExpanded="True">
+          <Expander.Header>
+            <TextBlock Classes="SectionHeader">
+              <i:Icon Value="fa-solid fa-wrench" /> Advanced Settings
+            </TextBlock>
+          </Expander.Header>
+          <StackPanel Orientation="Vertical">
+            <controls:TitledBorder Title="TransactionQL Binary Location">
+              <TextBox IsReadOnly="True" Watermark="%appdata%/tql" Text="{Binding TqlBinaryLocation}" />
+            </controls:TitledBorder>
+            <controls:TitledBorder Title="Plugin directory">
+              <TextBox IsReadOnly="True" Watermark="%appdata%/tql/plugins" Text="{Binding PluginDirectory}" />
+            </controls:TitledBorder>
+          </StackPanel>
+        </Expander>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</Window>

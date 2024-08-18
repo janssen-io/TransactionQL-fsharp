@@ -148,9 +148,12 @@ module QLInterpreter =
                 { envFilter with
                     Variables = envFilter.Variables |> Map.add "amount" total |> Map.add "total" (abs total) }
 
+            // TODO: (20240818) (wrong spot, probably) Update Date variable with ISO-formatted date?
+            //       Or (better solution) proper filter parsing for date to allow for comparison to other dates
             let date =
                 System.DateTime.ParseExact(Map.find "Date" env.Row, env.DateFormat, CultureInfo.InvariantCulture)
 
+            // TODO: (20240818) Check if Payee contains variables (for example 'Recipient', 'Name' or 'Receiver')
             let header = Header(date, payee)
 
             let comments =

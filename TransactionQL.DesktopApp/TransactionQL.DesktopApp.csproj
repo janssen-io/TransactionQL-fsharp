@@ -11,7 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
 
@@ -86,6 +85,9 @@
     </Compile>
     <Compile Update="Views\PaymentDetails.axaml.cs">
       <DependentUpon>PaymentDetails.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\AboutWindow.axaml.cs">
+      <DependentUpon>AboutWindow.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
 

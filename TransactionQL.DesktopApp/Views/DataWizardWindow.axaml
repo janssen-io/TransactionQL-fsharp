@@ -6,7 +6,7 @@
         xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
         xmlns:dd="using:TransactionQL.DesktopApp"
         xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
-        mc:Ignorable="d" Width="300" Height="410"
+        mc:Ignorable="d" Width="300" Height="450"
         x:Class="TransactionQL.DesktopApp.DataWizardWindow"
         Title="Ledger Leo - Data Selection"
         ExtendClientAreaToDecorationsHint="True"
@@ -21,33 +21,49 @@
   </Window.Resources>
   <Window.Styles>
     <StyleInclude Source="/Assets/Styles.axaml" />
+
+    <Style Selector="TextBlock.Label">
+      <Setter Property="Margin" Value="0 5 0 3" />
+      <Setter Property="FontSize" Value="10" />
+      <Setter Property="FontWeight" Value="500" />
+    </Style>
+    <Style Selector="#DataWizard TextBox /template/ Border:nth-child(1)">
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Border.Base.Neutral}" />
+    </Style>
+    <Style Selector="#DataWizard TextBox:focus /template/ Border:nth-child(1), #DataWizard TextBox:pointerover /template/ Border:nth-child(1)">
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Border.Base.Primary}" />
+    </Style>
   </Window.Styles>
-    <DockPanel Background="{DynamicResource BG.Elevated.Neutral}">
-      <Grid ColumnDefinitions="*,Auto" DockPanel.Dock="Top">
-        <!-- Transparent backgrounds are not targetable,  so set it to parent background colour -->
-        <Border Name="Dragbar" Height="20" Cursor="SizeAll" Background="{Binding Background, RelativeSource={RelativeSource AncestorType=DockPanel}}"
-                PointerMoved="Dragbar_OnPointerMoved" PointerPressed="Dragbar_OnPointerPressed" PointerReleased="Dragbar_OnPointerReleased"
+  <DockPanel Background="{DynamicResource BG.Elevated.Neutral}">
+    <Grid ColumnDefinitions="*,Auto" DockPanel.Dock="Top">
+      <!-- Transparent backgrounds are not targetable,  so set it to parent background colour -->
+      <Border Name="Dragbar" Height="20" Cursor="SizeAll" Background="{Binding Background, RelativeSource={RelativeSource AncestorType=DockPanel}}"
+              PointerMoved="Dragbar_OnPointerMoved" PointerPressed="Dragbar_OnPointerPressed" PointerReleased="Dragbar_OnPointerReleased"
                 />
-        <Button Grid.Column="1" i:Attached.Icon="fa-solid fa-x" 
-                Background="Transparent" RelativePanel.AlignRightWithPanel="True" 
-                FontSize="8" Foreground="{DynamicResource FG.Soft.Neutral}"
-                Click="Close" />
-      </Grid>
-      <Border Padding="20 5 20 20">
-        <DockPanel>
-          <c:StepIndicator
-            Name="Progress" Margin="0 0 0 20"
-            NumberOfSteps="4" StepWidth="55"
-            InactiveBackground="{DynamicResource BG.Base.Neutral}"
-            DockPanel.Dock="Top" HorizontalAlignment="Center" />
-          <Carousel Name="Pages" DockPanel.Dock="Bottom">
-            <Carousel.PageTransition >
-              <CrossFade Duration="0:00:00.400" />
-            </Carousel.PageTransition>
-            <Carousel.Items>
-              <RelativePanel HorizontalAlignment="Stretch">
-                <TextBlock Name="Header" RelativePanel.AlignTopWithPanel="True" Margin="0 0 0 10">Select your bank</TextBlock>
-                <ItemsControl RelativePanel.Below="Header" ItemsSource="{Binding AvailableModules}" x:DataType="vm:SelectDataWindowViewModel">
+      <Button Grid.Column="1" i:Attached.Icon="fa-solid fa-x"
+              Background="Transparent" RelativePanel.AlignRightWithPanel="True"
+              FontSize="8" Foreground="{DynamicResource FG.Soft.Neutral}"
+              Click="Close" />
+    </Grid>
+    <Border Padding="20 5 20 20">
+      <DockPanel>
+        <c:StepIndicator
+          Name="Progress" Margin="0 0 0 20"
+          NumberOfSteps="4" StepWidth="55"
+          InactiveBackground="{DynamicResource BG.Base.Neutral}"
+          DockPanel.Dock="Top" HorizontalAlignment="Center" />
+        <Carousel Name="Pages" DockPanel.Dock="Bottom">
+          <Carousel.PageTransition >
+            <CrossFade Duration="0:00:00.400" />
+          </Carousel.PageTransition>
+          <Carousel.Items>
+            <RelativePanel HorizontalAlignment="Stretch">
+              <c:TitledBorder Name="BankSelection" Title="Select your bank"
+                              RelativePanel.AlignRightWithPanel="True"
+                              RelativePanel.AlignLeftWithPanel="True">
+                <ItemsControl RelativePanel.Below="Header" ItemsSource="{Binding AvailableModules}" x:DataType="vm:SelectDataWindowViewModel" Margin="5 10">
                   <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                       <WrapPanel Orientation="Horizontal"/>
@@ -72,52 +88,69 @@
                     </DataTemplate>
                   </ItemsControl.ItemTemplate>
                 </ItemsControl>
-                <Button Click="NextPage" IsEnabled="{Binding Module, Converter={StaticResource hasValue}}"
-                        RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Next</Button>
-              </RelativePanel>
-              <RelativePanel HorizontalAlignment="Stretch">
-                <c:Dropzone Name="Transactions"
-                            FileDescription="transactions" FileTypes="*.csv"  FileName="{Binding TransactionsFile, Mode=TwoWay}"
-                            RelativePanel.AlignHorizontalCenterWithPanel="True" HorizontalAlignment="Stretch" Width="260" Height="200" />
-                <CheckBox RelativePanel.Below="Transactions" IsChecked="{Binding HasHeader}"  Margin="0 10 0 0">
-                  <TextBlock VerticalAlignment="Center">The file contains a header row</TextBlock>
-                </CheckBox>
-                <Button Click="NextPage" IsEnabled="{Binding TransactionsFile, Converter={StaticResource hasValue}}"
-                        RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Next</Button>
-                <Button Click="PreviousPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">Previous</Button>
-              </RelativePanel>
-              <RelativePanel HorizontalAlignment="Stretch">
-                <c:Dropzone FileDescription="accounts" FileTypes="*accounts*.ldg" FileName="{Binding AccountsFile, Mode=TwoWay}"
-                            RelativePanel.AlignHorizontalCenterWithPanel="True" Width="260" Height="200" />
-                <Button Click="NextPage" IsEnabled="{Binding AccountsFile, Converter={StaticResource hasValue}}"
-                        RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Next</Button>
-                <Button Click="PreviousPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">Previous</Button>
-              </RelativePanel>
-              <RelativePanel HorizontalAlignment="Stretch">
-                <c:Dropzone FileDescription="filters" FileTypes="*.tql" FileName="{Binding FiltersFile, Mode=TwoWay}"
-                            RelativePanel.AlignHorizontalCenterWithPanel="True" HorizontalAlignment="Stretch" Width="260" Height="200" />
-                <Button Click="NextPage" IsEnabled="{Binding FiltersFile, Converter={StaticResource hasValue}}"
-                        RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Next</Button>
-                <Button Click="PreviousPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">Previous</Button>
-              </RelativePanel>
-              <RelativePanel HorizontalAlignment="Stretch">
-                <StackPanel Orientation="Vertical" Spacing="10">
-                  <TextBlock TextWrapping="Wrap">
-                    Filtering transactions from "<Run Text="{Binding TransactionsFile, Converter={StaticResource filePath}}" />"
-                    from <Run Text="{Binding Module.Title}" />
-                    using filters from "<Run Text="{Binding FiltersFile, Converter={StaticResource filePath}}" />".
-                  </TextBlock>
-                  <TextBlock TextWrapping="Wrap">
-                    Auto-completing accounts from "<Run Text="{Binding AccountsFile, Converter={StaticResource filePath}}" />".
-                  </TextBlock>
+              </c:TitledBorder>
+              <c:TitledBorder Title="Defaults"
+                              RelativePanel.Below="BankSelection"
+                              RelativePanel.AlignRightWithPanel="True"
+                              RelativePanel.AlignLeftWithPanel="True"
+                              Margin="0 10 0 0">
+                <StackPanel Orientation="Vertical" Spacing="15" Margin="5 10">
+                  <StackPanel Orientation="Vertical">
+                    <TextBlock Classes="Label">Checking Account</TextBlock>
+                    <TextBox Watermark="Checking Account" Text="{Binding DefaultCheckingAccount}" />
+                  </StackPanel>
+                  <StackPanel Orientation="Vertical">
+                    <TextBlock Classes="Label">Currency</TextBlock>
+                    <TextBox Watermark="Currency" Text="{Binding DefaultCurrency}" />
+                  </StackPanel>
                 </StackPanel>
+              </c:TitledBorder>
+              <Button Click="NextPage" IsEnabled="{Binding Module, Converter={StaticResource hasValue}}"
+                      RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Next</Button>
+            </RelativePanel>
+            <RelativePanel HorizontalAlignment="Stretch">
+              <c:Dropzone Name="Transactions"
+                          FileDescription="transactions" FileTypes="*.csv"  FileName="{Binding TransactionsFile, Mode=TwoWay}"
+                          RelativePanel.AlignHorizontalCenterWithPanel="True" HorizontalAlignment="Stretch" Width="260" Height="200" />
+              <CheckBox RelativePanel.Below="Transactions" IsChecked="{Binding HasHeader}"  Margin="0 10 0 0">
+                <TextBlock VerticalAlignment="Center">The file contains a header row</TextBlock>
+              </CheckBox>
+              <Button Click="NextPage" IsEnabled="{Binding TransactionsFile, Converter={StaticResource hasValue}}"
+                      RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Next</Button>
+              <Button Click="PreviousPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">Previous</Button>
+            </RelativePanel>
+            <RelativePanel HorizontalAlignment="Stretch">
+              <c:Dropzone FileDescription="accounts" FileTypes="*accounts*.ldg" FileName="{Binding AccountsFile, Mode=TwoWay}"
+                          RelativePanel.AlignHorizontalCenterWithPanel="True" Width="260" Height="200" />
+              <Button Click="NextPage" IsEnabled="{Binding AccountsFile, Converter={StaticResource hasValue}}"
+                      RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Next</Button>
+              <Button Click="PreviousPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">Previous</Button>
+            </RelativePanel>
+            <RelativePanel HorizontalAlignment="Stretch">
+              <c:Dropzone FileDescription="filters" FileTypes="*.tql" FileName="{Binding FiltersFile, Mode=TwoWay}"
+                          RelativePanel.AlignHorizontalCenterWithPanel="True" HorizontalAlignment="Stretch" Width="260" Height="200" />
+              <Button Click="NextPage" IsEnabled="{Binding FiltersFile, Converter={StaticResource hasValue}}"
+                      RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Next</Button>
+              <Button Click="PreviousPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">Previous</Button>
+            </RelativePanel>
+            <RelativePanel HorizontalAlignment="Stretch">
+              <StackPanel Orientation="Vertical" Spacing="10">
+                <TextBlock TextWrapping="Wrap">
+                  Filtering transactions from "<Run Text="{Binding TransactionsFile, Converter={StaticResource filePath}}" />"
+                  from <Run Text="{Binding Module.Title}" />
+                  using filters from "<Run Text="{Binding FiltersFile, Converter={StaticResource filePath}}" />".
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap">
+                  Auto-completing accounts from "<Run Text="{Binding AccountsFile, Converter={StaticResource filePath}}" />".
+                </TextBlock>
+              </StackPanel>
 
-                <Button Command="{Binding Submit}" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Get Started</Button>
-                <Button Click="PreviousPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">Previous</Button>
-              </RelativePanel>
-            </Carousel.Items>
-          </Carousel>
-        </DockPanel>
-      </Border>
-    </DockPanel>
+              <Button Command="{Binding Submit}" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">Get Started</Button>
+              <Button Click="PreviousPage" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True">Previous</Button>
+            </RelativePanel>
+          </Carousel.Items>
+        </Carousel>
+      </DockPanel>
+    </Border>
+  </DockPanel>
 </Window>

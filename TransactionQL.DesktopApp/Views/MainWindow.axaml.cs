@@ -8,9 +8,8 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using Avalonia.VisualTree;
 using ReactiveUI;
-using TransactionQL.DesktopApp.Controls;
+using TransactionQL.Application;
 using TransactionQL.DesktopApp.ViewModels;
 using Module = TransactionQL.DesktopApp.ViewModels.Module;
 
@@ -114,6 +113,15 @@ public partial class MainWindow : Window
 
         IsEnabled = false;
         selectWindow.Show(this);
+    }
+
+    private void OpenSettings(object? sender, RoutedEventArgs ea)
+    {
+        new AboutWindow
+        {
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            DataContext = AboutViewModel.From(Models.About.Default),
+        }.Show(this);
     }
 
     private void BankTransactionCarousel_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)

@@ -184,9 +184,11 @@ public class Posting
 
         var searchIndex = 0;
         for (var itemIndex = 0; itemIndex < item.Length && searchIndex < searchString.Length; itemIndex++)
+        {
             // Try to find the next letter of the search string in the remainder of the item
             if (searchString[searchIndex] == item[itemIndex])
                 searchIndex++;
+        }
 
         // if all the letters of the searchString were found somewhere in the item, then it's a valid item.
         return searchIndex == searchString.Length;

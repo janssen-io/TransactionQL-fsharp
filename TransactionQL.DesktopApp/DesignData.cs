@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using TransactionQL.DesktopApp.ViewModels;
 
 namespace TransactionQL.DesktopApp;
@@ -42,7 +43,7 @@ public static class DesignData
 
     public static readonly MainWindowViewModel MainWindow = new()
     {
-        BankTransactions = [PaymentDetails, PaymentDetails2 ]
+        BankTransactions = [PaymentDetails, PaymentDetails2]
     };
 
     public static readonly SelectDataWindowViewModel DataWizard = new()
@@ -53,4 +54,6 @@ public static class DesignData
             new("triodos.dll", "Triodos"),
         ],
     };
+
+    public static readonly AboutViewModel About = AboutViewModel.From(Models.About.Default);
 }

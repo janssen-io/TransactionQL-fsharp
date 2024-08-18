@@ -24,7 +24,10 @@
         <Border Grid.Column="0" Name="Toolbar">
           <Grid ColumnDefinitions="*,*,*">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="20">
-              <Image Height="12" Width="12" Source="/Assets/lion.png"/>
+              <Button Click="OpenSettings" HotKey="Ctrl+F1" Classes="IconAction">
+                <Image Height="12" Width="12" Source="/Assets/lion.png"/>
+                <ToolTip.Tip>About Ledger Leo</ToolTip.Tip>
+              </Button>
               <Button Click="Open" HotKey="Ctrl+O" Classes="IconAction" i:Attached.Icon="fa-regular fa-folder-open">
                 <ToolTip.Tip>Open Bank Transactions (Ctrl+O)</ToolTip.Tip>
               </Button>
