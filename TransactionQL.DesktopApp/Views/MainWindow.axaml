@@ -24,7 +24,10 @@
         <Border Grid.Column="0" Name="Toolbar">
           <Grid ColumnDefinitions="*,*,*">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="20">
-              <Image Height="12" Width="12" Source="/Assets/lion.png"/>
+              <Button Click="OpenSettings" HotKey="Ctrl+F1" Classes="IconAction">
+                <Image Height="12" Width="12" Source="/Assets/lion.png"/>
+                <ToolTip.Tip>About Ledger Leo</ToolTip.Tip>
+              </Button>
               <Button Click="Open" HotKey="Ctrl+O" Classes="IconAction" i:Attached.Icon="fa-regular fa-folder-open">
                 <ToolTip.Tip>Open Bank Transactions (Ctrl+O)</ToolTip.Tip>
               </Button>
@@ -35,10 +38,6 @@
               <Button Command="{Binding SaveCommand}" Classes="IconAction" HotKey="Ctrl+Alt+S"
                       IsEnabled="{Binding IsDone}" i:Attached.Icon="fa-solid fa-file-export">
                 <ToolTip.Tip>Export to Ledger (Ctrl+Alt+S)</ToolTip.Tip>
-              </Button>
-              <Button Classes="IconAction" HotKey="Ctrl+I" Click="OpenSettings"
-                      i:Attached.Icon="fa-solid fa-sliders">
-                <ToolTip.Tip>Configure Preferences</ToolTip.Tip>
               </Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1" Spacing="5">
