@@ -9,7 +9,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using ReactiveUI;
-using TransactionQL.Application;
 using TransactionQL.DesktopApp.ViewModels;
 using Module = TransactionQL.DesktopApp.ViewModels.Module;
 

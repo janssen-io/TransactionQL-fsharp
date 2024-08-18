@@ -13,6 +13,7 @@
       <Border Classes="Card Padded">
         <StackPanel Orientation="Vertical" Spacing="10">
           <TextBlock>Hello</TextBlock>
+          <TextBlock Classes="Negative">-12.34</TextBlock>
           <TextBox>John</TextBox>
           <c:Dropzone />
         </StackPanel>

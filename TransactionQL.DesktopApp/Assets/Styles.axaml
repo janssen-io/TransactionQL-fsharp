@@ -65,7 +65,7 @@
     <Setter Property="Padding" Value="0" />
   </Style>
   <Style Selector="Button.IconAction:pointerover /template/ ContentPresenter">
-    <Setter Property="Foreground" Value="{DynamicResource PrimaryFG.Base.Neutral}" />
+    <Setter Property="Foreground" Value="{DynamicResource FG.Elevated.Primary}" />
     <Setter Property="RenderTransform" Value="TranslateY(-2px)" />
     <Setter Property="Cursor" Value="Hand" />
   </Style>
@@ -85,7 +85,7 @@
   <Style Selector="TextBlock.h2">
     <Setter Property="FontSize" Value="20" />
     <Setter Property="FontWeight" Value="Regular" />
-    <Setter Property="Foreground" Value="{DynamicResource PrimaryFG.Base.Neutral}" />
+    <Setter Property="Foreground" Value="{DynamicResource FG.Base.Primary}" />
   </Style>
 
   <Style Selector="TextBlock.subtitle">
