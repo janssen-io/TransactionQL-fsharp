@@ -137,8 +137,12 @@ module QLInterpreter =
     let rec evalPayee env payee =
         match payee with
         | Word p -> p
-        | ColumnToken (Column col) -> Map.find col env.Row
-        | Interpolation xs -> List.map (evalPayee env) xs |> (String.concat " ")
+        | ColumnToken (Column col) -> 
+            Map.tryFind col env.Row
+            |> Option.defaultValue $"@{col}"
+        | Interpolation xs -> 
+            List.map (evalPayee env) xs
+            |> (String.concat " ")
 
     let evalQuery env (Query(payee, filters, posting)) =
         let (Interpretation(envFilter, isMatch)) =

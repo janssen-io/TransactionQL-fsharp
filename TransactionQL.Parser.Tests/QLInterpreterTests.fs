@@ -246,6 +246,12 @@ let ``Payee: variable`` () =
     Assert.Equal("American Express", payee)
 
 [<Fact>]
+let ``Payee: variable (undefined)`` () =
+    let payeeParts = Interpolation [ ColumnToken (Column "Name") ]
+    let payee = evalPayee env payeeParts
+    Assert.Equal("@Name", payee)
+
+[<Fact>]
 let ``Payee: interpolation`` () =
     let payeeParts = Interpolation [ Word "Monthly:"; ColumnToken (Column "Name") ]
     let env' = { env with Row = Map.ofList [ ("Name", "American Express") ]}
