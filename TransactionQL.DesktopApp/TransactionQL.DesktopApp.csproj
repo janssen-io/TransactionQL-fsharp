@@ -7,7 +7,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <ApplicationIcon>Assets\lion.ico</ApplicationIcon>
-    <Version>development</Version>
   </PropertyGroup>
 
   <ItemGroup>
