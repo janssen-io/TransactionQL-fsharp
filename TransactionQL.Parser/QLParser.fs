@@ -132,10 +132,13 @@ module QLParser =
 
         orGroup
 
+    let pspace =
+        skipMany (pchar ' ')
+
     let qpayee: Parser<Payee, unit> =
         let pexpr = (qexpression |>> Payee.Expression)
          // TODO: unit tests
-        let pinterpolation = (many1Till (either pexpr (pword |>> Payee)) newline) |>> Payee.Interpolation
+        let pinterpolation = (manyTill ((either pexpr (pword |>> Word)) .>>? pspace) newline) |>> Payee.Interpolation
         (pchar '#' .>> spaces1) >>. pinterpolation
 
     let qquery =

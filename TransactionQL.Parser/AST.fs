@@ -46,7 +46,7 @@ module AST =
         | OrGroup of Filter list
 
     type Payee = 
-        | Payee of string
+        | Word of string
         | Expression of Expression
         | Interpolation of Payee list
 

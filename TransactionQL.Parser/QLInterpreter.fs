@@ -137,7 +137,7 @@ module QLInterpreter =
 
     let rec evalPayee env payee =
         match payee with
-        | Payee p -> Interpretation(env, p)
+        | Word p -> Interpretation(env, p)
         | Expression e -> map string (eval env e)
         | Interpolation xs -> Interpretation.fold evalPayee (fun l r -> l + r) (Interpretation(env, "")) xs
 

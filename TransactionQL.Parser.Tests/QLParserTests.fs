@@ -181,7 +181,18 @@ let ``Filters: or groups`` () =
 [<Fact>]
 let ``Payee: # <words>`` () =
     let payee = "Some long string"
-    test QLParser.qpayee $"# %s{payee}" (Payee payee)
+    let words = payee.Split () |> (Array.map Word) |> List.ofArray
+    test QLParser.qpayee $"# %s{payee}\n" (Interpolation words)
+
+[<Fact>]
+let ``Payee: # <variable>`` () =
+    let variable = "Name"
+    test QLParser.qpayee $"# (%s{variable})\n" (Interpolation [Expression (Variable variable)])
+
+[<Fact>]
+let ``Payee: # <interpolation>`` () =
+    let variable = "Name"
+    test QLParser.qpayee $"# Some (%s{variable}) string \n" (Interpolation [ (Word "Some"); (Expression (Variable variable)); (Word "string") ])
 
 [<Fact>]
 let ``Query: <payee> <filters> <posting>`` () =
@@ -201,7 +212,7 @@ let ``Query: <payee> <filters> <posting>`` () =
         QLParser.qquery
         query
         (Query(
-            Payee "Full description test",
+            Word "Full description test",
             [ Filter(Column "Creditor", EqualTo, String "NL")
               Filter(Column "Amount", GreaterThanOrEqualTo, Number 50.0) ],
             Posting(
@@ -245,13 +256,13 @@ let ``Queries: multiple queries`` () =
         QLParser.qprogram
         queries
         ([ Query(
-               Payee "First query",
+               Word "First query",
                [ Filter(Column "Creditor", EqualTo, String "NL") ],
                Posting(None, [ trx (Account [ "Test"; "Account" ], None) ])
            )
 
            Query(
-               Payee "Second query",
+               Word "Second query",
                [ Filter(Column "Creditor", EqualTo, String "BE")
                  OrGroup
                      [ Filter(Column "A", EqualTo, Number 5.0)
