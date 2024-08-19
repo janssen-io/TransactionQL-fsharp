@@ -36,6 +36,8 @@ jobs:
           release_name="tql-${{ matrix.target }}"
           version=$(cut -c 2- <<< "${{ github.event.release.tag_name }}")
 
+          echo "Building version > $version <"
+
           # Build everything
           dotnet publish TransactionQL.Plugins.ING/TransactionQL.Plugins.ING.fsproj \
             -c Release --runtime "${{ matrix.target }}" -o "dist/ing"
