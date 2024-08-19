@@ -10,13 +10,16 @@ function AddToPath($dir) {
     }
 }
 
+$latest_tag=$(git tag | sort | % { $_.Substring(1) } | Select -Last 1 )
+$commit=$(git rev-parse --short HEAD)
+$version="$($latest_tag)-$commit"
+Write-Host "Publishing version > $version <"
 
-dotnet publish TransactionQL.Plugins.ING/TransactionQL.Plugins.ING.fsproj -c $configuration
-dotnet publish TransactionQL.Plugins.Bunq/TransactionQL.Plugins.Bunq.fsproj -c $configuration
-dotnet publish TransactionQL.Plugins.ASN/TransactionQL.Plugins.ASN.fsproj -c $configuration
-dotnet publish TransactionQL.Console\TransactionQL.Console.fsproj -c $configuration -r win-x64 -p:PublishSingleFile=true --no-self-contained
-dotnet publish TransactionQL.DesktopApp/TransactionQL.DesktopApp.csproj -c $configuration -r win-x64 -p:PublishSingleFile=true --no-self-contained
-
+dotnet publish TransactionQL.Plugins.ING/TransactionQL.Plugins.ING.fsproj -c $configuration -p:Version=$version
+dotnet publish TransactionQL.Plugins.Bunq/TransactionQL.Plugins.Bunq.fsproj -c $configuration -p:Version=$version
+dotnet publish TransactionQL.Plugins.ASN/TransactionQL.Plugins.ASN.fsproj -c $configuration -p:Version=$version
+dotnet publish TransactionQL.Console\TransactionQL.Console.fsproj -c $configuration -r win-x64 -p:PublishSingleFile=true --no-self-contained -p:Version=$version
+dotnet publish TransactionQL.DesktopApp/TransactionQL.DesktopApp.csproj -c $configuration -r win-x64 -p:PublishSingleFile=true --no-self-contained -p:Version=$version
 
 $appData = [environment]::GetFolderPath("ApplicationData")
 $appDir = Join-Path $appData "tql"

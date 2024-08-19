@@ -6,7 +6,6 @@
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
-    <AssemblyVersion>2.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
