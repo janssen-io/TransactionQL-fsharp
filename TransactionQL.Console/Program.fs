@@ -53,7 +53,7 @@ module Program =
 
         interface IArgParserTemplate with
             member s.Usage =
-                let v = Assembly.GetExecutingAssembly().GetCustomAttribute(typeof<AssemblyFileVersionAttribute>) :?> AssemblyFileVersionAttribute
+                let assembly = Assembly.GetExecutingAssembly().GetName()
                 match s with
                 | Files _ -> "the paths to the transactions and filter files"
                 | Date _ -> $"the date output format (default: %s{defaultOpts.Format.Date})"
@@ -67,7 +67,7 @@ module Program =
                 | Locale _ -> $"the locale used to parse decimal values (default: %s{defaultOpts.Locale})"
                 | AddDescription _ ->
                     $"add the transaction's description below the header (default: %A{defaultOpts.AddDescription})"
-                | Version -> $"You're running tql {v.Version}"
+                | Version -> $"You're running tql {assembly.Version}"
 
     let parseFilters options =
         let filter = QLParser.parse ((new StreamReader(options.FilterFile)).ReadToEnd())

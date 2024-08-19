@@ -37,11 +37,11 @@ jobs:
 
           # Build everything
           dotnet publish TransactionQL.Plugins.ING/TransactionQL.Plugins.ING.fsproj \
-            -c Release --runtime "${{ matrix.target }}" -o "dist/ing"
+            -c Release --runtime "${{ matrix.target }}" -o "dist/ing" -p:Version=$version
           dotnet publish TransactionQL.Plugins.Bunq/TransactionQL.Plugins.Bunq.fsproj \
-            -c Release --runtime "${{ matrix.target }}" -o "dist/bunq"
+            -c Release --runtime "${{ matrix.target }}" -o "dist/bunq" -p:Version=$version
           dotnet publish TransactionQL.Plugins.ASN/TransactionQL.Plugins.ASN.fsproj \
-            -c Release --runtime "${{ matrix.target }}" -o "dist/asn"
+            -c Release --runtime "${{ matrix.target }}" -o "dist/asn" -p:Version=$version
 
           dotnet publish TransactionQL.Console/TransactionQL.Console.fsproj \
             -c Release --runtime "${{ matrix.target }}" -o "$release_name/console" \
