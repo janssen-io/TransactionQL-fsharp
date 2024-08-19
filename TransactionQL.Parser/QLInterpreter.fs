@@ -38,7 +38,6 @@ module QLInterpreter =
 
         eval' expr |> fun n -> Interpretation(env, n)
 
-
     let generatePostingLine
         env
         ({ Account = accounts
@@ -135,7 +134,17 @@ module QLInterpreter =
 
         | OrGroup filters -> Interpretation.fold evalFilter (||) (Interpretation(env, false)) filters
 
-    let evalQuery env (Query(Payee payee, filters, posting)) =
+    let rec evalPayee env payee =
+        match payee with
+        | Word p -> p
+        | ColumnToken (Column col) -> 
+            Map.tryFind col env.Row
+            |> Option.defaultValue $"@{col}"
+        | Interpolation xs -> 
+            List.map (evalPayee env) xs
+            |> (String.concat " ")
+
+    let evalQuery env (Query(payee, filters, posting)) =
         let (Interpretation(envFilter, isMatch)) =
             Interpretation.fold evalFilter (&&) (Interpretation(env, true)) filters
 
@@ -153,8 +162,8 @@ module QLInterpreter =
             let date =
                 System.DateTime.ParseExact(Map.find "Date" env.Row, env.DateFormat, CultureInfo.InvariantCulture)
 
-            // TODO: (20240818) Check if Payee contains variables (for example 'Recipient', 'Name' or 'Receiver')
-            let header = Header(date, payee)
+            let payeeString = evalPayee env payee
+            let header = Header(date, payeeString)
 
             let comments =
                 [ if Map.containsKey "Description" envFilter.Row then
@@ -177,7 +186,6 @@ module QLInterpreter =
                       Lines = postingLines
                       Comments = newComments }
             )
-
 
     let rec evalProgram env queries =
         match queries with

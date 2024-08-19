@@ -181,27 +181,54 @@ let ``Filters: or groups`` () =
 [<Fact>]
 let ``Payee: # <words>`` () =
     let payee = "Some long string"
-    test QLParser.qpayee $"# %s{payee}" (Payee payee)
+    let words = payee.Split () |> (Array.map Word) |> List.ofArray
+    test QLParser.qpayee $"# %s{payee}\n" (Interpolation words)
+
+[<Fact>]
+let ``Payee: # <variable>`` () =
+    let variable = "Name"
+    test QLParser.qpayee $"# @%s{variable}\n"  (Interpolation [ColumnToken (Column variable)])
+
+[<Fact>]
+let ``Payee: # <interpolation>`` () =
+    let variable = "Name"
+    test QLParser.qpayee $"# Some @%s{variable} string\n" (Interpolation [ (Word "Some"); (ColumnToken (Column variable)); (Word "string") ])
+
+[<Fact>]
+let ``Payee: # <odd chars>`` () =
+    let variable = "Name"
+    test 
+        QLParser.qpayee
+        $"# Some <Test> & Sons (@%s{variable}) string\n"
+        (Interpolation [
+            Word "Some"
+            Word "<Test>"
+            Word "&"
+            Word "Sons"
+            Word "("
+            ColumnToken (Column "Name")
+            Word ")"
+            Word "string"
+        ])
 
 [<Fact>]
 let ``Query: <payee> <filters> <posting>`` () =
-    let query =
-        """# Full description test
-            Creditor = "NL"
-            Amount >= 50.00
-
-            posting {
-                Assets:TestAccount  EUR (total / 2)
-                Assets:TestSavings  EUR (remainder)
-                Expenses:Development
-            }
-            """
-
+    let query = [
+        "# Full description @Creditor"
+        "    Creditor = \"NL\""
+        "    Amount >= 50.00"
+        ""
+        "    posting {"
+        "        Assets:TestAccount  EUR (total / 2)"
+        "        Assets:TestSavings  EUR (remainder)"
+        "        Expenses:Development"
+        "    }"
+    ]
     test
         QLParser.qquery
-        query
+        (String.concat Environment.NewLine query)
         (Query(
-            Payee "Full description test",
+            Interpolation [ Word "Full"; Word "description"; ColumnToken (Column "Creditor") ],
             [ Filter(Column "Creditor", EqualTo, String "NL")
               Filter(Column "Amount", GreaterThanOrEqualTo, Number 50.0) ],
             Posting(
@@ -220,38 +247,38 @@ let ``Query: <payee> <filters> <posting>`` () =
 
 [<Fact>]
 let ``Queries: multiple queries`` () =
-    let queries =
-        """# First query
-        Creditor = "NL"
-
-        posting {
-            Test:Account
-        }
-
-    # Second query
-        Creditor = "BE"
-
-        A = 5.0
-        or B = 2.0
-
-        C = 1.0
-
-        posting {
-            Assets:Checking
-        }
-    """
+    let queries = [
+        "# First query"
+        "   Creditor = \"NL\""
+        ""
+        "   posting {"
+        "       Test:Account"
+        "   }"
+        ""
+        "# Second query"
+        "   Creditor = \"BE\""
+        ""
+        "   A = 5.0"
+        "   or B = 2.0"
+        ""
+        "   C = 1.0"
+        ""
+        "   posting {"
+        "       Assets:Checking"
+        "   }"
+    ]
 
     test
         QLParser.qprogram
-        queries
+        (String.concat Environment.NewLine queries)
         ([ Query(
-               Payee "First query",
+               Interpolation [ Word "First"; Word "query" ],
                [ Filter(Column "Creditor", EqualTo, String "NL") ],
                Posting(None, [ trx (Account [ "Test"; "Account" ], None) ])
            )
 
            Query(
-               Payee "Second query",
+               Interpolation [ Word "Second"; Word "query" ],
                [ Filter(Column "Creditor", EqualTo, String "BE")
                  OrGroup
                      [ Filter(Column "A", EqualTo, Number 5.0)

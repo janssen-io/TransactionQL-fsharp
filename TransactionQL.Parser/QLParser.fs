@@ -132,15 +132,22 @@ module QLParser =
 
         orGroup
 
+    /// Skip zero or more literal spaces
+    let pspace = skipMany (pchar ' ')
+
+    let qcolumnToken = pchar '@' >>. qcolumnIdentifier |>> ColumnToken
+
     let qpayee: Parser<Payee, unit> =
-        let isNewline = fun c -> List.contains c [ "\n"; "\r" ]
-        (pchar '#' .>> spaces1) >>. manySatisfy (not << isNewline << string) |>> Payee
+        let isWhitespaceOrVar = fun c -> List.contains c [ "\n"; "\r"; "\t"; " "; "@" ]
+        let ptext = manySatisfy (not << isWhitespaceOrVar << string)
+        let payeeParts = ((either qcolumnToken (ptext |>> Word)) .>>? pspace)
+        let pinterpolation = (many1Till payeeParts newline) |>> Interpolation
+        (pchar '#' .>> spaces1) >>. pinterpolation
 
     let qquery =
-        let payee = qpayee .>> newline
         let filters = many (between spaces spaces1 qfilter)
         let posting = between spaces spaces qposting
-        pipe3 payee filters posting (curry3 Query)
+        pipe3 qpayee filters posting (curry3 Query)
 
     let qprogram = many (qquery .>> spaces)
 

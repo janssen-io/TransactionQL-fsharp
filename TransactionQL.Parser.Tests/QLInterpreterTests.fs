@@ -233,6 +233,32 @@ let ``Inference: number column - notequalto`` () =
     Assert.True(evalFilter' (env', Filter(Column "Amount", NotEqualTo, (Number 2.0))))
 
 [<Fact>]
+let ``Payee: words`` () =
+    let payeeParts = Interpolation [ Word "American"; Word "Express"]
+    let payee = evalPayee env payeeParts
+    Assert.Equal("American Express", payee)
+
+[<Fact>]
+let ``Payee: variable`` () =
+    let payeeParts = Interpolation [ ColumnToken (Column "Name") ]
+    let env' = { env with Row = Map.ofList [ ("Name", "American Express") ]}
+    let payee = evalPayee env' payeeParts
+    Assert.Equal("American Express", payee)
+
+[<Fact>]
+let ``Payee: variable (undefined)`` () =
+    let payeeParts = Interpolation [ ColumnToken (Column "Name") ]
+    let payee = evalPayee env payeeParts
+    Assert.Equal("@Name", payee)
+
+[<Fact>]
+let ``Payee: interpolation`` () =
+    let payeeParts = Interpolation [ Word "Monthly:"; ColumnToken (Column "Name") ]
+    let env' = { env with Row = Map.ofList [ ("Name", "American Express") ]}
+    let payee = evalPayee env' payeeParts
+    Assert.Equal("Monthly: American Express", payee)
+
+[<Fact>]
 let ``Posting lines: No amount`` () =
     let env' =
         { env with
@@ -326,7 +352,7 @@ let ``Posting: updates remainder between lines`` () =
 let ``Query: given a matching row, a posting is generated`` () =
     let ql =
         Query(
-            Payee "a payee",
+            Word "a payee",
             [ Filter(Column "Amount", GreaterThan, Number 0.00) ],
             Posting(
                 None,
@@ -351,7 +377,7 @@ let ``Query: given a matching row, a posting is generated`` () =
 let ``Query: given a row that does not match, no posting is generated`` () =
     let ql =
         Query(
-            Payee "a payee",
+            Word "a payee",
             [ Filter(Column "Amount", GreaterThan, Number 0.00) ],
             Posting(
                 None,
@@ -369,7 +395,7 @@ let ``Query: given a row that does not match, no posting is generated`` () =
 let ``Queries: multiple matching queries only applies the first match`` () =
     let queries =
         [ Query(
-              Payee "first payee",
+              Word "first payee",
               [ Filter(Column "Amount", GreaterThan, Number 0.00) ],
               Posting(
                   None,
@@ -382,7 +408,7 @@ let ``Queries: multiple matching queries only applies the first match`` () =
               )
           )
           Query(
-              Payee "second payee",
+              Word "second payee",
               [ Filter(Column "Amount", GreaterThan, Number 0.00) ],
               Posting(
                   None,
@@ -411,7 +437,7 @@ let ``Queries: multiple matching queries only applies the first match`` () =
 let ``Queries: multiple queries only applies the match`` () =
     let queries =
         [ Query(
-              Payee "first payee",
+              Word "first payee",
               [ Filter(Column "Amount", LessThan, Number 0.00) ],
               Posting(
                   None,
@@ -424,7 +450,7 @@ let ``Queries: multiple queries only applies the match`` () =
               )
           )
           Query(
-              Payee "second payee",
+              Word "second payee",
               [ Filter(Column "Amount", GreaterThan, Number 0.00) ],
               Posting(
                   None,
@@ -459,7 +485,7 @@ let ``Queries: no matches`` () =
 let ``Queries: notes are added to the comments`` () =
     let queries =
         [ Query(
-              Payee "second payee",
+              Word "second payee",
               [ Filter(Column "Amount", GreaterThan, Number 0.00) ],
               Posting(
                   "this is a note" |> Some,
@@ -486,7 +512,7 @@ let ``Queries: notes are added to the comments`` () =
 let ``Queries: tags are added to the posting line`` () =
     let queries =
         [ Query(
-              Payee "second payee",
+              Word "second payee",
               [ Filter(Column "Amount", GreaterThan, Number 0.00) ],
               Posting(
                   "this is a note" |> Some,

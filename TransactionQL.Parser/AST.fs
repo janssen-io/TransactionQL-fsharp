@@ -45,6 +45,9 @@ module AST =
         | Filter of Column * FilterOperator * FilterAtom
         | OrGroup of Filter list
 
-    type Payee = Payee of string
+    type Payee = 
+        | Word of string
+        | ColumnToken of Column
+        | Interpolation of Payee list
 
     type Query = Query of Payee * Filter list * Posting

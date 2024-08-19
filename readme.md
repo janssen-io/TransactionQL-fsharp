@@ -65,7 +65,11 @@ filter, it will generate a posting. Filters consist of three parts:
 ### Payee line
 
 Every filter starts with a payee line. This line will be used on the generated
-posting.
+posting. Variables can be used by prefixing them with the `@`-symbol.
+For example, `# Rent (@Name)`. If the variable does not exist, the text is
+printed as is.
+
+Individual `@`-symbols are not supported.
 
 ### Conditions
 

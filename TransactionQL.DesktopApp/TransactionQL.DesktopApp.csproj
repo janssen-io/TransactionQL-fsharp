@@ -7,7 +7,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <ApplicationIcon>Assets\lion.ico</ApplicationIcon>
-    <AssemblyVersion>2.1.3</AssemblyVersion>
+    <AssemblyVersion>2.2.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
