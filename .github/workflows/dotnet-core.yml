@@ -34,6 +34,7 @@ jobs:
         run: |
           # Define some variables for things we need
           release_name="tql-${{ matrix.target }}"
+          version=$(cut -c 2- <<< "${{ github.event.release.tag_name }}")
 
           # Build everything
           dotnet publish TransactionQL.Plugins.ING/TransactionQL.Plugins.ING.fsproj \
@@ -45,10 +46,10 @@ jobs:
 
           dotnet publish TransactionQL.Console/TransactionQL.Console.fsproj \
             -c Release --runtime "${{ matrix.target }}" -o "$release_name/console" \
-            -p:PublishSingleFile=true --no-self-contained
+            -p:PublishSingleFile=true --no-self-contained -p:Version=$version
           dotnet publish TransactionQL.DesktopApp/TransactionQL.DesktopApp.csproj \
             -c Release --runtime "${{ matrix.target }}" -o "$release_name/desktop" \
-            -p:PublishSingleFile=true --no-self-contained
+            -p:PublishSingleFile=true --no-self-contained -p:Version=$version
 
           # Copy plugin DLLs
           mkdir "$release_name/plugins"
@@ -69,5 +70,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: "tql*"
+          prerelease: ${{ contains(github.event.release.tag_name, '-') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
