@@ -38,7 +38,6 @@ module QLInterpreter =
 
         eval' expr |> fun n -> Interpretation(env, n)
 
-
     let generatePostingLine
         env
         ({ Account = accounts
@@ -137,9 +136,9 @@ module QLInterpreter =
 
     let rec evalPayee env payee =
         match payee with
-        | Word p -> Interpretation(env, p)
-        | Expression e -> map string (eval env e)
-        | Interpolation xs -> Interpretation.fold evalPayee (fun l r -> l + r) (Interpretation(env, "")) xs
+        | Word p -> p
+        | ColumnToken (Column col) -> Map.find col env.Row
+        | Interpolation xs -> List.map (evalPayee env) xs |> (String.concat " ")
 
     let evalQuery env (Query(payee, filters, posting)) =
         let (Interpretation(envFilter, isMatch)) =
@@ -159,9 +158,7 @@ module QLInterpreter =
             let date =
                 System.DateTime.ParseExact(Map.find "Date" env.Row, env.DateFormat, CultureInfo.InvariantCulture)
 
-            // TODO: (20240818) Check if Payee contains variables (for example 'Recipient', 'Name' or 'Receiver')
-            //       In progress: updated the AST, next step is update parser and write unit tests
-            let payeeString = (evalPayee env payee) |> Interpretation.result
+            let payeeString = evalPayee env payee
             let header = Header(date, payeeString)
 
             let comments =

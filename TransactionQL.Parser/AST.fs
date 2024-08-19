@@ -47,7 +47,7 @@ module AST =
 
     type Payee = 
         | Word of string
-        | Expression of Expression
+        | ColumnToken of Column
         | Interpolation of Payee list
 
     type Query = Query of Payee * Filter list * Posting

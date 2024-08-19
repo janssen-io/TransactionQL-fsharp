@@ -135,9 +135,12 @@ module QLParser =
     /// Skip zero or more literal spaces
     let pspace = skipMany (pchar ' ')
 
+    let qcolumnToken = pchar '@' >>. qcolumnIdentifier |>> ColumnToken
+
     let qpayee: Parser<Payee, unit> =
-        let pexpr = (qexpression |>> Expression)
-        let payeeParts = ((either pexpr (pword |>> Word)) .>>? pspace)
+        let isWhitespaceOrVar = fun c -> List.contains c [ "\n"; "\r"; "\t"; " "; "@" ]
+        let ptext = manySatisfy (not << isWhitespaceOrVar << string)
+        let payeeParts = ((either qcolumnToken (ptext |>> Word)) .>>? pspace)
         let pinterpolation = (many1Till payeeParts newline) |>> Interpolation
         (pchar '#' .>> spaces1) >>. pinterpolation
 

@@ -233,6 +233,26 @@ let ``Inference: number column - notequalto`` () =
     Assert.True(evalFilter' (env', Filter(Column "Amount", NotEqualTo, (Number 2.0))))
 
 [<Fact>]
+let ``Payee: words`` () =
+    let payeeParts = Interpolation [ Word "American"; Word "Express"]
+    let payee = evalPayee env payeeParts
+    Assert.Equal("American Express", payee)
+
+[<Fact>]
+let ``Payee: variable`` () =
+    let payeeParts = Interpolation [ ColumnToken (Column "Name") ]
+    let env' = { env with Row = Map.ofList [ ("Name", "American Express") ]}
+    let payee = evalPayee env' payeeParts
+    Assert.Equal("American Express", payee)
+
+[<Fact>]
+let ``Payee: interpolation`` () =
+    let payeeParts = Interpolation [ Word "Monthly:"; ColumnToken (Column "Name") ]
+    let env' = { env with Row = Map.ofList [ ("Name", "American Express") ]}
+    let payee = evalPayee env' payeeParts
+    Assert.Equal("Monthly: American Express", payee)
+
+[<Fact>]
 let ``Posting lines: No amount`` () =
     let env' =
         { env with

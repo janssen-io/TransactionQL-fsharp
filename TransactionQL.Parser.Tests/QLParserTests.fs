@@ -187,17 +187,34 @@ let ``Payee: # <words>`` () =
 [<Fact>]
 let ``Payee: # <variable>`` () =
     let variable = "Name"
-    test QLParser.qpayee $"# (%s{variable})\n" (Interpolation [Expression (Variable variable)])
+    test QLParser.qpayee $"# @%s{variable}\n"  (Interpolation [ColumnToken (Column variable)])
 
 [<Fact>]
 let ``Payee: # <interpolation>`` () =
     let variable = "Name"
-    test QLParser.qpayee $"# Some (%s{variable}) string \n" (Interpolation [ (Word "Some"); (Expression (Variable variable)); (Word "string") ])
+    test QLParser.qpayee $"# Some @%s{variable} string\n" (Interpolation [ (Word "Some"); (ColumnToken (Column variable)); (Word "string") ])
+
+[<Fact>]
+let ``Payee: # <odd chars>`` () =
+    let variable = "Name"
+    test 
+        QLParser.qpayee
+        $"# Some <Test> & Sons (@%s{variable}) string\n"
+        (Interpolation [
+            Word "Some"
+            Word "<Test>"
+            Word "&"
+            Word "Sons"
+            Word "("
+            ColumnToken (Column "Name")
+            Word ")"
+            Word "string"
+        ])
 
 [<Fact>]
 let ``Query: <payee> <filters> <posting>`` () =
     let query = [
-        "# Full description (Creditor)"
+        "# Full description @Creditor"
         "    Creditor = \"NL\""
         "    Amount >= 50.00"
         ""
@@ -211,7 +228,7 @@ let ``Query: <payee> <filters> <posting>`` () =
         QLParser.qquery
         (String.concat Environment.NewLine query)
         (Query(
-            Interpolation [ Word "Full"; Word "description"; Expression (Variable "Creditor") ],
+            Interpolation [ Word "Full"; Word "description"; ColumnToken (Column "Creditor") ],
             [ Filter(Column "Creditor", EqualTo, String "NL")
               Filter(Column "Amount", GreaterThanOrEqualTo, Number 50.0) ],
             Posting(
