@@ -9,7 +9,7 @@ jobs:
     name: Release
     strategy:
       matrix:
-        kind: ['linux', 'windows', 'macOS']
+        kind: ['linux', 'windows']
         include:
           - kind: linux
             os: ubuntu-latest
@@ -17,9 +17,6 @@ jobs:
           - kind: windows
             os: windows-latest
             target: win-x64
-          - kind: macOS
-            os: macos-latest
-            target: osx-x64
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -34,7 +31,7 @@ jobs:
         run: |
           # Define some variables for things we need
           release_name="tql-${{ matrix.target }}"
-          version=$(cut -c 2- <<< "${{ github.event.release.tag_name }}")
+          version=$(cut -c 2- <<< "${{ github.ref_name }}")
 
           echo "Building version > $version <"
 
@@ -72,6 +69,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: "tql*"
-          prerelease: ${{ contains(github.event.release.tag_name, '-') }}
+          prerelease: ${{ contains(github.ref_name, '-') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
