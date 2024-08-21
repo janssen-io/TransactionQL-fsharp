@@ -56,9 +56,10 @@
     <Setter Property="BoxShadow" Value="none" />
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="Foreground" Value="{DynamicResource FG.Base.Primary}" />
+    <Setter Property="FontSize" Value="16" />
     <Setter Property="Transitions">
       <Transitions>
-        <BrushTransition Property="Foreground" Duration="0:0:0.3"></BrushTransition>
+        <BrushTransition Property="Foreground" Duration="0:0:0.2"></BrushTransition>
         <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"></TransformOperationsTransition>
       </Transitions>
     </Setter>
@@ -66,7 +67,7 @@
   </Style>
   <Style Selector="Button.IconAction:pointerover /template/ ContentPresenter">
     <Setter Property="Foreground" Value="{DynamicResource FG.Elevated.Primary}" />
-    <Setter Property="RenderTransform" Value="TranslateY(-2px)" />
+    <Setter Property="RenderTransform" Value="scale(1.2)" />
     <Setter Property="Cursor" Value="Hand" />
   </Style>
   <Style Selector="Button.IconAction:disabled /template/ ContentPresenter">
