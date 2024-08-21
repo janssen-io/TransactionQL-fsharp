@@ -10,6 +10,7 @@ using System.Windows.Input;
 using Microsoft.FSharp.Core;
 using TransactionQL.Application;
 using TransactionQL.Parser;
+using TransactionQL.Shared.Extensions;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
@@ -146,12 +147,15 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     Postings = new ObservableCollection<Posting>(entry.Lines.Select(line =>
                     {
-                        var hasAmount = FSharpOption<Tuple<AST.Commodity, double>>.None != line.Amount;
+                        var amountOrDefault = line.Amount.Or(new(AST.Commodity.NewCommodity(""), 0));
+
                         return new Posting()
                         {
                             Account = string.Join(':', line.Account.Item),
-                            Amount = !hasAmount ? null : (decimal)line.Amount.Value.Item2,
-                            Currency = !hasAmount ? null : line.Amount.Value.Item1.Item
+                            // we don't want to display 0, if there's no amount.
+                            // But since Amount is a non-nullable double, we can't make it the default.
+                            Amount = line.Amount.HasValue() ? (decimal)amountOrDefault.Item2 : null,
+                            Currency = amountOrDefault.Item1.Item,
                         };
                     }))
                 };
