@@ -1,6 +1,5 @@
 ﻿namespace TransactionQL.Application
 
-open System.Diagnostics
 open System.Reflection
 
 module Configuration =

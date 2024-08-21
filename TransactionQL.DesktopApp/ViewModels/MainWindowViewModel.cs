@@ -54,7 +54,7 @@ public class MainWindowViewModel : ViewModelBase
         set
         {
             _locale = value;
-            CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(value ?? "en-US");
+            CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(string.IsNullOrEmpty(value) ? "en-US" : value);
         }
     }
 
@@ -88,11 +88,13 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    [DataMember]
+    public SelectDataWindowViewModel.SelectedData? PreviouslySelectedData { get; set; }
+
     public bool IsDone => _numberOfValidTransactions == BankTransactions.Count;
 
     internal void Parse(SelectDataWindowViewModel.SelectedData data)
     {
-        Debug.WriteLine(data);
         using var filterTql = new StreamReader(data.FiltersFile);
         var parser = API.parseFilters(filterTql.ReadToEnd());
         if (!parser.TryGetLeft(out var queries))
@@ -178,6 +180,10 @@ public class MainWindowViewModel : ViewModelBase
             }
         }
         CountValid();
+
+        // If parsing was successful, only then save previously selected data.
+        // If it's bogus, we probably don't want to remember it.
+        this.PreviouslySelectedData = data;
 
         // TODO:
         // - tags/notes (posting)
