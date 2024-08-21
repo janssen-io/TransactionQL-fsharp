@@ -1,4 +1,4 @@
-param([string]$configuration="Release") 
+param([string]$configuration="Release", [bool]$UseLatestTagVersion=$true) 
 
 function AddToPath($dir) {
     if ($env:PATH.Contains($dir)) { return }
@@ -10,9 +10,14 @@ function AddToPath($dir) {
     }
 }
 
-$latest_tag=$(git tag | sort | % { $_.Substring(1) } | Select -Last 1 )
-$commit=$(git rev-parse --short HEAD)
-$version="$($latest_tag)-$commit"
+if ($UseLatestTagVersion){
+    $latest_tag=$(git tag | sort | % { $_.Substring(1) } | Select -Last 1 )
+    $commit=$(git rev-parse --short HEAD)
+    $version="$($latest_tag)-$commit"
+}
+else {
+    $version="1.0.0"
+}
 Write-Host "Publishing version > $version <"
 
 dotnet publish TransactionQL.Plugins.ING/TransactionQL.Plugins.ING.fsproj -c $configuration -p:Version=$version
