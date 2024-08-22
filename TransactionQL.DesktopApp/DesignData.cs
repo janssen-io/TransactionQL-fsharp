@@ -48,9 +48,9 @@ public static class DesignData
     public static readonly SelectDataWindowViewModel DataWizard = new()
     {
         AvailableModules = [
-            new("asn.dll", "ASN"),
-            new("ing.dll", "ING"),
-            new("triodos.dll", "Triodos"),
+            new() { FileName = "asn.dll", Title = "ASN" },
+            new() { FileName = "ing.dll", Title = "ING" },
+            new() { FileName = "triodos.dll", Title = "Triodos" },
         ],
     };
 

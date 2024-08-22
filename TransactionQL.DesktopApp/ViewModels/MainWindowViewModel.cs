@@ -8,8 +8,11 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
 using TransactionQL.Application;
+using TransactionQL.DesktopApp.Models;
 using TransactionQL.Parser;
 using TransactionQL.Shared.Extensions;
+
+using static TransactionQL.DesktopApp.Models.AppState;
 using static TransactionQL.Shared.Types;
 
 namespace TransactionQL.DesktopApp.ViewModels;
@@ -45,19 +48,6 @@ public class MainWindowViewModel : ViewModelBase
 
     [DataMember] public ObservableCollection<PaymentDetailsViewModel> BankTransactions { get; set; } = [];
 
-    private string? _locale;
-
-    [DataMember]
-    public string? Locale
-    {
-        get => _locale;
-        set
-        {
-            _locale = value;
-            CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(string.IsNullOrEmpty(value) ? "en-US" : value);
-        }
-    }
-
     private int _bankTransactionIndex = 0;
 
     [DataMember]
@@ -89,11 +79,11 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     [DataMember]
-    public SelectDataWindowViewModel.SelectedData? PreviouslySelectedData { get; set; }
+    public SelectedData? PreviouslySelectedData { get; set; }
 
     public bool IsDone => _numberOfValidTransactions == BankTransactions.Count;
 
-    internal void Parse(SelectDataWindowViewModel.SelectedData data)
+    internal void Parse(SelectedData data)
     {
         using StreamReader filterTql = new(data.FiltersFile);
         Either<AST.Query[], string> parser = API.parseFilters(filterTql.ReadToEnd());
@@ -122,7 +112,6 @@ public class MainWindowViewModel : ViewModelBase
         }
 
         using StreamReader bankTransactionCsv = new(data.TransactionsFile);
-        Locale = "en-US";
         if (data.HasHeader)
         {
             _ = bankTransactionCsv.ReadLine();

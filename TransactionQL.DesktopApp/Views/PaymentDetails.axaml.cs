@@ -18,9 +18,9 @@ public partial class PaymentDetails : UserControl
         };
     }
 
-    private void OnContainerOnLoaded(object? sender1, RoutedEventArgs routedEventArgs)
+    private void OnContainerOnLoaded(object? sender, RoutedEventArgs routedEventArgs)
     {
-        Control container = (Control)sender1!;
+        Control container = (Control)sender!;
         AutoCompleteBox? box = container.FindDescendantOfType<AutoCompleteBox>();
         _ = (box?.Focus());
 

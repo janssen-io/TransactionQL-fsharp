@@ -1,11 +1,14 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
 using System;
+using System.Globalization;
 using System.Reactive.Disposables;
 using System.Reactive.Subjects;
 using System.Threading;
+using TransactionQL.DesktopApp.Application;
 using TransactionQL.DesktopApp.ViewModels;
 using TransactionQL.DesktopApp.Views;
 
@@ -23,6 +26,13 @@ public partial class App : Avalonia.Application, IDisposable
 
     public override void OnFrameworkInitializationCompleted()
     {
+        CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
+
+        ServiceCollection collection = new();
+        collection.AddTql();
+
+        var services = collection.BuildServiceProvider();
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // Use a custom AutoSuspendHelper to also be able to save app state on-demand.

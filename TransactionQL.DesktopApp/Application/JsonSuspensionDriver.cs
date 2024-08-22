@@ -40,7 +40,12 @@ public class JsonSuspensionDriver : ISuspensionDriver
         }
 
         string lines = File.ReadAllText(_file);
-        object? state = JsonConvert.DeserializeObject<object>(lines, _settings);
+        object? state = null;
+        try
+        {
+            state = JsonConvert.DeserializeObject<object>(lines, _settings);
+        }
+        catch { } // TODO log? Show warning?
         return Observable.Return(state ?? new MainWindowViewModel());
     }
 

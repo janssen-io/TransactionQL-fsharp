@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
+using TransactionQL.DesktopApp.Models;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
@@ -92,9 +93,13 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     [IgnoreDataMember] public ICommand AddTransactionCommand { get; }
 
+    [IgnoreDataMember] public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate { get; }
+
     public PaymentDetailsViewModel()
     {
         AddTransactionCommand = ReactiveCommand.Create(() => { Postings.Add(Posting.Empty); });
+
+        AccountAutoCompletePredicate = FilterAccounts;
     }
 
     public PaymentDetailsViewModel(string title, DateTime date, string description, string currency, decimal amount,
@@ -121,12 +126,18 @@ public class PaymentDetailsViewModel : ViewModelBase
         IsActive = false;
     }
 
+    // TODO: shouldn't this be part of our domain?
+    // DraftTransaction while editing -> TryCreate Transaction when finished?
     public bool IsValid(out string errorMessage)
     {
         List<string> errors =
         [
-            .. string.IsNullOrEmpty(Title) ? ["The transaction's title must be set."] : [],
-            .. Postings.Count(p => !string.IsNullOrEmpty(p.Account)) < 2 ? ["The transaction must contain at least two postings."] : [],
+            .. string.IsNullOrEmpty(Title)
+                ? ["The transaction's title must be set."]
+                : Array.Empty<string>(),
+            .. Postings.Count(p => !string.IsNullOrEmpty(p.Account)) < 2
+                ? ["The transaction must contain at least two postings."]
+                : Array.Empty<string>(),
         ];
 
         IEnumerable<Posting> nonEmptyPostings = Postings.Where(p => !string.IsNullOrEmpty(p.Account));
@@ -144,37 +155,8 @@ public class PaymentDetailsViewModel : ViewModelBase
 
         errorMessage = string.Join(Environment.NewLine, errors);
 
-        HasError = errors.Any();
+        HasError = errors.Count != 0;
         return !HasError;
-    }
-}
-
-public class Posting
-{
-
-    [DataMember]
-    public string? Account { get; set; } = "";
-    [DataMember] public string? Currency { get; set; }
-    [DataMember] public decimal? Amount { get; set; }
-    public decimal Value => Amount ?? 0m;
-
-    [IgnoreDataMember] public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate { get; }
-
-    public Posting()
-    {
-        AccountAutoCompletePredicate = FilterAccounts;
-    }
-
-    public static Posting Empty => new()
-    {
-        Account = "",
-        Currency = "EUR",
-        Amount = null
-    };
-
-    internal bool HasAmount()
-    {
-        return !string.IsNullOrEmpty(Currency) && Amount != null;
     }
 
     private static bool FilterAccounts(string? searchString, string item)
@@ -201,3 +183,4 @@ public class Posting
         return searchIndex == searchString.Length;
     }
 }
+

@@ -14,8 +14,16 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        _ = BuildAvaloniaApp()
-            .StartWithClassicDesktopLifetime(args);
+        try
+        {
+            _ = BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args);
+        }
+        catch (Exception ex)
+        {
+            // TODO: logging
+            throw ex;
+        }
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.

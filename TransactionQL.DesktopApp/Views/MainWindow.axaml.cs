@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
@@ -10,7 +11,6 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
 using TransactionQL.DesktopApp.ViewModels;
-using Module = TransactionQL.DesktopApp.ViewModels.Module;
 
 namespace TransactionQL.DesktopApp.Views;
 
@@ -19,16 +19,13 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        CarouselNext = this.FindControl<Button>(nameof(CarouselNext))!;
-        CarouselPrevious = this.FindControl<Button>(nameof(CarouselPrevious))!;
-        BankTransactionCarousel = this.FindControl<Carousel>(nameof(BankTransactionCarousel))!;
-        BankTransactionCarousel.PageTransition = null;
+        KeyDown += HandleKeyDown;
+    }
 
-        TransactionsList = this.FindControl<ListBox>(nameof(TransactionsList))!;
-
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
         CarouselNext.Command = ReactiveCommand.Create(() => BankTransactionCarousel.Next());
         CarouselPrevious.Command = ReactiveCommand.Create(() => BankTransactionCarousel.Previous());
-        KeyDown += HandleKeyDown;
     }
 
     private void HandleKeyDown(object? sender, KeyEventArgs e)
@@ -92,12 +89,12 @@ public partial class MainWindow : Window
         string pluginDirectory = TransactionQL.Application.Configuration.createAndGetPluginDir;
         DirectoryInfo dir = new(pluginDirectory);
         FileInfo[] files = dir.GetFiles("*.dll");
-        ObservableCollection<Module> availableModules = new(files.Select(f =>
+        ObservableCollection<Models.Module> availableModules = new(files.Select(f =>
             {
 #pragma warning disable S3885 // "Assembly.Load" should be used - Load results in an exception
                 string? title = Assembly.LoadFrom(f.FullName).GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
 #pragma warning restore S3885 // "Assembly.Load" should be used
-                return new Module(f.Name, title);
+                return new Models.Module { Title = title!, FileName = f.Name };
             }));
 
         SelectDataWindowViewModel selectDataVm = new()

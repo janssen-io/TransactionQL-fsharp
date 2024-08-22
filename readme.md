@@ -1,6 +1,8 @@
-# Transaction Query Language
+# Transaction Query Language ![version](https://img.shields.io/github/v/release/janssen-io/transactionql-fsharp?label=version&labelColor=hsl(155%2C%2055%25%2C%2049%25)&color=darkslategray)
 
-Transaction QL is a small domain specific language to convert bank statements
+![downloads](https://img.shields.io/github/downloads/janssen-io/TransactionQL-fsharp/total)
+
+Transaction QL is a domain specific language to convert bank statements
 to [ledger-cli](https://www.ledger-cli.org/) postings.
 
 ## Ledger-cli

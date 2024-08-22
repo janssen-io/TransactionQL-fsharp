@@ -94,7 +94,7 @@
                       <AutoCompleteBox Grid.Row="0" Grid.Column="0"
                                        BorderBrush="Transparent"
                                        SelectedItem="{Binding Account}"
-                                       TextFilter="{Binding AccountAutoCompletePredicate}"
+                                       TextFilter="{Binding Path=#Details.((vm:PaymentDetailsViewModel)DataContext).AccountAutoCompletePredicate}"
                                        ItemsSource="{Binding Path=#Details.((vm:PaymentDetailsViewModel)DataContext).ValidAccounts}" />
                       <TextBox Grid.Row="0" Grid.Column="1"
                                Text="{Binding Currency}" TextAlignment="Right" />

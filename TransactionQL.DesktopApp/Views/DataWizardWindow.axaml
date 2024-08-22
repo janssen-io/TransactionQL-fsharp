@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:c="using:TransactionQL.DesktopApp.Controls"
         xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
+        xmlns:models="using:TransactionQL.DesktopApp.Models"
         xmlns:dd="using:TransactionQL.DesktopApp"
         xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
         mc:Ignorable="d" Width="300" Height="450"
@@ -70,7 +71,7 @@
                     </ItemsPanelTemplate>
                   </ItemsControl.ItemsPanel>
                   <ItemsControl.ItemTemplate>
-                    <DataTemplate x:DataType="vm:Module">
+                    <DataTemplate x:DataType="models:Module">
                       <RadioButton GroupName="SelectedModule" Classes="ToggleButton" Margin="0 0 5 0"
                                    Command="{Binding #DataWizard.((vm:SelectDataWindowViewModel)DataContext).SelectBank}" CommandParameter="{Binding $self.DataContext}">
                         <RadioButton.Styles>
