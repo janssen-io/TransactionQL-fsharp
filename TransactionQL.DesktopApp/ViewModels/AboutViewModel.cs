@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using TransactionQL.DesktopApp.Models;
+﻿using TransactionQL.DesktopApp.Models;
 
 namespace TransactionQL.DesktopApp.ViewModels
 {

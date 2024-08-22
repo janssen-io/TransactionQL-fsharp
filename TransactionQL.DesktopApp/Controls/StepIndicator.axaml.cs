@@ -41,8 +41,8 @@ public class StepIndicator : TemplatedControl
 
     public IBrush InactiveBackground
     {
-        get { return GetValue(InactiveBackgroundProperty); }
-        set { SetValue(InactiveBackgroundProperty, value); }
+        get => GetValue(InactiveBackgroundProperty);
+        set => SetValue(InactiveBackgroundProperty, value);
     }
 
     public static readonly StyledProperty<double> StepWidthProperty =
@@ -50,8 +50,8 @@ public class StepIndicator : TemplatedControl
 
     public double StepWidth
     {
-        get { return GetValue(StepWidthProperty); }
-        set { SetValue(StepWidthProperty, value); }
+        get => GetValue(StepWidthProperty);
+        set => SetValue(StepWidthProperty, value);
     }
 
     public static readonly StyledProperty<IBrush> ActiveBackgroundProperty =
@@ -59,8 +59,8 @@ public class StepIndicator : TemplatedControl
 
     public IBrush ActiveBackground
     {
-        get { return GetValue(ActiveBackgroundProperty); }
-        set { SetValue(ActiveBackgroundProperty, value); }
+        get => GetValue(ActiveBackgroundProperty);
+        set => SetValue(ActiveBackgroundProperty, value);
     }
 
     public static readonly StyledProperty<uint> NumberOfStepsProperty =
@@ -68,8 +68,8 @@ public class StepIndicator : TemplatedControl
 
     public uint NumberOfSteps
     {
-        get { return GetValue(NumberOfStepsProperty); }
-        set { SetValue(NumberOfStepsProperty, value); }
+        get => GetValue(NumberOfStepsProperty);
+        set => SetValue(NumberOfStepsProperty, value);
     }
 
     public static readonly StyledProperty<ObservableCollection<Step>> ItemsProperty =
@@ -77,8 +77,8 @@ public class StepIndicator : TemplatedControl
 
     public ObservableCollection<Step> Items
     {
-        get { return GetValue(ItemsProperty); }
-        set { SetValue(ItemsProperty, value); }
+        get => GetValue(ItemsProperty);
+        set => SetValue(ItemsProperty, value);
     }
 
     public static readonly StyledProperty<uint> CurrentStepProperty =
@@ -86,12 +86,15 @@ public class StepIndicator : TemplatedControl
 
     public uint CurrentStep
     {
-        get { return GetValue(CurrentStepProperty); }
-        set {
+        get => GetValue(CurrentStepProperty);
+        set
+        {
             if (value > Items.Count)
+            {
                 return;
+            }
 
-            SetValue(CurrentStepProperty, value);
+            _ = SetValue(CurrentStepProperty, value);
             UpdateCompleted();
         }
     }
@@ -110,11 +113,14 @@ public class StepIndicator : TemplatedControl
 
     private void UpdateCompleted()
     {
-        for(int i = 0; i < Items.Count; i++)
+        for (int i = 0; i < Items.Count; i++)
         {
             Items[i].IsCompleted = i < CurrentStep;
         }
 
-        if (CurrentStep > Items.Count) CurrentStep = (uint)Items.Count;
+        if (CurrentStep > Items.Count)
+        {
+            CurrentStep = (uint)Items.Count;
+        }
     }
 }

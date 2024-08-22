@@ -16,7 +16,7 @@ public partial class DataWizardWindow : Window
         this.AttachDevTools();
 #endif
 
-        this.KeyDown += HandleKeyDown;
+        KeyDown += HandleKeyDown;
     }
 
     protected override void OnDataContextChanged(EventArgs e)
@@ -42,13 +42,13 @@ public partial class DataWizardWindow : Window
     {
         if (e.Key == Key.Escape)
         {
-            this.Close();
+            Close();
         }
     }
 
     private void Close(object? sender, RoutedEventArgs e)
     {
-        this.Close();
+        Close();
     }
 
     private bool _mouseDownForWindowMoving = false;
@@ -56,7 +56,10 @@ public partial class DataWizardWindow : Window
 
     private void Dragbar_OnPointerMoved(object? sender, PointerEventArgs e)
     {
-        if (!_mouseDownForWindowMoving) return;
+        if (!_mouseDownForWindowMoving)
+        {
+            return;
+        }
 
         PointerPoint currentPoint = e.GetCurrentPoint(this);
         Position = new PixelPoint(Position.X + (int)(currentPoint.Position.X - _originalPoint.Position.X),
@@ -65,7 +68,10 @@ public partial class DataWizardWindow : Window
 
     private void Dragbar_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
-        if (WindowState == WindowState.Maximized || WindowState == WindowState.FullScreen) return;
+        if (WindowState is WindowState.Maximized or WindowState.FullScreen)
+        {
+            return;
+        }
 
         _mouseDownForWindowMoving = true;
         _originalPoint = e.GetCurrentPoint(this);

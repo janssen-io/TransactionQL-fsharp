@@ -15,17 +15,11 @@ namespace TransactionQL.DesktopApp.Controls
                 return string.Empty;
             }
 
-            if (value is string path && targetType == typeof(string))
-            {
-                return Path.GetFileName(path);
-            }
-
-            if (value is Uri uri && targetType == typeof(string))
-            {
-                return Path.GetFileName(uri.AbsolutePath);
-            }
-
-            throw new InvalidCastException($"{value} ({value.GetType()}) is not a file path.");
+            return value is string path && targetType == typeof(string)
+                ? Path.GetFileName(path)
+                : value is Uri uri && targetType == typeof(string)
+                ? (object)Path.GetFileName(uri.AbsolutePath)
+                : throw new InvalidCastException($"{value} ({value.GetType()}) is not a file path.");
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

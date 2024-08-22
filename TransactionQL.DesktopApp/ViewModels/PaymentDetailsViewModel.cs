@@ -1,12 +1,12 @@
 ﻿using Avalonia.Controls;
 using DynamicData;
 using ReactiveUI;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
-using System;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
@@ -20,10 +20,7 @@ public class PaymentDetailsViewModel : ViewModelBase
     public bool IsActive
     {
         get => _isActive;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _isActive, value);
-        }
+        set => this.RaiseAndSetIfChanged(ref _isActive, value);
     }
 
     private bool _hasError = false;
@@ -61,7 +58,7 @@ public class PaymentDetailsViewModel : ViewModelBase
         get => _amount;
         private set
         {
-            this.RaiseAndSetIfChanged(ref _amount, value);
+            _ = this.RaiseAndSetIfChanged(ref _amount, value);
             this.RaisePropertyChanged(nameof(IsNegativeAmount));
         }
     }
@@ -89,9 +86,9 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     #endregion properties
 
-    [DataMember] public ObservableCollection<Posting> Postings { get; set; } = new();
+    [DataMember] public ObservableCollection<Posting> Postings { get; set; } = [];
 
-    [DataMember] public ObservableCollection<string> ValidAccounts { get; } = new();
+    [DataMember] public ObservableCollection<string> ValidAccounts { get; } = [];
 
     [IgnoreDataMember] public ICommand AddTransactionCommand { get; }
 
@@ -120,26 +117,30 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     public void Deactivate()
     {
-        IsValid(out var _);
+        _ = IsValid(out _);
         IsActive = false;
     }
 
     public bool IsValid(out string errorMessage)
     {
-        List<string> errors = new();
+        List<string> errors =
+        [
+            .. string.IsNullOrEmpty(Title) ? ["The transaction's title must be set."] : [],
+            .. Postings.Count(p => !string.IsNullOrEmpty(p.Account)) < 2 ? ["The transaction must contain at least two postings."] : [],
+        ];
 
-        if (string.IsNullOrEmpty(Title)) errors.Add("The transaction's title must be set.");
-        if (Postings.Count(p => !string.IsNullOrEmpty(p.Account)) < 2)
-            errors.Add("The transaction must contain at least two postings.");
-
-        var nonEmptyPostings = Postings.Where(p => !string.IsNullOrEmpty(p.Account));
+        IEnumerable<Posting> nonEmptyPostings = Postings.Where(p => !string.IsNullOrEmpty(p.Account));
         if (nonEmptyPostings.Count(p => !p.HasAmount()) > 1)
+        {
             errors.Add("The transaction may contain at most one auto-calculated posting (one without costs).");
+        }
 
         // TODO: handle multiple currencies
-        var balance = nonEmptyPostings.Aggregate(0m, (total, p) => total + p.Value);
+        decimal balance = nonEmptyPostings.Aggregate(0m, (total, p) => total + p.Value);
         if (Postings.All(p => p.HasAmount()) && balance != 0m)
+        {
             errors.Add($"The transaction's postings are not balanced, the total equals {balance:0.00}.");
+        }
 
         errorMessage = string.Join(Environment.NewLine, errors);
 
@@ -178,16 +179,22 @@ public class Posting
 
     private static bool FilterAccounts(string? searchString, string item)
     {
-        if (searchString is null) return true;
+        if (searchString is null)
+        {
+            return true;
+        }
+
         searchString = searchString.ToLowerInvariant();
         item = item.ToLowerInvariant();
 
-        var searchIndex = 0;
-        for (var itemIndex = 0; itemIndex < item.Length && searchIndex < searchString.Length; itemIndex++)
+        int searchIndex = 0;
+        for (int itemIndex = 0; itemIndex < item.Length && searchIndex < searchString.Length; itemIndex++)
         {
             // Try to find the next letter of the search string in the remainder of the item
             if (searchString[searchIndex] == item[itemIndex])
+            {
                 searchIndex++;
+            }
         }
 
         // if all the letters of the searchString were found somewhere in the item, then it's a valid item.

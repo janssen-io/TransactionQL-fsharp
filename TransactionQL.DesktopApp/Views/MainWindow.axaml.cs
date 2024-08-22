@@ -1,14 +1,14 @@
+using Avalonia.Controls;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
+using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reflection;
-using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Platform.Storage;
-using ReactiveUI;
 using TransactionQL.DesktopApp.ViewModels;
 using Module = TransactionQL.DesktopApp.ViewModels.Module;
 
@@ -28,21 +28,18 @@ public partial class MainWindow : Window
 
         CarouselNext.Command = ReactiveCommand.Create(() => BankTransactionCarousel.Next());
         CarouselPrevious.Command = ReactiveCommand.Create(() => BankTransactionCarousel.Previous());
-        this.KeyDown += HandleKeyDown;
+        KeyDown += HandleKeyDown;
     }
 
     private void HandleKeyDown(object? sender, KeyEventArgs e)
     {
         if (e.Key == Key.F11)
         {
-            if (this.WindowState != WindowState.FullScreen)
-                this.WindowState = WindowState.FullScreen;
-            else
-                this.WindowState = WindowState.Normal;
+            WindowState = WindowState != WindowState.FullScreen ? WindowState.FullScreen : WindowState.Normal;
         }
-        if (e.Key == Key.Escape && this.WindowState == WindowState.FullScreen)
+        if (e.Key == Key.Escape && WindowState == WindowState.FullScreen)
         {
-            this.WindowState = WindowState.Normal;
+            WindowState = WindowState.Normal;
         }
     }
 
@@ -55,14 +52,14 @@ public partial class MainWindow : Window
 
     private void ShowError(object? sender, ErrorViewModel e)
     {
-        var errorDialog = new ErrorDialog { DataContext = e };
+        ErrorDialog errorDialog = new() { DataContext = e };
         errorDialog.Show(this);
     }
 
     // TODO: use interaction to get the path, but save in ViewModel?
     private async void Save(object? sender, string postings)
     {
-        var options = new FilePickerSaveOptions
+        FilePickerSaveOptions options = new()
         {
             Title = "Select Ledger File",
             FileTypeChoices = new[]
@@ -76,12 +73,15 @@ public partial class MainWindow : Window
             ShowOverwritePrompt = false
         };
 
-        var file = await StorageProvider.SaveFilePickerAsync(options);
-        if (file == null) return;
+        IStorageFile? file = await StorageProvider.SaveFilePickerAsync(options);
+        if (file == null)
+        {
+            return;
+        }
 
-        var path = file.Path.AbsolutePath;
-        await using var stream = new FileStream(path, FileMode.Append);
-        await using var writer = new StreamWriter(stream);
+        string path = file.Path.AbsolutePath;
+        await using FileStream stream = new(path, FileMode.Append);
+        await using StreamWriter writer = new(stream);
         await writer.WriteLineAsync(postings);
     }
 
@@ -89,18 +89,18 @@ public partial class MainWindow : Window
     {
         MainWindowViewModel mainVm = (MainWindowViewModel)DataContext!;
 
-        var pluginDirectory = TransactionQL.Application.Configuration.createAndGetPluginDir;
-        var dir = new DirectoryInfo(pluginDirectory);
-        var files = dir.GetFiles("*.dll");
-        var availableModules = new ObservableCollection<Module>(files.Select(f =>
+        string pluginDirectory = TransactionQL.Application.Configuration.createAndGetPluginDir;
+        DirectoryInfo dir = new(pluginDirectory);
+        FileInfo[] files = dir.GetFiles("*.dll");
+        ObservableCollection<Module> availableModules = new(files.Select(f =>
             {
 #pragma warning disable S3885 // "Assembly.Load" should be used - Load results in an exception
-                var title = Assembly.LoadFrom(f.FullName).GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
+                string? title = Assembly.LoadFrom(f.FullName).GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
 #pragma warning restore S3885 // "Assembly.Load" should be used
                 return new Module(f.Name, title);
             }));
 
-        var selectDataVm = new SelectDataWindowViewModel()
+        SelectDataWindowViewModel selectDataVm = new()
         {
             AvailableModules = availableModules,
             HasHeader = mainVm.PreviouslySelectedData?.HasHeader ?? false,
@@ -113,7 +113,7 @@ public partial class MainWindow : Window
 
         selectDataVm.DataSelected += (_, data) => mainVm.Parse(data);
 
-        var selectWindow = new DataWizardWindow()
+        DataWizardWindow selectWindow = new()
         {
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
             DataContext = selectDataVm,
@@ -135,10 +135,13 @@ public partial class MainWindow : Window
 
     private void BankTransactionCarousel_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
-        foreach (var item in e.RemovedItems.OfType<PaymentDetailsViewModel>()) item.Deactivate();
+        foreach (PaymentDetailsViewModel item in e.RemovedItems.OfType<PaymentDetailsViewModel>())
+        {
+            item.Deactivate();
+        }
 
-        var visibleItem = e.AddedItems.OfType<PaymentDetailsViewModel>().FirstOrDefault();
+        PaymentDetailsViewModel? visibleItem = e.AddedItems.OfType<PaymentDetailsViewModel>().FirstOrDefault();
         visibleItem?.Activate();
-        ((MainWindowViewModel)this.DataContext!).CountValid();
+        ((MainWindowViewModel)DataContext!).CountValid();
     }
 }

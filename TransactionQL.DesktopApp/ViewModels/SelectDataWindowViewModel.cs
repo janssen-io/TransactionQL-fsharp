@@ -1,10 +1,10 @@
 ﻿using ReactiveUI;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Input;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows.Input;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
@@ -68,7 +68,7 @@ public class SelectDataWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _module, value);
     }
 
-    private ObservableCollection<Module> _availableModules = new();
+    private ObservableCollection<Module> _availableModules = [];
 
     public ObservableCollection<Module> AvailableModules
     {
@@ -109,17 +109,17 @@ public class SelectDataWindowViewModel : ViewModelBase
     public class SelectedData
     {
         // Typically we want to select different/new transactions
-        [IgnoreDataMember] 
+        [IgnoreDataMember]
         public required string TransactionsFile { get; init; }
 
         [DataMember]
         public required bool HasHeader { get; init; }
 
         [DataMember]
-        public required string FiltersFile { get; init;  }
+        public required string FiltersFile { get; init; }
 
         [DataMember]
-        public required string AccountsFile { get; init;  }
+        public required string AccountsFile { get; init; }
 
         [DataMember]
         public required string Module { get; init; }
@@ -139,10 +139,7 @@ public class Module : ViewModelBase
     public string Title
     {
         get => _title;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _title, value);
-        }
+        set => this.RaiseAndSetIfChanged(ref _title, value);
     }
 
     private string _fileName = "";
@@ -150,10 +147,7 @@ public class Module : ViewModelBase
     public string FileName
     {
         get => _fileName;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _fileName, value);
-        }
+        set => this.RaiseAndSetIfChanged(ref _fileName, value);
     }
 
     public Module(string fileName, string? title)
