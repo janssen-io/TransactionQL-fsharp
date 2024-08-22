@@ -1,4 +1,4 @@
-param([string]$configuration="Release", [bool]$UseLatestTagVersion=$true) 
+param([string]$configuration="Release", [bool]$UseLatestTagVersion=$true, [bool]$RunTests=$true) 
 
 function AddToPath($dir) {
     if ($env:PATH.Contains($dir)) { return }
@@ -8,6 +8,10 @@ function AddToPath($dir) {
         [System.Environment]::SetEnvironmentVariable('PATH',"$env:PATH;$dir", 'User')
         $env:PATH = [System.Environment]::GetEnvironmentVariable('PATH')
     }
+}
+
+if ($RunTests) {
+    dotnet test -c $configuration
 }
 
 if ($UseLatestTagVersion){
