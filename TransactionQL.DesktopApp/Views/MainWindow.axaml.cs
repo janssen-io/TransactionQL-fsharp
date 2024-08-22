@@ -87,21 +87,31 @@ public partial class MainWindow : Window
 
     private void Open(object? sender, RoutedEventArgs ea)
     {
+        MainWindowViewModel mainVm = (MainWindowViewModel)DataContext!;
+
         var pluginDirectory = TransactionQL.Application.Configuration.createAndGetPluginDir;
         var dir = new DirectoryInfo(pluginDirectory);
         var files = dir.GetFiles("*.dll");
-        var selectDataVm = new SelectDataWindowViewModel()
-        {
-            AvailableModules = new ObservableCollection<Module>(files.Select(f =>
+        var availableModules = new ObservableCollection<Module>(files.Select(f =>
             {
 #pragma warning disable S3885 // "Assembly.Load" should be used - Load results in an exception
                 var title = Assembly.LoadFrom(f.FullName).GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
 #pragma warning restore S3885 // "Assembly.Load" should be used
                 return new Module(f.Name, title);
-            }))
+            }));
+
+        var selectDataVm = new SelectDataWindowViewModel()
+        {
+            AvailableModules = availableModules,
+            HasHeader = mainVm.PreviouslySelectedData?.HasHeader ?? false,
+            AccountsFile = mainVm.PreviouslySelectedData?.AccountsFile ?? string.Empty,
+            FiltersFile = mainVm.PreviouslySelectedData?.FiltersFile ?? string.Empty,
+            DefaultCheckingAccount = mainVm.PreviouslySelectedData?.DefaultCheckingAccount ?? "Assets:Checking",
+            DefaultCurrency = mainVm.PreviouslySelectedData?.DefaultCurrency ?? "EUR",
+            Module = availableModules.FirstOrDefault(m => m.FileName == mainVm.PreviouslySelectedData?.Module),
         };
 
-        selectDataVm.DataSelected += (_, data) => ((MainWindowViewModel)DataContext!).Parse(data);
+        selectDataVm.DataSelected += (_, data) => mainVm.Parse(data);
 
         var selectWindow = new DataWizardWindow()
         {

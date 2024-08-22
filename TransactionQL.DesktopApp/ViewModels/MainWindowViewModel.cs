@@ -10,6 +10,7 @@ using System.Windows.Input;
 using Microsoft.FSharp.Core;
 using TransactionQL.Application;
 using TransactionQL.Parser;
+using TransactionQL.Shared.Extensions;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
@@ -53,7 +54,7 @@ public class MainWindowViewModel : ViewModelBase
         set
         {
             _locale = value;
-            CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(value ?? "en-US");
+            CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(string.IsNullOrEmpty(value) ? "en-US" : value);
         }
     }
 
@@ -87,11 +88,13 @@ public class MainWindowViewModel : ViewModelBase
         }
     }
 
+    [DataMember]
+    public SelectDataWindowViewModel.SelectedData? PreviouslySelectedData { get; set; }
+
     public bool IsDone => _numberOfValidTransactions == BankTransactions.Count;
 
     internal void Parse(SelectDataWindowViewModel.SelectedData data)
     {
-        Debug.WriteLine(data);
         using var filterTql = new StreamReader(data.FiltersFile);
         var parser = API.parseFilters(filterTql.ReadToEnd());
         if (!parser.TryGetLeft(out var queries))
@@ -146,12 +149,15 @@ public class MainWindowViewModel : ViewModelBase
                 {
                     Postings = new ObservableCollection<Posting>(entry.Lines.Select(line =>
                     {
-                        var hasAmount = FSharpOption<Tuple<AST.Commodity, double>>.None != line.Amount;
+                        var amountOrDefault = line.Amount.Or(new(AST.Commodity.NewCommodity(""), 0));
+
                         return new Posting()
                         {
                             Account = string.Join(':', line.Account.Item),
-                            Amount = !hasAmount ? null : (decimal)line.Amount.Value.Item2,
-                            Currency = !hasAmount ? null : line.Amount.Value.Item1.Item
+                            // we don't want to display 0, if there's no amount.
+                            // But since Amount is a non-nullable double, we can't make it the default.
+                            Amount = line.Amount.HasValue() ? (decimal)amountOrDefault.Item2 : null,
+                            Currency = amountOrDefault.Item1.Item,
                         };
                     }))
                 };
@@ -174,6 +180,10 @@ public class MainWindowViewModel : ViewModelBase
             }
         }
         CountValid();
+
+        // If parsing was successful, only then save previously selected data.
+        // If it's bogus, we probably don't want to remember it.
+        this.PreviouslySelectedData = data;
 
         // TODO:
         // - tags/notes (posting)
