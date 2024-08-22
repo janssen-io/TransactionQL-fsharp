@@ -83,6 +83,8 @@ public class MainWindowViewModel : ViewModelBase
 
     public bool IsDone => _numberOfValidTransactions == BankTransactions.Count;
 
+    private static readonly string[] _newLines = [ "\n", "\r\n" ];
+
     internal void Parse(SelectedData data)
     {
         using StreamReader filterTql = new(data.FiltersFile);
@@ -97,7 +99,7 @@ public class MainWindowViewModel : ViewModelBase
         using StreamReader accountsFile = new(data.AccountsFile);
         string[] accountLines = accountsFile
             .ReadToEnd()
-            .Split(new[] { "\n", "\r\n" }, StringSplitOptions.TrimEntries);
+            .Split(_newLines, StringSplitOptions.TrimEntries);
         System.Collections.Generic.IEnumerable<string> accounts = accountLines
             .Where(line => line.StartsWith("account "))
             .Select(line => line.Split(" ")[1]);

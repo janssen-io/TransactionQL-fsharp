@@ -89,6 +89,8 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     [DataMember] public ObservableCollection<Posting> Postings { get; set; } = [];
 
+    // Still required here, but don't persist on this level
+    // Too much duplication. Just repopulate during startup.
     [DataMember] public ObservableCollection<string> ValidAccounts { get; } = [];
 
     [IgnoreDataMember] public ICommand AddTransactionCommand { get; }
@@ -97,7 +99,8 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     public PaymentDetailsViewModel()
     {
-        AddTransactionCommand = ReactiveCommand.Create(() => { Postings.Add(Posting.Empty); });
+        AddTransactionCommand = ReactiveCommand.Create(
+            () => Postings.Add(Posting.Empty));
 
         AccountAutoCompletePredicate = FilterAccounts;
     }
