@@ -22,9 +22,10 @@
   <Grid RowDefinitions="Auto,35,*">
     <Border Classes="Card Padded">
       <RelativePanel>
-        <Grid ColumnDefinitions="*,Auto,Auto" Name="Header"
+        <Grid ColumnDefinitions="*,Auto,Auto,Auto" Name="Header"
               RelativePanel.AlignLeftWithPanel="True"
               RelativePanel.AlignRightWithPanel="True">
+
           <TextBox Name="Title" Text="{Binding Title}" Classes="h1"
                    Grid.Column="0"
                    Watermark="Payee" />
@@ -47,6 +48,21 @@
                  RelativePanel.Below="Date"
                  Watermark="Description"
                   />
+        <Border RelativePanel.AlignBottomWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.Below="Description"
+                Background="{Binding $parent[Border].Background}"
+                IsVisible="{Binding HasError}" Padding="3 3 0 3">
+          <ToolTip.Tip>
+            <StackPanel>
+              <TextBlock Text="{Binding Error}" />
+            </StackPanel>
+          </ToolTip.Tip>
+          <i:Icon Value="mdi-alert-box"
+                  Grid.Column="3" FontSize="18"
+                  Foreground="{DynamicResource Border.Base.Error}">
+          </i:Icon>
+        </Border>
       </RelativePanel>
     </Border>
     <Border Grid.Row="2" Classes="Card">

@@ -19,7 +19,8 @@ public static class DesignData
             new() { Account = "Assets:Checking", Currency = "EUR", Amount = -127.11m },
             new() { Account = "Expenses:Living:Utilities" }
         ],
-        IsActive = true
+        IsActive = true,
+        HasError = true,
     };
 
     public static readonly PaymentDetailsViewModel PaymentDetails2 = new(

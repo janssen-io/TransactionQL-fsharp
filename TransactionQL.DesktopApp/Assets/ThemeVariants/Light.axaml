@@ -31,6 +31,7 @@
       <SolidColorBrush x:Key="FG.Base.Error" Color="{StaticResource error-700}" />
       <SolidColorBrush x:Key="FG.Base.Neutral" Color="{StaticResource grey-900}" />
       <SolidColorBrush x:Key="FG.Base.Primary" Color="{StaticResource primary-800}" />
+      <SolidColorBrush x:Key="FG.Elevated.Error" Color="{StaticResource error-500}" />
       <SolidColorBrush x:Key="FG.Elevated.Neutral" Color="{StaticResource grey-700}" />
       <SolidColorBrush x:Key="FG.Elevated.Primary" Color="{StaticResource primary-800}" />
       <SolidColorBrush x:Key="FG.Contrast.Neutral" Color="{StaticResource grey-100}" />

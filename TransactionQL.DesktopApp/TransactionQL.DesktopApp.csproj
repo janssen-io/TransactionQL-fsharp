@@ -36,6 +36,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Projektanker.Icons.Avalonia" Version="9.4.0" />
     <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.4.0" />
+    <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="9.4.0" />
   </ItemGroup>
 
 

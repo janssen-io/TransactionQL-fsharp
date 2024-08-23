@@ -33,6 +33,15 @@ public class PaymentDetailsViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _hasError, value);
     }
 
+    private string _error = "";
+
+    [DataMember]
+    public string Error
+    {
+        get => _error;
+        set => this.RaiseAndSetIfChanged(ref _error, value);
+    }
+
     private string? _title = "";
 
     [DataMember]
@@ -129,8 +138,6 @@ public class PaymentDetailsViewModel : ViewModelBase
         IsActive = false;
     }
 
-    // TODO: shouldn't this be part of our domain?
-    // DraftTransaction while editing -> TryCreate Transaction when finished?
     public bool IsValid(out string errorMessage)
     {
         List<string> errors =
@@ -157,6 +164,7 @@ public class PaymentDetailsViewModel : ViewModelBase
         }
 
         errorMessage = string.Join(Environment.NewLine, errors);
+        Error = errorMessage;
 
         HasError = errors.Count != 0;
         return !HasError;

@@ -2,6 +2,7 @@
 using Avalonia.ReactiveUI;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
+using Projektanker.Icons.Avalonia.MaterialDesign;
 using System;
 
 namespace TransactionQL.DesktopApp;
@@ -30,6 +31,7 @@ internal static class Program
     public static AppBuilder BuildAvaloniaApp()
     {
         _ = IconProvider.Current.Register<FontAwesomeIconProvider>();
+        _ = IconProvider.Current.Register<MaterialDesignIconProvider>();
         return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .LogToTrace()
