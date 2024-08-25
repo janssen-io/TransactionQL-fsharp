@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
 using TransactionQL.DesktopApp.Models;
+using TransactionQL.DesktopApp.Services;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
@@ -86,6 +87,7 @@ public class PaymentDetailsViewModel : ViewModelBase
     }
 
     private DateTime _date = DateTime.MinValue;
+    private readonly ISelectAccounts _accountSelector;
 
     [DataMember]
     public DateTime Date
@@ -98,24 +100,21 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     [DataMember] public ObservableCollection<Posting> Postings { get; set; } = [];
 
-    // Still required here, but don't persist on this level
-    // Too much duplication. Just repopulate during startup.
-    [DataMember] public ObservableCollection<string> ValidAccounts { get; } = [];
-
     [IgnoreDataMember] public ICommand AddTransactionCommand { get; }
 
     [IgnoreDataMember] public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate { get; }
 
-    public PaymentDetailsViewModel()
+    public PaymentDetailsViewModel(ISelectAccounts accountSelector)
     {
         AddTransactionCommand = ReactiveCommand.Create(
             () => Postings.Add(Posting.Empty));
 
-        AccountAutoCompletePredicate = FilterAccounts;
+        AccountAutoCompletePredicate = accountSelector.IsFuzzyMatch;
+        _accountSelector = accountSelector;
     }
 
-    public PaymentDetailsViewModel(string title, DateTime date, string description, string currency, decimal amount,
-        ObservableCollection<string> validAccounts) : this()
+    internal PaymentDetailsViewModel(ISelectAccounts accountSelector, string title, DateTime date, string description, string currency, decimal amount,
+        ObservableCollection<string> validAccounts) : this(accountSelector)
     {
         Title = title;
         Date = date;
@@ -168,30 +167,6 @@ public class PaymentDetailsViewModel : ViewModelBase
 
         HasError = errors.Count != 0;
         return !HasError;
-    }
-
-    private static bool FilterAccounts(string? searchString, string item)
-    {
-        if (searchString is null)
-        {
-            return true;
-        }
-
-        searchString = searchString.ToLowerInvariant();
-        item = item.ToLowerInvariant();
-
-        int searchIndex = 0;
-        for (int itemIndex = 0; itemIndex < item.Length && searchIndex < searchString.Length; itemIndex++)
-        {
-            // Try to find the next letter of the search string in the remainder of the item
-            if (searchString[searchIndex] == item[itemIndex])
-            {
-                searchIndex++;
-            }
-        }
-
-        // if all the letters of the searchString were found somewhere in the item, then it's a valid item.
-        return searchIndex == searchString.Length;
     }
 }
 

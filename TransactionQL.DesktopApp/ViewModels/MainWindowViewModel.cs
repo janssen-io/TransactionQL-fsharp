@@ -12,7 +12,7 @@ using TransactionQL.DesktopApp.Models;
 using TransactionQL.Parser;
 using TransactionQL.Shared.Extensions;
 
-using static TransactionQL.DesktopApp.Models.AppState;
+using static TransactionQL.DesktopApp.Models.SelectedData;
 using static TransactionQL.Shared.Types;
 
 namespace TransactionQL.DesktopApp.ViewModels;
@@ -79,13 +79,12 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     [DataMember]
-    public SelectedData? PreviouslySelectedData { get; set; }
+    public Models.SelectedData? PreviouslySelectedData { get; set; }
 
     public bool IsDone => _numberOfValidTransactions == BankTransactions.Count;
 
-    private static readonly string[] _newLines = [ "\n", "\r\n" ];
 
-    internal void Parse(SelectedData data)
+    internal void Parse(Models.SelectedData data)
     {
         using StreamReader filterTql = new(data.FiltersFile);
         Either<AST.Query[], string> parser = API.parseFilters(filterTql.ReadToEnd());
@@ -95,15 +94,6 @@ public class MainWindowViewModel : ViewModelBase
             ErrorThrown?.Invoke(this, new ErrorViewModel(message));
             return;
         }
-
-        using StreamReader accountsFile = new(data.AccountsFile);
-        string[] accountLines = accountsFile
-            .ReadToEnd()
-            .Split(_newLines, StringSplitOptions.TrimEntries);
-        System.Collections.Generic.IEnumerable<string> accounts = accountLines
-            .Where(line => line.StartsWith("account "))
-            .Select(line => line.Split(" ")[1]);
-        ObservableCollection<string> validAccounts = new(accounts.ToArray());
 
         Either<Input.Converters.IConverter, string> loader = API.loadReader(data.Module, Configuration.createAndGetPluginDir);
         if (!loader.TryGetLeft(out Input.Converters.IConverter? reader))
