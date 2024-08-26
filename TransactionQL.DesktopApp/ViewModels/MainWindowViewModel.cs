@@ -1,20 +1,14 @@
-﻿using Avalonia.Threading;
-using Microsoft.FSharp.Collections;
+﻿using DynamicData;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
 using TransactionQL.Application;
 using TransactionQL.DesktopApp.Models;
 using TransactionQL.DesktopApp.Services;
-using TransactionQL.Parser;
-using TransactionQL.Shared.Extensions;
-
-using static TransactionQL.Shared.Types;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
@@ -58,15 +52,6 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _bankTransactionIndex, value);
     }
 
-    private bool _hasTransactions = false;
-
-    [DataMember]
-    public bool HasTransactions
-    {
-        get => _hasTransactions;
-        set => this.RaiseAndSetIfChanged(ref _hasTransactions, value);
-    }
-
     private int _numberOfValidTransactions = 0;
     [DataMember]
     public int NumberOfValidTransactions
@@ -80,94 +65,23 @@ public class MainWindowViewModel : ViewModelBase
     }
 
     [DataMember]
-    public Models.SelectedData? PreviouslySelectedData { get; set; }
+    public SelectedData? PreviouslySelectedData { get; set; }
 
     public bool IsDone => _numberOfValidTransactions == BankTransactions.Count;
 
 
     internal void Parse(SelectedData data)
     {
-        using StreamReader filterTql = new(data.FiltersFile);
-        Either<AST.Query[], string> parser = API.parseFilters(filterTql.ReadToEnd());
-        if (!parser.TryGetLeft(out AST.Query[]? queries))
-        {
-            _ = parser.TryGetRight(out string? message);
-            ErrorThrown?.Invoke(this, new ErrorViewModel(message));
+        var loader = new DataLoader(data);
+        if (!loader.TryLoadData(out var ps))
             return;
-        }
 
-        Either<Input.Converters.IConverter, string> loader = API.loadReader(data.Module, Configuration.createAndGetPluginDir);
-        if (!loader.TryGetLeft(out Input.Converters.IConverter? reader))
-        {
-            _ = parser.TryGetRight(out string? message);
-            ErrorThrown?.Invoke(this, new ErrorViewModel(message));
-            return;
-        }
-
-        using StreamReader bankTransactionCsv = new(data.TransactionsFile);
-        if (data.HasHeader)
-        {
-            _ = bankTransactionCsv.ReadLine();
-        }
-
-        FSharpMap<string, string>[] rows = reader.Read(bankTransactionCsv.ReadToEnd());
-
-        Either<QLInterpreter.Entry, FSharpMap<string, string>>[] filteredRows = API.filter(reader, queries, rows).ToArray();
+        // Make sure we don't enumerate multiple times
+        var payments = ps.ToArray();
+        NumberOfValidTransactions = payments.Aggregate(0, (count, p) => p.IsValid(out string _) ? count + 1 : count);
 
         BankTransactions.Clear();
-
-        if (filteredRows.Length > 0)
-        {
-            HasTransactions = true;
-        }
-
-        var accountSelector = FilewatchingAccountSelector.Monitor(data.AccountsFile, Dispatcher.UIThread.Invoke);
-        for (int i = 0; i < rows.Length; i++)
-        {
-            Either<QLInterpreter.Entry, FSharpMap<string, string>> filteredRow = filteredRows[i];
-            if (filteredRow.TryGetLeft(out QLInterpreter.Entry? entry))
-            {
-                string title = entry.Header.Item2;
-                string description = string.Join(",", entry.Comments.ToArray()).Trim('\'');
-                DateTime date = entry.Header.Item1;
-                decimal amount = decimal.Parse(rows[i]["Amount"],
-                    NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
-
-                PaymentDetailsViewModel transaction = new(accountSelector, title, date, description, data.DefaultCurrency, amount)
-                {
-                    Postings = new ObservableCollection<Posting>(entry.Lines.Select(line =>
-                    {
-                        Tuple<AST.Commodity, double> amountOrDefault = line.Amount.Or(new(AST.Commodity.NewCommodity(""), 0));
-
-                        return new Posting()
-                        {
-                            Account = string.Join(':', line.Account.Item),
-                            // we don't want to display 0, if there's no amount.
-                            // But since Amount is a non-nullable double, we can't make it the default.
-                            Amount = line.Amount.HasValue() ? (decimal)amountOrDefault.Item2 : null,
-                            Currency = amountOrDefault.Item1.Item,
-                        };
-                    }))
-                };
-                _ = transaction.IsValid(out _);
-                BankTransactions.Add(transaction);
-            }
-            else if (filteredRow.TryGetRight(out FSharpMap<string, string>? row))
-            {
-                string title = row["Name"];
-                string description = row["Description"].Trim('\'');
-                DateTime date = DateTime.ParseExact(row["Date"], reader.DateFormat, CultureInfo.InvariantCulture);
-                decimal amount = decimal.Parse(row["Amount"],
-                    NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
-                BankTransactions.Add(
-                    new PaymentDetailsViewModel(accountSelector, title, date, description, data.DefaultCurrency, amount)
-                    {
-                        HasError = true,
-                        Postings = { new Posting { Account = data.DefaultCheckingAccount, Currency = data.DefaultCurrency, Amount = amount } }
-                    });
-            }
-        }
-        CountValid();
+        BankTransactions.AddRange(payments);
 
         // If parsing was successful, only then save previously selected data.
         // If it's bogus, we probably don't want to remember it.
@@ -184,7 +98,7 @@ public class MainWindowViewModel : ViewModelBase
 
         try
         {
-            System.Collections.Generic.IEnumerable<string> postings = BankTransactions
+            IEnumerable<string> postings = BankTransactions
                 .Select(posting => API.formatPosting(
                     posting.Date,
                     posting.Title?.Trim(),
