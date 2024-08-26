@@ -4,13 +4,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using TransactionQL.DesktopApp.Models;
-using static TransactionQL.DesktopApp.Models.SelectedData;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
 public class SelectDataWindowViewModel : ViewModelBase
 {
-    public event EventHandler<Models.SelectedData.SelectedData>? DataSelected;
+    public event EventHandler<SelectedData>? DataSelected;
     public event EventHandler? SelectionCancelled;
     private string _transactionsFile = "";
 
@@ -88,7 +87,7 @@ public class SelectDataWindowViewModel : ViewModelBase
     {
         Submit = ReactiveCommand.Create(() =>
         {
-            Models.SelectedData.SelectedData data = new()
+            SelectedData data = new()
             {
                 TransactionsFile = TransactionsFile,
                 HasHeader = HasHeader,

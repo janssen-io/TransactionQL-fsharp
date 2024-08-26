@@ -1,4 +1,5 @@
-﻿using Microsoft.FSharp.Collections;
+﻿using Avalonia.Threading;
+using Microsoft.FSharp.Collections;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
@@ -9,10 +10,10 @@ using System.Runtime.Serialization;
 using System.Windows.Input;
 using TransactionQL.Application;
 using TransactionQL.DesktopApp.Models;
+using TransactionQL.DesktopApp.Services;
 using TransactionQL.Parser;
 using TransactionQL.Shared.Extensions;
 
-using static TransactionQL.DesktopApp.Models.SelectedData;
 using static TransactionQL.Shared.Types;
 
 namespace TransactionQL.DesktopApp.ViewModels;
@@ -84,7 +85,7 @@ public class MainWindowViewModel : ViewModelBase
     public bool IsDone => _numberOfValidTransactions == BankTransactions.Count;
 
 
-    internal void Parse(Models.SelectedData data)
+    internal void Parse(SelectedData data)
     {
         using StreamReader filterTql = new(data.FiltersFile);
         Either<AST.Query[], string> parser = API.parseFilters(filterTql.ReadToEnd());
@@ -120,6 +121,7 @@ public class MainWindowViewModel : ViewModelBase
             HasTransactions = true;
         }
 
+        var accountSelector = FilewatchingAccountSelector.Monitor(data.AccountsFile, Dispatcher.UIThread.Invoke);
         for (int i = 0; i < rows.Length; i++)
         {
             Either<QLInterpreter.Entry, FSharpMap<string, string>> filteredRow = filteredRows[i];
@@ -131,7 +133,7 @@ public class MainWindowViewModel : ViewModelBase
                 decimal amount = decimal.Parse(rows[i]["Amount"],
                     NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
 
-                PaymentDetailsViewModel transaction = new(title, date, description, data.DefaultCurrency, amount, validAccounts)
+                PaymentDetailsViewModel transaction = new(accountSelector, title, date, description, data.DefaultCurrency, amount)
                 {
                     Postings = new ObservableCollection<Posting>(entry.Lines.Select(line =>
                     {
@@ -158,7 +160,7 @@ public class MainWindowViewModel : ViewModelBase
                 decimal amount = decimal.Parse(row["Amount"],
                     NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
                 BankTransactions.Add(
-                    new PaymentDetailsViewModel(title, date, description, data.DefaultCurrency, amount, validAccounts)
+                    new PaymentDetailsViewModel(accountSelector, title, date, description, data.DefaultCurrency, amount)
                     {
                         HasError = true,
                         Postings = { new Posting { Account = data.DefaultCheckingAccount, Currency = data.DefaultCurrency, Amount = amount } }

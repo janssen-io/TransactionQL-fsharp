@@ -13,17 +13,19 @@ public class FilewatchingAccountSelector : ISelectAccounts, IDisposable
 {
     private readonly string _path;
     private readonly FileSystemWatcher _watcher;
+    private readonly Action<Action>? _dispatcher;
 
-    private FilewatchingAccountSelector(string path, FileSystemWatcher watcher, IEnumerable<string> initialAccounts)
+    private FilewatchingAccountSelector(string path, FileSystemWatcher watcher, IEnumerable<string> initialAccounts, Action<Action>? dispatcher)
     {
         _path = path;
         _watcher = watcher;
+        _dispatcher = dispatcher;
         _watcher.Changed += UpdateCollection;
 
         AvailableAccounts = new(initialAccounts);
     }
 
-    public static FilewatchingAccountSelector Monitor(string accountsFile)
+    public static FilewatchingAccountSelector Monitor(string accountsFile, Action<Action>? dispatcher = null)
     {
         var path = Path.GetDirectoryName(accountsFile) 
             ?? throw new FileNotFoundException($"Error while trying to read {accountsFile}");
@@ -36,7 +38,7 @@ public class FilewatchingAccountSelector : ISelectAccounts, IDisposable
             EnableRaisingEvents = true
         };
 
-        return new(accountsFile, watcher, ReadAccounts(accountsFile));
+        return new(accountsFile, watcher, ReadAccounts(accountsFile), dispatcher);
     }
 
     public ObservableCollection<string> AvailableAccounts { get; }
@@ -72,8 +74,11 @@ public class FilewatchingAccountSelector : ISelectAccounts, IDisposable
 
     private void ResetCollection()
     {
-        AvailableAccounts.Clear();
-        AvailableAccounts.AddRange(ReadAccounts(_path));
+        _dispatcher?.Invoke(() => 
+        {
+            AvailableAccounts.Clear();
+            AvailableAccounts.AddRange(ReadAccounts(_path));
+        });
     }
 
     private static IEnumerable<string> ReadAccounts(string accountsFile)
@@ -83,9 +88,9 @@ public class FilewatchingAccountSelector : ISelectAccounts, IDisposable
             .StreamLines()
             .OfType<string>()
             .Where(line => line.StartsWith("account "))
-            .Select(line => line.Split(" ", Split.RemoveEmptyEntries | Split.TrimEntries)[1]);
+            .Select(line => line.Split(" ", Split.RemoveEmptyEntries | Split.TrimEntries)[1])
+            .ToArray(); // Read accounts before the stream is dispose
     }
-
 }
 
 public interface ISelectAccounts

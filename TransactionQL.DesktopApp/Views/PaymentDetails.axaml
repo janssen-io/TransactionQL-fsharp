@@ -111,7 +111,7 @@
                                        BorderBrush="Transparent"
                                        SelectedItem="{Binding Account}"
                                        TextFilter="{Binding Path=#Details.((vm:PaymentDetailsViewModel)DataContext).AccountAutoCompletePredicate}"
-                                       ItemsSource="{Binding Path=#Details.((vm:PaymentDetailsViewModel)DataContext).ValidAccounts}" />
+                                       ItemsSource="{Binding Path=#Details.((vm:PaymentDetailsViewModel)DataContext).AccountSelector.AvailableAccounts}" />
                       <TextBox Grid.Row="0" Grid.Column="1"
                                Text="{Binding Currency}" TextAlignment="Right" />
                       <TextBox Grid.Row="0" Grid.Column="2"

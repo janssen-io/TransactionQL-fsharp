@@ -87,7 +87,6 @@ public class PaymentDetailsViewModel : ViewModelBase
     }
 
     private DateTime _date = DateTime.MinValue;
-    private readonly ISelectAccounts _accountSelector;
 
     [DataMember]
     public DateTime Date
@@ -104,25 +103,25 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     [IgnoreDataMember] public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate { get; }
 
+    [IgnoreDataMember]
+    public ISelectAccounts AccountSelector { get; }
+
     public PaymentDetailsViewModel(ISelectAccounts accountSelector)
     {
         AddTransactionCommand = ReactiveCommand.Create(
             () => Postings.Add(Posting.Empty));
 
         AccountAutoCompletePredicate = accountSelector.IsFuzzyMatch;
-        _accountSelector = accountSelector;
+        AccountSelector = accountSelector;
     }
 
-    internal PaymentDetailsViewModel(ISelectAccounts accountSelector, string title, DateTime date, string description, string currency, decimal amount,
-        ObservableCollection<string> validAccounts) : this(accountSelector)
+    internal PaymentDetailsViewModel(ISelectAccounts accountSelector, string title, DateTime date, string description, string currency, decimal amount) : this(accountSelector)
     {
         Title = title;
         Date = date;
         Description = description;
         Currency = currency;
         Amount = amount;
-
-        ValidAccounts = validAccounts;
     }
 
     public void Activate()
