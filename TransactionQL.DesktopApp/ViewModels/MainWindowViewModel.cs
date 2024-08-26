@@ -1,4 +1,5 @@
-﻿using DynamicData;
+﻿using Avalonia.Threading;
+using DynamicData;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,8 @@ public class MainWindowViewModel : ViewModelBase
             StateSaved?.Invoke(this, EventArgs.Empty);
             LastSaved = DateTime.Now.ToShortTimeString();
         });
+
+        AccountSelector = EmptySelector.Instance;
     }
 
     [IgnoreDataMember] public ICommand SaveCommand { get; }
@@ -67,12 +70,25 @@ public class MainWindowViewModel : ViewModelBase
     [DataMember]
     public SelectedData? PreviouslySelectedData { get; set; }
 
+    private ISelectAccounts _accountSelector;
+    [DataMember]
+    public ISelectAccounts AccountSelector {
+        get => _accountSelector;
+        set
+        {
+            _accountSelector = value;
+            foreach (var t in BankTransactions) t.Init(value);
+        }
+    }
+
     public bool IsDone => _numberOfValidTransactions == BankTransactions.Count;
 
 
     internal void Parse(SelectedData data)
     {
-        var loader = new DataLoader(data);
+        AccountSelector = FilewatchingAccountSelector.Monitor(data.AccountsFile, Dispatcher.UIThread.Invoke);
+        var loader = new DataLoader(data, AccountSelector);
+
         if (!loader.TryLoadData(out var ps))
             return;
 

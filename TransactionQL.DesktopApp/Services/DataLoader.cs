@@ -1,6 +1,4 @@
-﻿using Avalonia.Threading;
-using DynamicData;
-using Microsoft.FSharp.Collections;
+﻿using Microsoft.FSharp.Collections;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -17,18 +15,23 @@ using static TransactionQL.Shared.Types;
 
 namespace TransactionQL.DesktopApp.Services;
 
+public interface ILoadData
+{
+    bool TryLoadData(out IEnumerable<PaymentDetailsViewModel> payments);
+}
+
 public class DataLoader : ILoadData
 {
 
     private static readonly Tuple<AST.Commodity, double> _defaultAmount = new(AST.Commodity.NewCommodity(""), 0);
 
     private readonly SelectedData _data;
-    private readonly FilewatchingAccountSelector _accountSelector;
+    private readonly ISelectAccounts _accountSelector;
 
-    public DataLoader(SelectedData data)
+    public DataLoader(SelectedData data, ISelectAccounts accountSelector)
     {
         _data = data;
-        _accountSelector = FilewatchingAccountSelector.Monitor(data.AccountsFile, Dispatcher.UIThread.Invoke);
+        _accountSelector = accountSelector;
     }
 
     public bool TryLoadData(out IEnumerable<PaymentDetailsViewModel> payments)
@@ -143,9 +146,4 @@ public class DataLoader : ILoadData
 
         return true;
     }
-}
-
-public interface ILoadData
-{
-    bool TryLoadData(out IEnumerable<PaymentDetailsViewModel> payments);
 }

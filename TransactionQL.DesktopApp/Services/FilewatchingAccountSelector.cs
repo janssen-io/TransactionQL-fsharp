@@ -1,4 +1,6 @@
-﻿using DynamicData;
+﻿using Avalonia.Threading;
+using DynamicData;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,10 +11,16 @@ using Split = System.StringSplitOptions;
 
 namespace TransactionQL.DesktopApp.Services;
 
-public class FilewatchingAccountSelector : ISelectAccounts, IDisposable
+public interface ISelectAccounts
 {
-    private readonly string _path;
-    private readonly FileSystemWatcher _watcher;
+    ObservableCollection<string> AvailableAccounts { get; }
+    bool IsFuzzyMatch(string? searchString, string item);
+}
+
+public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
+{
+    private string _path;
+    private FileSystemWatcher _watcher;
     private readonly Action<Action>? _dispatcher;
 
     private FilewatchingAccountSelector(string path, FileSystemWatcher watcher, IEnumerable<string> initialAccounts, Action<Action>? dispatcher)
@@ -25,23 +33,55 @@ public class FilewatchingAccountSelector : ISelectAccounts, IDisposable
         AvailableAccounts = new(initialAccounts);
     }
 
+    /// <summary>
+    /// For the deserializer. Must set the required properties via <see cref="Path"/>.
+    /// </summary>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    private FilewatchingAccountSelector()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    {
+        _dispatcher = Dispatcher.UIThread.Invoke;
+    }
+
     public static FilewatchingAccountSelector Monitor(string accountsFile, Action<Action>? dispatcher = null)
     {
-        var path = Path.GetDirectoryName(accountsFile) 
+        var watcher = CreateWatcher(accountsFile);
+        return new(accountsFile, watcher, ReadAccounts(accountsFile), dispatcher);
+    }
+
+    private static FileSystemWatcher CreateWatcher(string accountsFile)
+    {
+        var path = System.IO.Path.GetDirectoryName(accountsFile) 
             ?? throw new FileNotFoundException($"Error while trying to read {accountsFile}");
 
-        var file = Path.GetFileName(accountsFile);
+        var file = System.IO.Path.GetFileName(accountsFile);
 
-        FileSystemWatcher watcher = new(path, file)
+        return new(path, file)
         {
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size,
             EnableRaisingEvents = true
         };
-
-        return new(accountsFile, watcher, ReadAccounts(accountsFile), dispatcher);
     }
 
-    public ObservableCollection<string> AvailableAccounts { get; }
+    [JsonIgnore]
+    public ObservableCollection<string> AvailableAccounts { get; } = [];
+
+    public string Path {
+        get => _path;
+        // TODO: make private and allow Newtonsoft to set it.
+        set
+        {
+            if (string.IsNullOrEmpty(value))
+                return;
+
+            _watcher?.Dispose();
+            _watcher = CreateWatcher(value);
+            _watcher.Changed += UpdateCollection;
+
+            _path = value;
+            ResetCollection();
+        }
+    }
 
     public bool IsFuzzyMatch(string? searchString, string item)
     {
@@ -67,7 +107,19 @@ public class FilewatchingAccountSelector : ISelectAccounts, IDisposable
         return searchIndex == searchString.Length;
     }
 
-    public void Dispose() => _watcher?.Dispose();
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    public void Dispose(bool isDisposing)
+    {
+        if (isDisposing)
+        {
+            _watcher?.Dispose();
+        }
+    }
 
     private void UpdateCollection(object sender, FileSystemEventArgs e)
         => ResetCollection();
@@ -83,6 +135,9 @@ public class FilewatchingAccountSelector : ISelectAccounts, IDisposable
 
     private static IEnumerable<string> ReadAccounts(string accountsFile)
     {
+        if (string.IsNullOrEmpty(accountsFile))
+            return Enumerable.Empty<string>();
+
         using StreamReader stream = new(accountsFile);
         return stream
             .StreamLines()
@@ -93,8 +148,12 @@ public class FilewatchingAccountSelector : ISelectAccounts, IDisposable
     }
 }
 
-public interface ISelectAccounts
+public class EmptySelector : ISelectAccounts
 {
-    ObservableCollection<string> AvailableAccounts { get; }
-    bool IsFuzzyMatch(string? searchString, string item);
+    public static readonly EmptySelector Instance = new();
+    public ObservableCollection<string> AvailableAccounts => [];
+
+    public bool IsFuzzyMatch(string? searchString, string item) => true;
+
+    private EmptySelector() { }
 }

@@ -101,16 +101,39 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     [IgnoreDataMember] public ICommand AddTransactionCommand { get; }
 
-    [IgnoreDataMember] public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate { get; }
-
+    private AutoCompleteFilterPredicate<string> _accountAutoCompletePredicate;
     [IgnoreDataMember]
-    public ISelectAccounts AccountSelector { get; }
+    public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate
+    {
+        get => _accountAutoCompletePredicate;
+        private set
+        {
+            this.RaiseAndSetIfChanged(ref _accountAutoCompletePredicate, value);
+        }
+    }
 
-    public PaymentDetailsViewModel(ISelectAccounts accountSelector)
+    private ISelectAccounts _accountSelector;
+    [IgnoreDataMember]
+    public ISelectAccounts AccountSelector
+    {
+        get => _accountSelector;
+        private set
+        {
+            this.RaiseAndSetIfChanged(ref _accountSelector, value);
+        }
+    }
+
+    public PaymentDetailsViewModel()
     {
         AddTransactionCommand = ReactiveCommand.Create(
             () => Postings.Add(Posting.Empty));
 
+        AccountSelector = EmptySelector.Instance;
+        AccountAutoCompletePredicate = AccountSelector.IsFuzzyMatch;
+    }
+
+    public PaymentDetailsViewModel(ISelectAccounts accountSelector) : this()
+    {
         AccountAutoCompletePredicate = accountSelector.IsFuzzyMatch;
         AccountSelector = accountSelector;
     }
@@ -124,14 +147,21 @@ public class PaymentDetailsViewModel : ViewModelBase
         Amount = amount;
     }
 
+    internal void Init(ISelectAccounts accountSelector)
+    {
+        AccountAutoCompletePredicate = accountSelector.IsFuzzyMatch;
+        AccountSelector = accountSelector;
+    }
+
     public void Activate()
     {
-        Postings.RemoveMany(Postings.Where(p => string.IsNullOrEmpty(p.Account)));
+        RemoveEmptyPostings();
         IsActive = true;
     }
 
     public void Deactivate()
     {
+        RemoveEmptyPostings();
         _ = IsValid(out _);
         IsActive = false;
     }
@@ -167,5 +197,8 @@ public class PaymentDetailsViewModel : ViewModelBase
         HasError = errors.Count != 0;
         return !HasError;
     }
+
+    private void RemoveEmptyPostings()
+        => Postings.RemoveMany(Postings.Where(p => string.IsNullOrEmpty(p.Account)));
 }
 
