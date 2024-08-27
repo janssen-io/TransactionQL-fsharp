@@ -69,7 +69,7 @@ public class PaymentDetailsViewModel : ViewModelBase
     public decimal Amount
     {
         get => _amount;
-        private set
+        set
         {
             _ = this.RaiseAndSetIfChanged(ref _amount, value);
             this.RaisePropertyChanged(nameof(IsNegativeAmount));
@@ -94,7 +94,7 @@ public class PaymentDetailsViewModel : ViewModelBase
     public DateTime Date
     {
         get => _date;
-        private set => this.RaiseAndSetIfChanged(ref _date, value);
+        set => this.RaiseAndSetIfChanged(ref _date, value);
     }
 
     #endregion properties
@@ -125,13 +125,14 @@ public class PaymentDetailsViewModel : ViewModelBase
         }
     }
 
-    public PaymentDetailsViewModel()
+    // For deserializer
+    private PaymentDetailsViewModel()
     {
         AddTransactionCommand = ReactiveCommand.Create(
             () => Postings.Add(Posting.Empty));
 
-        _accountSelector = EmptySelector.Instance;
-        _accountAutoCompletePredicate = AccountSelector.IsFuzzyMatch;
+        _accountSelector = AccountSelector ?? EmptySelector.Instance;
+        _accountAutoCompletePredicate = _accountSelector.IsFuzzyMatch;
     }
 
     public PaymentDetailsViewModel(ISelectAccounts accountSelector) : this()
@@ -140,7 +141,10 @@ public class PaymentDetailsViewModel : ViewModelBase
         AccountSelector = accountSelector;
     }
 
-    internal PaymentDetailsViewModel(ISelectAccounts accountSelector, string title, DateTime date, string description, string currency, decimal amount) : this(accountSelector)
+    public PaymentDetailsViewModel(
+        ISelectAccounts accountSelector,
+        string title, DateTime date, string description,
+        string currency, decimal amount) : this(accountSelector)
     {
         Title = title;
         Date = date;
