@@ -1,5 +1,6 @@
 ﻿using Avalonia.Threading;
 using DynamicData;
+using Newtonsoft.Json;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using TransactionQL.DesktopApp.Services;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class MainWindowViewModel : ViewModelBase
 {
     public event EventHandler<string>? Saved;
@@ -29,22 +31,34 @@ public class MainWindowViewModel : ViewModelBase
             LastSaved = DateTime.Now.ToShortTimeString();
         });
 
-        AccountSelector = EmptySelector.Instance;
+        _accountSelector = EmptySelector.Instance;
     }
 
-    [IgnoreDataMember] public ICommand SaveCommand { get; }
-    [IgnoreDataMember] public ICommand SaveStateCommand { get; }
+     public ICommand SaveCommand { get; }
+     public ICommand SaveStateCommand { get; }
 
     private string _lastSaved = "(not yet)";
 
-    [IgnoreDataMember]
     public string LastSaved
     {
         get => _lastSaved;
         set => this.RaiseAndSetIfChanged(ref _lastSaved, value);
     }
 
-    [DataMember] public ObservableCollection<PaymentDetailsViewModel> BankTransactions { get; set; } = [];
+    private ObservableCollection<PaymentDetailsViewModel> _bankTransactions = [];
+
+    [DataMember]
+    public ObservableCollection<PaymentDetailsViewModel> BankTransactions
+    {
+        get { return _bankTransactions; }
+        set
+        {
+
+            _bankTransactions = value;
+            foreach (var t in _bankTransactions)
+                t.Init(AccountSelector);
+        }
+    }
 
     private int _bankTransactionIndex = 0;
 
@@ -71,13 +85,16 @@ public class MainWindowViewModel : ViewModelBase
     public SelectedData? PreviouslySelectedData { get; set; }
 
     private ISelectAccounts _accountSelector;
+
     [DataMember]
-    public ISelectAccounts AccountSelector {
+    public ISelectAccounts AccountSelector
+    {
         get => _accountSelector;
         set
         {
             _accountSelector = value;
-            foreach (var t in BankTransactions) t.Init(value);
+            foreach (var t in BankTransactions)
+                t.Init(value);
         }
     }
 

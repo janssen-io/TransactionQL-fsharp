@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using DynamicData;
+using Newtonsoft.Json;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using TransactionQL.DesktopApp.Services;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class PaymentDetailsViewModel : ViewModelBase
 {
     #region properties
@@ -74,7 +76,7 @@ public class PaymentDetailsViewModel : ViewModelBase
         }
     }
 
-    [IgnoreDataMember] public bool IsNegativeAmount => Amount < 0;
+     public bool IsNegativeAmount => Amount < 0;
 
 
     private string? _description = "";
@@ -99,10 +101,10 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     [DataMember] public ObservableCollection<Posting> Postings { get; set; } = [];
 
-    [IgnoreDataMember] public ICommand AddTransactionCommand { get; }
+     public ICommand AddTransactionCommand { get; }
 
     private AutoCompleteFilterPredicate<string> _accountAutoCompletePredicate;
-    [IgnoreDataMember]
+
     public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate
     {
         get => _accountAutoCompletePredicate;
@@ -113,7 +115,7 @@ public class PaymentDetailsViewModel : ViewModelBase
     }
 
     private ISelectAccounts _accountSelector;
-    [IgnoreDataMember]
+
     public ISelectAccounts AccountSelector
     {
         get => _accountSelector;
@@ -128,8 +130,8 @@ public class PaymentDetailsViewModel : ViewModelBase
         AddTransactionCommand = ReactiveCommand.Create(
             () => Postings.Add(Posting.Empty));
 
-        AccountSelector = EmptySelector.Instance;
-        AccountAutoCompletePredicate = AccountSelector.IsFuzzyMatch;
+        _accountSelector = EmptySelector.Instance;
+        _accountAutoCompletePredicate = AccountSelector.IsFuzzyMatch;
     }
 
     public PaymentDetailsViewModel(ISelectAccounts accountSelector) : this()
