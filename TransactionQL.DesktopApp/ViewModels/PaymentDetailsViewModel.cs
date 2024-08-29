@@ -132,12 +132,12 @@ public class PaymentDetailsViewModel : ViewModelBase
             () => Postings.Add(Posting.Empty));
 
         _accountSelector = AccountSelector ?? EmptySelector.Instance;
-        _accountAutoCompletePredicate = _accountSelector.IsFuzzyMatch;
+        _accountAutoCompletePredicate = _accountSelector.IsMatch;
     }
 
     public PaymentDetailsViewModel(ISelectAccounts accountSelector) : this()
     {
-        AccountAutoCompletePredicate = accountSelector.IsFuzzyMatch;
+        AccountAutoCompletePredicate = accountSelector.IsMatch;
         AccountSelector = accountSelector;
     }
 
@@ -155,7 +155,7 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     internal void Init(ISelectAccounts accountSelector)
     {
-        AccountAutoCompletePredicate = accountSelector.IsFuzzyMatch;
+        AccountAutoCompletePredicate = accountSelector.IsMatch;
         AccountSelector = accountSelector;
     }
 

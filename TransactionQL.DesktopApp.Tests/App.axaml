@@ -1,7 +1,41 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="TransactionQL.DesktopApp.Tests.App">
+             xmlns:local="using:TransactionQL.DesktopApp.Tests"
+             xmlns:app="using:TransactionQL.DesktopApp.Controls"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             x:Class="TransactionQL.DesktopApp.Tests.App"
+             RequestedThemeVariant="Default">
+
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="avares://TransactionQL.DesktopApp/Assets/ThemeVariants/Dark.axaml" />
+        <ResourceInclude Source="avares://TransactionQL.DesktopApp/Assets/ThemeVariants/Light.axaml" />
+        <ResourceInclude Source="avares://TransactionQL.DesktopApp/Assets/Variables.axaml" />
+        <ResourceInclude Source="avares://TransactionQL.DesktopApp/Controls/Dropzone.axaml" />
+        <ResourceInclude Source="avares://TransactionQL.DesktopApp/Controls/StepIndicator.axaml" />
+        <ResourceInclude Source="avares://TransactionQL.DesktopApp/Controls/TitledBorder.axaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </Application.Resources>
+
   <Application.Styles>
-    <FluentTheme />
+    <FluentTheme >
+    <FluentTheme.Palettes>
+      <ColorPaletteResources x:Key="Light" 
+                             Accent="{StaticResource primary-500}"
+                             RegionColor="White"
+                             ErrorText="{StaticResource error-700}" />
+      <ColorPaletteResources x:Key="Dark" 
+                             Accent="{StaticResource primary-500}"
+                             RegionColor="Black"
+                             ErrorText="{StaticResource error-300}" />
+    </FluentTheme.Palettes>
+    </FluentTheme>
+    <StyleInclude Source="avares://TransactionQL.DesktopApp/Icons.axaml" />
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+    <Style Selector="Window">
+      <Setter Property="FontFamily" Value="Segoe UI" />
+    </Style>
   </Application.Styles>
 </Application>

@@ -30,8 +30,10 @@ internal static class Program
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
     {
-        _ = IconProvider.Current.Register<FontAwesomeIconProvider>();
-        _ = IconProvider.Current.Register<MaterialDesignIconProvider>();
+            _ = IconProvider.Current
+                .Register<FontAwesomeIconProvider>()
+                .Register<MaterialDesignIconProvider>();
+
         return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .LogToTrace()

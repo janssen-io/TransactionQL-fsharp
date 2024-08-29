@@ -65,5 +65,5 @@ internal class MockAccountSelector : ISelectAccounts
     public static readonly MockAccountSelector Instance = new MockAccountSelector();
     public ObservableCollection<string> AvailableAccounts => ["Assets:Checking", "Expenses:Living:Utilities"];
 
-    public bool IsFuzzyMatch(string? searchString, string item) => true;
+    public bool IsMatch(string? searchString, string item) => true;
 }

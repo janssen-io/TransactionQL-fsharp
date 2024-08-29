@@ -11,22 +11,33 @@ using Split = System.StringSplitOptions;
 
 namespace TransactionQL.DesktopApp.Services;
 
-public interface ISelectAccounts
+public interface ISelectAccounts : IMatchAccounts
 {
     ObservableCollection<string> AvailableAccounts { get; }
-    bool IsFuzzyMatch(string? searchString, string item);
+}
+
+public interface IMatchAccounts
+{
+    bool IsMatch(string? searchString, string item);
 }
 
 public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
 {
     private string _path;
     private FileSystemWatcher _watcher;
+    private readonly IMatchAccounts _matcher;
     private readonly Action<Action>? _dispatcher;
 
-    private FilewatchingAccountSelector(string path, FileSystemWatcher watcher, IEnumerable<string> initialAccounts, Action<Action>? dispatcher)
+    private FilewatchingAccountSelector(
+        string path,
+        FileSystemWatcher watcher,
+        IEnumerable<string> initialAccounts,
+        IMatchAccounts matcher,
+        Action<Action>? dispatcher)
     {
         _path = path;
         _watcher = watcher;
+        _matcher = matcher;
         _dispatcher = dispatcher;
         _watcher.Changed += UpdateCollection;
 
@@ -41,12 +52,13 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
         _dispatcher = Dispatcher.UIThread.Invoke;
+        _matcher = new FuzzyMatcher();
     }
 
-    public static FilewatchingAccountSelector Monitor(string accountsFile, Action<Action>? dispatcher = null)
+    public static FilewatchingAccountSelector Monitor(string accountsFile, Action<Action>? dispatcher = null, IMatchAccounts? matcher = null)
     {
         var watcher = CreateWatcher(accountsFile);
-        return new(accountsFile, watcher, ReadAccounts(accountsFile), dispatcher);
+        return new(accountsFile, watcher, ReadAccounts(accountsFile), matcher ?? new FuzzyMatcher(), dispatcher);
     }
 
     private static FileSystemWatcher CreateWatcher(string accountsFile)
@@ -83,29 +95,8 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
         }
     }
 
-    public bool IsFuzzyMatch(string? searchString, string item)
-    {
-        if (searchString is null)
-        {
-            return true;
-        }
-
-        searchString = searchString.ToLowerInvariant();
-        item = item.ToLowerInvariant();
-
-        int searchIndex = 0;
-        for (int itemIndex = 0; itemIndex < item.Length && searchIndex < searchString.Length; itemIndex++)
-        {
-            // Try to find the next letter of the search string in the remainder of the item
-            if (searchString[searchIndex] == item[itemIndex])
-            {
-                searchIndex++;
-            }
-        }
-
-        // if all the letters of the searchString were found somewhere in the item, then it's a valid item.
-        return searchIndex == searchString.Length;
-    }
+    public bool IsMatch(string? searchString, string item) 
+        => _matcher.IsMatch(searchString, item);
 
     public void Dispose()
     {
@@ -153,7 +144,34 @@ public class EmptySelector : ISelectAccounts
     public static readonly EmptySelector Instance = new();
     public ObservableCollection<string> AvailableAccounts => [];
 
-    public bool IsFuzzyMatch(string? searchString, string item) => true;
+    public bool IsMatch(string? searchString, string item) => true;
 
     private EmptySelector() { }
+}
+
+public class FuzzyMatcher : IMatchAccounts
+{
+    public bool IsMatch(string? searchString, string item)
+    {
+        if (searchString is null)
+        {
+            return true;
+        }
+
+        searchString = searchString.ToLowerInvariant();
+        item = item.ToLowerInvariant();
+
+        int searchIndex = 0;
+        for (int itemIndex = 0; itemIndex < item.Length && searchIndex < searchString.Length; itemIndex++)
+        {
+            // Try to find the next letter of the search string in the remainder of the item
+            if (searchString[searchIndex] == item[itemIndex])
+            {
+                searchIndex++;
+            }
+        }
+
+        // if all the letters of the searchString were found somewhere in the item, then it's a valid item.
+        return searchIndex == searchString.Length;
+    }
 }
