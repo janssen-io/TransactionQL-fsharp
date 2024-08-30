@@ -190,11 +190,15 @@ public class PaymentDetailsViewModel : ViewModelBase
             errors.Add("The transaction may contain at most one auto-calculated posting (one without costs).");
         }
 
-        // TODO: handle multiple currencies
         decimal balance = nonEmptyPostings.Aggregate(0m, (total, p) => total + p.Value);
         if (Postings.All(p => p.HasAmount()) && balance != 0m)
         {
-            errors.Add($"The transaction's postings are not balanced, the total equals {balance:0.00}.");
+            var commodity = Postings[0].Currency;
+            var areAllSame = Postings.All(p => p.Currency == commodity);
+            if (areAllSame)
+            {
+                errors.Add($"The transaction's postings are not balanced, the total equals {balance:0.00}.");
+            }
         }
 
         errorMessage = string.Join(Environment.NewLine, errors);
