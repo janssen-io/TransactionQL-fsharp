@@ -30,22 +30,6 @@ public partial class PaymentDetailsTests
             }
         }
 
-        private AutoCompleteBox[] _postingAccountFields;
-
-        private AutoCompleteBox[] PostingAccountFields
-        {
-            get
-            {
-                if (_postingAccountFields == null)
-                {
-                    _postingAccountFields = _view.GetVisualDescendants().OfType<AutoCompleteBox>().ToArray();
-                    Assert.NotNull(_postingAccountFields);
-                }
-
-                return _postingAccountFields;
-            }
-        }
-
         public readonly PaymentDetailsViewModel DataContext;
 
         public static Steps GetView(MainWindow parentWindow)
