@@ -117,7 +117,7 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
 
     private void ResetCollection()
     {
-        _dispatcher?.Invoke(() => 
+        _dispatcher?.Invoke(() =>
         {
             AvailableAccounts.Clear();
             AvailableAccounts.AddRange(ReadAccounts(_path));
