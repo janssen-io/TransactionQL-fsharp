@@ -1,4 +1,5 @@
-﻿using TransactionQL.DesktopApp.Services;
+﻿using System.Collections.Specialized;
+using TransactionQL.DesktopApp.Services;
 
 namespace TransactionQL.DesktopApp.Tests.Services;
 
@@ -28,8 +29,13 @@ public class FileWatchingAccountSelectorTests
         ManualResetEvent waitForUpdate = new(false);
         watcher.AvailableAccounts.CollectionChanged += (sender, args) =>
         {
-            if (args.NewItems?.Count > 0)
+            // Ensure we only signal the MRE when the last expected
+            // account is added (AddRange adds them one by one)
+            if (args.Action == NotifyCollectionChangedAction.Add
+                && watcher.AvailableAccounts.Count == 5)
+            {
                 waitForUpdate.Set();
+            }
         };
 
         // Act
@@ -39,7 +45,7 @@ public class FileWatchingAccountSelectorTests
         write.Flush();
         write.Close();
 
-        waitForUpdate.WaitOne(5000);
+        waitForUpdate.WaitOne(500);
 
         // Assert
         Assert.Collection(watcher.AvailableAccounts,
