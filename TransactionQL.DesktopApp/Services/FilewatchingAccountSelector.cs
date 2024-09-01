@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using TransactionQL.DesktopApp.Application;
 using Split = System.StringSplitOptions;
 
@@ -27,6 +29,12 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
     private FileSystemWatcher _watcher;
     private readonly IMatchAccounts _matcher;
     private readonly Action<Action>? _dispatcher;
+    private readonly Timer _debouncer;
+
+    public const int DebounceMillis = 100;
+    public delegate void AccountsChangedHandler(object sender, AccountsChangedEventArgs e);
+    public event EventHandler<AccountsChangedEventArgs>? AccountsChanged;
+
 
     private FilewatchingAccountSelector(
         string path,
@@ -39,7 +47,8 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
         _watcher = watcher;
         _matcher = matcher;
         _dispatcher = dispatcher;
-        _watcher.Changed += UpdateCollection;
+        _watcher.Changed += DebouncedUpdateCollection;
+        _debouncer = new Timer(new TimerCallback(UpdateCollection), null, Timeout.Infinite, Timeout.Infinite);
 
         AvailableAccounts = new(initialAccounts);
     }
@@ -55,10 +64,10 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
         _matcher = new FuzzyMatcher();
     }
 
-    public static FilewatchingAccountSelector Monitor(string accountsFile, Action<Action>? dispatcher = null, IMatchAccounts? matcher = null)
+    public static async Task<FilewatchingAccountSelector> Monitor(string accountsFile, Action<Action>? dispatcher = null, IMatchAccounts? matcher = null)
     {
         var watcher = CreateWatcher(accountsFile);
-        return new(accountsFile, watcher, ReadAccounts(accountsFile), matcher ?? new FuzzyMatcher(), dispatcher);
+        return new(accountsFile, watcher, await ReadAccounts(accountsFile), matcher ?? new FuzzyMatcher(), dispatcher);
     }
 
     private static FileSystemWatcher CreateWatcher(string accountsFile)
@@ -88,7 +97,7 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
 
             _watcher?.Dispose();
             _watcher = CreateWatcher(value);
-            _watcher.Changed += UpdateCollection;
+            _watcher.Changed += DebouncedUpdateCollection;
 
             _path = value;
             ResetCollection();
@@ -112,7 +121,10 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
         }
     }
 
-    private void UpdateCollection(object sender, FileSystemEventArgs e)
+    private void DebouncedUpdateCollection(object sender, FileSystemEventArgs e)
+        => _debouncer.Change(DebounceMillis, Timeout.Infinite);
+
+    private void UpdateCollection(object? sender)
         => ResetCollection();
 
     private void ResetCollection()
@@ -120,23 +132,37 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
         _dispatcher?.Invoke(() =>
         {
             AvailableAccounts.Clear();
-            AvailableAccounts.AddRange(ReadAccounts(_path));
+            AvailableAccounts.AddRange(ReadAccounts(_path).Result);
+            AccountsChanged?.Invoke(this, new());
         });
     }
 
-    private static IEnumerable<string> ReadAccounts(string accountsFile)
+    private static async Task<IEnumerable<string>> ReadAccounts(string accountsFile, bool withRetry = true)
     {
         if (string.IsNullOrEmpty(accountsFile))
             return Enumerable.Empty<string>();
 
-        using StreamReader stream = new(accountsFile);
-        return stream
-            .StreamLines()
-            .OfType<string>()
-            .Where(line => line.StartsWith("account "))
-            .Select(line => line.Split(" ", Split.RemoveEmptyEntries | Split.TrimEntries)[1])
-            .ToArray(); // Read accounts before the stream is dispose
+        try
+        {
+            using StreamReader stream = new(accountsFile);
+             // Read accounts before the stream is dispose
+            return stream
+                .StreamLines()
+                .OfType<string>()
+                .Where(line => line.StartsWith("account "))
+                .Select(line => line.Split(" ", Split.RemoveEmptyEntries | Split.TrimEntries)[1])
+                .ToArray();
+        }
+        catch(IOException) when (withRetry)
+        {
+            await Task.Delay(100);
+            return await ReadAccounts(accountsFile, false);
+        }
     }
+}
+
+public class AccountsChangedEventArgs : EventArgs
+{
 }
 
 public class EmptySelector : ISelectAccounts

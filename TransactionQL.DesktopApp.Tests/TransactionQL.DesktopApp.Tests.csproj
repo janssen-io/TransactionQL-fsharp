@@ -29,10 +29,4 @@
     <ProjectReference Include="..\TransactionQL.DesktopApp\TransactionQL.DesktopApp.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="Services\filewatchingaccounts.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

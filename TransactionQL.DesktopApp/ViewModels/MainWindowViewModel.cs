@@ -103,7 +103,7 @@ public class MainWindowViewModel : ViewModelBase
 
     internal void Parse(SelectedData data)
     {
-        AccountSelector = FilewatchingAccountSelector.Monitor(data.AccountsFile, Dispatcher.UIThread.Invoke);
+        AccountSelector = FilewatchingAccountSelector.Monitor(data.AccountsFile, Dispatcher.UIThread.Invoke).Result;
         var loader = new DataLoader(data, AccountSelector);
 
         if (!loader.TryLoadData(out var ps))
