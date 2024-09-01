@@ -1,6 +1,5 @@
 using Avalonia.Headless.XUnit;
 using Moq;
-using System.Collections.ObjectModel;
 using TransactionQL.DesktopApp.Services;
 using TransactionQL.DesktopApp.Tests.Services;
 using TransactionQL.DesktopApp.ViewModels;
@@ -35,7 +34,7 @@ public partial class PaymentDetailsTests
         };
 
         window.Show();
-        var details = Steps.GetView(window);
+        var details = new Steps(window, transaction);
 
         // Sanity check
         Assert.Empty(details.DataContext.Postings);
@@ -73,7 +72,7 @@ public partial class PaymentDetailsTests
         };
 
         window.Show();
-        var details = Steps.GetView(window);
+        var details = new Steps(window, transaction);
 
         // Sanity check
         Assert.Empty(details.DataContext.Postings);
@@ -114,7 +113,7 @@ public partial class PaymentDetailsTests
         };
 
         window.Show();
-        var details = Steps.GetView(window);
+        var details = new Steps(window, transaction);
 
         // Act
         var completedAccount = details.AddPosting("ea", 0, transaction.Amount);

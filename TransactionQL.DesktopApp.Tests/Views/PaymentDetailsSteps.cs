@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Input;
-using Avalonia.Threading;
 using Avalonia.VisualTree;
 using TransactionQL.DesktopApp.ViewModels;
 using TransactionQL.DesktopApp.Views;
@@ -10,7 +9,7 @@ namespace TransactionQL.DesktopApp.Tests.Views;
 
 public partial class PaymentDetailsTests
 {
-    private class Steps
+    public class Steps
     {
         private readonly PaymentDetails _view;
         private readonly Window _w;
@@ -32,29 +31,32 @@ public partial class PaymentDetailsTests
 
         public readonly PaymentDetailsViewModel DataContext;
 
-        public static Steps GetView(MainWindow parentWindow)
+        public Steps(Window parentWindow, PaymentDetailsViewModel vm)
         {
+            _w = parentWindow;
+
             var carousel = parentWindow.FindControl<Carousel>("BankTransactionCarousel");
             Assert.NotNull(carousel);
 
-            var currentItem = carousel.ContainerFromIndex(carousel.SelectedIndex);
-            var details = currentItem?.FindDescendantOfType<PaymentDetails>();
-            Assert.NotNull(details);
-            var vm = Assert.IsType<PaymentDetailsViewModel>(details.DataContext);
+            var currentItem = carousel.ContainerFromItem(vm);
 
-            return new(parentWindow, details, vm);
-        }
+            // Null-forgiving (!), because we assert it's not null
+            _view = currentItem?.FindDescendantOfType<PaymentDetails>()!;
+            Assert.NotNull(_view);
 
-        private Steps(Window window, PaymentDetails view, PaymentDetailsViewModel vm)
-        {
-            this._view = view;
-            this._w = window;
             DataContext = vm;
         }
 
         public void AddPosting()
             => AddTransactionButton.Command?.Execute(null);
 
+        /// <summary>
+        /// Add a posting to the transaction
+        /// </summary>
+        /// <param name="name">The text to enter in the account field</param>
+        /// <param name="selectIndex">The index of the item to select after filtering (auto-complete)</param>
+        /// <param name="amount">The amount to enter for this posting</param>
+        /// <returns></returns>
         public Models.Posting AddPosting(string name, int selectIndex = 0, decimal? amount = null)
         {
             AddPosting();
@@ -69,8 +71,25 @@ public partial class PaymentDetailsTests
                 _w.KeyTextInput(amount.Value.ToString());
             }
 
-            var frame = _w.CaptureRenderedFrame();
-            frame!.Save("file.png");
+            return DataContext.Postings[^1];
+        }
+        /// <summary>
+        /// Add a posting to the transaction
+        /// </summary>
+        /// <param name="name">The complete account name</param>
+        /// <param name="amount">The amount to enter for this posting</param>
+        /// <returns></returns>
+        public Models.Posting AddPosting(string name, decimal? amount = null)
+        {
+            AddPosting();
+            _w.KeyTextInput(name);
+
+            if (amount != null)
+            {
+                _w.KeyPressQwerty(PhysicalKey.Tab, RawInputModifiers.None);
+                _w.KeyPressQwerty(PhysicalKey.Tab, RawInputModifiers.None);
+                _w.KeyTextInput(amount.Value.ToString());
+            }
 
             return DataContext.Postings[^1];
         }
