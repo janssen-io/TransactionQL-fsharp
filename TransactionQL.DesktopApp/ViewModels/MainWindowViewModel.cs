@@ -104,9 +104,10 @@ public class MainWindowViewModel : ViewModelBase
     internal void Parse(SelectedData data)
     {
         AccountSelector = FilewatchingAccountSelector.Monitor(data.AccountsFile, Dispatcher.UIThread.Invoke).Result;
-        var loader = new DataLoader(data, AccountSelector);
+        var loader = new DataLoader(
+            TransactionQLApiAdapter.Instance, FilesystemStreamer.Instance, AccountSelector, Configuration.createAndGetPluginDir);
 
-        if (!loader.TryLoadData(out var ps))
+        if (!loader.TryLoadData(data, out var ps, out var e))
             return;
 
         // Make sure we don't enumerate multiple times

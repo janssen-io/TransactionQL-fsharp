@@ -42,6 +42,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TransactionQL.Application\TransactionQL.Application.fsproj" />
+    <ProjectReference Include="..\TransactionQL.Plugins.ASN\TransactionQL.Plugins.ASN.fsproj" />
     <ProjectReference Include="..\TransactionQL.Shared\TransactionQL.Shared.fsproj" />
   </ItemGroup>
 

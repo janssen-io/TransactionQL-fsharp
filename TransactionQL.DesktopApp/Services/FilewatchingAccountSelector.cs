@@ -31,7 +31,7 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
     private readonly Action<Action>? _dispatcher;
     private readonly Timer _debouncer;
 
-    public const int DebounceMillis = 100;
+    public const int DebounceMillis = 200;
     public delegate void AccountsChangedHandler(object sender, AccountsChangedEventArgs e);
     public event EventHandler<AccountsChangedEventArgs>? AccountsChanged;
 
@@ -89,7 +89,6 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
 
     public string Path {
         get => _path;
-        // TODO: make private and allow Newtonsoft to set it.
         set
         {
             if (string.IsNullOrEmpty(value))

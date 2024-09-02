@@ -151,6 +151,42 @@ public class FileWatchingAccountSelectorTests : IDisposable
             a => Assert.Equal("Test:Account:Two", a));
     }
 
+    [Fact]
+    public async Task ItDebouncesFilesystemEvents()
+    {
+        _fileName = Path.Join(Path.GetTempPath(), nameof(ItMonitors_Replace));
+        FillAccountsFile();
+
+        _output.WriteLine(_fileName);
+
+        // Arrange
+        var newFile = Path.GetTempFileName();
+        using (StreamWriter write = new(new FileStream(newFile, FileMode.Append)))
+        {
+            write.WriteLine("account Test:Account:One");
+            write.WriteLine("account Test:Account:Two");
+            write.Flush();
+        }
+
+        var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
+
+        int numOfEvents = 0;
+        watcher.AccountsChanged += (sender, args) => numOfEvents++;
+
+        // Act
+        File.Copy(newFile, _fileName, overwrite: true);
+
+        if (File.Exists(newFile))
+            File.Delete(newFile);
+
+        // By testing, we saw that the above operation trigger about 12 events.
+        // So by waiting for 20x the debounce time, we should be able to see if it triggered multiple times.
+        await Task.Delay(20 * FilewatchingAccountSelector.DebounceMillis + 1000);
+
+        // Assert
+        Assert.Equal(1, numOfEvents);
+    }
+
     private static void DummyDispatch(Action a) => a.Invoke();
 
     private void FillAccountsFile()

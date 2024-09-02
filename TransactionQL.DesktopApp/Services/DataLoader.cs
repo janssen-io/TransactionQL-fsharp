@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using TransactionQL.Application;
 using TransactionQL.DesktopApp.Models;
 using TransactionQL.DesktopApp.ViewModels;
 using TransactionQL.Parser;
@@ -17,31 +16,47 @@ namespace TransactionQL.DesktopApp.Services;
 
 public interface ILoadData
 {
-    bool TryLoadData(out IEnumerable<PaymentDetailsViewModel> payments);
+    bool TryLoadData(SelectedData data, out IEnumerable<PaymentDetailsViewModel> payments, out string error);
+}
+
+public interface IStreamFiles
+{
+    Stream Open(string path);
+}
+
+public class FilesystemStreamer : IStreamFiles
+{
+    public static readonly FilesystemStreamer Instance = new();
+    public Stream Open(string path) => new FileStream(path, FileMode.Open);
 }
 
 public class DataLoader : ILoadData
 {
-
     private static readonly Tuple<AST.Commodity, double> _defaultAmount = new(AST.Commodity.NewCommodity(""), 0);
-
-    private readonly SelectedData _data;
+    private readonly ITransactionQLApi _api;
+    private readonly IStreamFiles _streamer;
+    private SelectedData _data;
     private readonly ISelectAccounts _accountSelector;
+    private readonly string _pluginDir;
 
-    public DataLoader(SelectedData data, ISelectAccounts accountSelector)
+    public DataLoader(
+        ITransactionQLApi api, IStreamFiles streamer, ISelectAccounts accountSelector, string pluginDir)
     {
-        _data = data;
+        _api = api;
+        _streamer = streamer;
         _accountSelector = accountSelector;
+        _pluginDir = pluginDir;
     }
 
-    public bool TryLoadData(out IEnumerable<PaymentDetailsViewModel> payments)
+    public bool TryLoadData(SelectedData data, out IEnumerable<PaymentDetailsViewModel> payments, out string error)
     {
+        _data = data;
         payments = [];
 
-        if (!TryParseFilters(_data.FiltersFile, out var queries))
+        if (!TryParseFilters(_data.FiltersFile, out var queries, out error))
             return false;
 
-        if (!TryCreateReader(_data, out var reader))
+        if (!TryCreateReader(_data, out var reader, out error, _pluginDir))
             return false;
 
         payments = ParseTransactions(_data, queries, reader);
@@ -67,15 +82,16 @@ public class DataLoader : ILoadData
 
     private IEnumerable<PaymentDetailsViewModel> ParseTransactions(SelectedData data, AST.Query[] queries, IConverter reader)
     {
-        // TODO: external dependency (IO)
-        using StreamReader bankTransactionCsv = new(data.TransactionsFile);
+        using Stream t = _streamer.Open(data.TransactionsFile);
+        using StreamReader bankTransactionCsv = new(t);
         if (data.HasHeader)
         {
             _ = bankTransactionCsv.ReadLine();
         }
 
         FSharpMap<string, string>[] rows = reader.Read(bankTransactionCsv.ReadToEnd());
-        Either<QLInterpreter.Entry, FSharpMap<string, string>>[] filteredRows = API.filter(reader, queries, rows).ToArray();
+        Either<QLInterpreter.Entry, FSharpMap<string, string>>[] filteredRows
+            = _api.Filter(reader, queries, rows).ToArray();
 
         foreach(var filteredRow in filteredRows.Zip(rows))
         {
@@ -90,8 +106,11 @@ public class DataLoader : ILoadData
         string title = row["Name"];
         string description = row["Description"].Trim('\'');
         DateTime date = DateTime.ParseExact(row["Date"], reader.DateFormat, CultureInfo.InvariantCulture);
-        decimal amount = decimal.Parse(row["Amount"],
+
+        decimal amount = decimal.Parse(
+            row["Amount"],
             NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
+
         var posting = new Posting { Account = _data.DefaultCheckingAccount, Currency = _data.DefaultCurrency, Amount = amount };
 
         return new PaymentDetailsViewModel(_accountSelector, title, date, description, _data.DefaultCurrency, amount)
@@ -105,8 +124,11 @@ public class DataLoader : ILoadData
         string title = entry.Header.Item2;
         string description = string.Join(",", entry.Comments.ToArray()).Trim('\'');
         DateTime date = entry.Header.Item1;
-        decimal amount = decimal.Parse(row["Amount"],
+
+        decimal amount = decimal.Parse(
+            row["Amount"],
             NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
+
         var postings = ParsePostings(entry);
 
         return new PaymentDetailsViewModel(_accountSelector, title, date, description, _data.DefaultCurrency, amount)
@@ -115,15 +137,14 @@ public class DataLoader : ILoadData
         };
     }
 
-    private bool TryCreateReader(
-        SelectedData data, [NotNullWhen(true)] out IConverter? reader)
+    private bool TryCreateReader(SelectedData data, [NotNullWhen(true)] out IConverter? reader, out string error, string pluginDir)
     {
-        Either<IConverter, string> loader = API.loadReader(data.Module, Configuration.createAndGetPluginDir);
+        error = string.Empty;
+        Either<IConverter, string> loader = _api.LoadReader(data.Module, pluginDir);
+
         if (!loader.TryGetLeft(out reader))
         {
-            _ = loader.TryGetRight(out string? message);
-            // TODO: external dependency (ViewModel)
-            //ErrorThrown?.Invoke(this, new ErrorViewModel(message));
+            _ = loader.TryGetRight(out error);
             return false;
         }
 
@@ -131,16 +152,18 @@ public class DataLoader : ILoadData
     }
 
 
-    private bool TryParseFilters(string filtersFile, [NotNullWhen(true)] out AST.Query[]? queries)
+    private bool TryParseFilters(string filtersFile, [NotNullWhen(true)] out AST.Query[]? queries, out string error)
     {
-        // TODO: external dependency (IO)
-        using StreamReader filterTql = new(filtersFile);
-        Either<AST.Query[], string> parser = API.parseFilters(filterTql.ReadToEnd());
+        error = string.Empty;
+
+        using Stream f = _streamer.Open(filtersFile);
+        using StreamReader filterTql = new(f);
+
+        Either<AST.Query[], string> parser = _api.ParseFilters(filterTql.ReadToEnd());
+
         if (!parser.TryGetLeft(out queries))
         {
-            _ = parser.TryGetRight(out string? message);
-            // TODO: external dependency (ViewModel)
-            //ErrorThrown?.Invoke(this, new ErrorViewModel(message));
+            _ = parser.TryGetRight(out error);
             return false;
         }
 
