@@ -72,7 +72,7 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
 
     private static FileSystemWatcher CreateWatcher(string accountsFile)
     {
-        var path = System.IO.Path.GetDirectoryName(accountsFile) 
+        var path = System.IO.Path.GetDirectoryName(accountsFile)
             ?? throw new FileNotFoundException($"Error while trying to read {accountsFile}");
 
         var file = System.IO.Path.GetFileName(accountsFile);
@@ -87,7 +87,8 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
     [JsonIgnore]
     public ObservableCollection<string> AvailableAccounts { get; } = [];
 
-    public string Path {
+    public string Path
+    {
         get => _path;
         set
         {
@@ -103,7 +104,7 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
         }
     }
 
-    public bool IsMatch(string? searchString, string item) 
+    public bool IsMatch(string? searchString, string item)
         => _matcher.IsMatch(searchString, item);
 
     public void Dispose()
@@ -144,7 +145,7 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
         try
         {
             using StreamReader stream = new(accountsFile);
-             // Read accounts before the stream is dispose
+            // Read accounts before the stream is dispose
             return stream
                 .StreamLines()
                 .OfType<string>()
@@ -152,7 +153,7 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
                 .Select(line => line.Split(" ", Split.RemoveEmptyEntries | Split.TrimEntries)[1])
                 .ToArray();
         }
-        catch(IOException) when (withRetry)
+        catch (IOException) when (withRetry)
         {
             await Task.Delay(100);
             return await ReadAccounts(accountsFile, false);

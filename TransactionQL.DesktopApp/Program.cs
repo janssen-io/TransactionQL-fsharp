@@ -23,16 +23,16 @@ internal static class Program
         catch (Exception ex)
         {
             // TODO: logging
-            throw ex;
+            throw;
         }
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
     {
-            _ = IconProvider.Current
-                .Register<FontAwesomeIconProvider>()
-                .Register<MaterialDesignIconProvider>();
+        _ = IconProvider.Current
+            .Register<FontAwesomeIconProvider>()
+            .Register<MaterialDesignIconProvider>();
 
         return AppBuilder.Configure<App>()
             .UsePlatformDetect()

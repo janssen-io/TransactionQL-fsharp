@@ -1,11 +1,11 @@
-﻿using Avalonia.Headless;
-using Avalonia;
-using TransactionQL.DesktopApp.Tests;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Headless;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
 using Projektanker.Icons.Avalonia.MaterialDesign;
-using Avalonia.Controls;
 using System.Diagnostics;
+using TransactionQL.DesktopApp.Tests;
 
 [assembly: AvaloniaTestApplication(typeof(TestApp))]
 

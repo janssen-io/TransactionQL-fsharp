@@ -76,7 +76,7 @@ public class PaymentDetailsViewModel : ViewModelBase
         }
     }
 
-     public bool IsNegativeAmount => Amount < 0;
+    public bool IsNegativeAmount => Amount < 0;
 
 
     private string? _description = "";
@@ -101,7 +101,7 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     [DataMember] public ObservableCollection<Posting> Postings { get; set; } = [];
 
-     public ICommand AddTransactionCommand { get; }
+    public ICommand AddTransactionCommand { get; }
 
     private AutoCompleteFilterPredicate<string> _accountAutoCompletePredicate;
 
@@ -211,4 +211,3 @@ public class PaymentDetailsViewModel : ViewModelBase
     private void RemoveEmptyPostings()
         => Postings.RemoveMany(Postings.Where(p => string.IsNullOrEmpty(p.Account)));
 }
-

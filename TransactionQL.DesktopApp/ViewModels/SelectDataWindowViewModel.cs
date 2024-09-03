@@ -105,4 +105,3 @@ public class SelectDataWindowViewModel : ViewModelBase
         SelectBank = ReactiveCommand.Create<Module>(module => Module = module);
     }
 }
-

@@ -44,7 +44,8 @@ public class MainWindowViewModelTests
             """;
 
         var vm = new MainWindowViewModel() { BankTransactions = new(transactions) };
-        vm.Saved += (sender, outputToSave) => {
+        vm.Saved += (sender, outputToSave) =>
+        {
 
             actualLedger = outputToSave;
             waitForSaved.Set();
@@ -60,4 +61,3 @@ public class MainWindowViewModelTests
 
     private DateTime NewDT(int year, int month, int day) => new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Unspecified);
 }
-

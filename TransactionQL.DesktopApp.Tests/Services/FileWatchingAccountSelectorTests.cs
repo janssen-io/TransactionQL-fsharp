@@ -55,7 +55,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
         };
 
         // Act
-        using StreamWriter write = new(new FileStream(_fileName, FileMode.Append), Encoding.Default, 4*1024*1024);
+        using StreamWriter write = new(new FileStream(_fileName, FileMode.Append), Encoding.Default, 4 * 1024 * 1024);
         write.WriteLine("");
         write.WriteLine("account Income:Test");
         write.Flush();
@@ -95,7 +95,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
             contents = read.ReadToEnd().Split(Environment.NewLine);
         }
 
-        using StreamWriter write = new(new FileStream(_fileName, FileMode.Truncate, FileAccess.Write), Encoding.Default, 4*1024*1024);
+        using StreamWriter write = new(new FileStream(_fileName, FileMode.Truncate, FileAccess.Write), Encoding.Default, 4 * 1024 * 1024);
         foreach (var line in contents)
         {
             if (line != "account Expenses:Recreation")

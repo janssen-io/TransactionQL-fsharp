@@ -83,9 +83,9 @@ public partial class PaymentDetailsTests
         details.AddPosting();
 
         // Assert
-         Assert.Collection(
-             details.DataContext.Postings,
-             AssertEmptyPosting, AssertEmptyPosting, AssertEmptyPosting);
+        Assert.Collection(
+            details.DataContext.Postings,
+            AssertEmptyPosting, AssertEmptyPosting, AssertEmptyPosting);
     }
 
     [AvaloniaFact]

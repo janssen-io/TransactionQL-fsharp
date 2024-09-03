@@ -93,7 +93,7 @@ public class DataLoader : ILoadData
         Either<QLInterpreter.Entry, FSharpMap<string, string>>[] filteredRows
             = _api.Filter(reader, queries, rows).ToArray();
 
-        foreach(var filteredRow in filteredRows.Zip(rows))
+        foreach (var filteredRow in filteredRows.Zip(rows))
         {
             yield return filteredRow.First.TryGetLeft(out QLInterpreter.Entry? entry)
                 ? CreateFilteredTransaction(filteredRow.Second, entry)
