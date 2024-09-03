@@ -107,8 +107,11 @@ public class MainWindowViewModel : ViewModelBase
         var loader = new DataLoader(
             TransactionQLApiAdapter.Instance, FilesystemStreamer.Instance, AccountSelector, Configuration.createAndGetPluginDir);
 
-        if (!loader.TryLoadData(data, out var ps, out var e))
+        if (!loader.TryLoadData(data, out var ps, out var errorMessage))
+        {
+            ErrorThrown?.Invoke(this, new(errorMessage));
             return;
+        }
 
         // Make sure we don't enumerate multiple times
         var payments = ps.ToArray();
@@ -124,9 +127,9 @@ public class MainWindowViewModel : ViewModelBase
 
     private void Save()
     {
-        if (!AreEntriesValid(out string? message))
+        if (!AreEntriesValid(out string message))
         {
-            ErrorThrown?.Invoke(this, new ErrorViewModel(message));
+            ErrorThrown?.Invoke(this, new(message));
             return;
         }
 
@@ -146,7 +149,7 @@ public class MainWindowViewModel : ViewModelBase
         }
         catch (Exception e)
         {
-            ErrorThrown?.Invoke(this, new ErrorViewModel(e.Message));
+            ErrorThrown?.Invoke(this, new(e.Message));
         }
     }
 
