@@ -22,6 +22,8 @@ public class MainWindowViewModel : ViewModelBase
 
     public event EventHandler<ErrorViewModel>? ErrorThrown;
 
+    private readonly ITransactionQLApi _api;
+
     public MainWindowViewModel()
     {
         SaveCommand = ReactiveCommand.Create(Save);
@@ -32,10 +34,13 @@ public class MainWindowViewModel : ViewModelBase
         });
 
         _accountSelector = EmptySelector.Instance;
+        _api = TransactionQLApiAdapter.Instance;
     }
 
-     public ICommand SaveCommand { get; }
-     public ICommand SaveStateCommand { get; }
+    public MainWindowViewModel(ITransactionQLApi api) : this() => _api = api;
+
+    public ICommand SaveCommand { get; }
+    public ICommand SaveStateCommand { get; }
 
     private string _lastSaved = "(not yet)";
 
@@ -136,7 +141,7 @@ public class MainWindowViewModel : ViewModelBase
         try
         {
             IEnumerable<string> postings = BankTransactions
-                .Select(posting => API.formatPosting(
+                .Select(posting => _api.FormatPosting(
                     posting.Date,
                     posting.Title?.Trim(),
                     posting.Description?.Trim(),
