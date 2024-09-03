@@ -40,6 +40,7 @@ public class MainWindowViewModelTests
             2024/01/02 B
                 Assets                                      €  110.00
                 Expenses:B                                  € -110.00
+
             """;
 
         var vm = new MainWindowViewModel() { BankTransactions = new(transactions) };

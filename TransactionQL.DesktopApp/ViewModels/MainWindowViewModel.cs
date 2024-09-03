@@ -143,14 +143,14 @@ public class MainWindowViewModel : ViewModelBase
             IEnumerable<string> postings = BankTransactions
                 .Select(posting => _api.FormatPosting(
                     posting.Date,
-                    posting.Title?.Trim(),
-                    posting.Description?.Trim(),
+                    posting.Title!.Trim(), // Valid transactions must have a title
+                    posting.Description?.Trim() ?? string.Empty,
                     posting.Postings
                         .Where(trx => !string.IsNullOrEmpty(trx.Account))
-                        .Select(trx => Tuple.Create(trx.Account?.Trim(), trx.Currency?.Trim(), trx.Amount))
+                        .Select(trx => Tuple.Create(trx.Account!.Trim(), trx.Currency?.Trim(), trx.Amount))
                         .ToArray()));
 
-            Saved?.Invoke(this, string.Join(Environment.NewLine + Environment.NewLine, postings));
+            Saved?.Invoke(this, string.Join(Environment.NewLine + Environment.NewLine, postings) + Environment.NewLine);
         }
         catch (Exception e)
         {
