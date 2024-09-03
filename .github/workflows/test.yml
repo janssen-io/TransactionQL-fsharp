@@ -6,7 +6,7 @@ on:
         
 jobs:
   release:
-    name: Release
+    name: Test
     strategy:
       matrix:
         kind: ['linux', 'windows']
@@ -28,5 +28,9 @@ jobs:
         with:
           dotnet-version: 8.x
 
+      - name: Format
+        run: dotnet format --verify-no-changes --verbosity diagnostic
+
       - name: Test
         run: dotnet test
+
