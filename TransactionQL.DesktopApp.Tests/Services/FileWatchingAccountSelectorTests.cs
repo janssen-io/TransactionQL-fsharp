@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text;
 using TransactionQL.DesktopApp.Services;
 using Xunit.Abstractions;
@@ -19,7 +20,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
     [Fact]
     public async Task ItContains_InitialAccounts()
     {
-        _fileName = Path.Join(Path.GetTempPath(), nameof(ItContains_InitialAccounts));
+        _fileName = CreateTempFile();
         FillAccountsFile();
 
         _output.WriteLine(_fileName);
@@ -38,7 +39,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
     [Fact]
     public async Task ItMonitors_Adds()
     {
-        _fileName = Path.Join(Path.GetTempPath(), nameof(ItMonitors_Adds));
+        _fileName = CreateTempFile();
         FillAccountsFile();
 
         _output.WriteLine(_fileName);
@@ -74,7 +75,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
     [Fact]
     public async Task ItMonitors_Deletes()
     {
-        _fileName = Path.Join(Path.GetTempPath(), nameof(ItMonitors_Deletes));
+        _fileName = CreateTempFile();
         FillAccountsFile();
 
         _output.WriteLine(_fileName);
@@ -115,7 +116,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
     [Fact]
     public async Task ItMonitors_Replace()
     {
-        _fileName = Path.Join(Path.GetTempPath(), nameof(ItMonitors_Replace));
+        _fileName = CreateTempFile();
         FillAccountsFile();
 
         _output.WriteLine(_fileName);
@@ -154,7 +155,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
     [Fact]
     public async Task ItDebouncesFilesystemEvents()
     {
-        _fileName = Path.Join(Path.GetTempPath(), nameof(ItMonitors_Replace));
+        _fileName = CreateTempFile();
         FillAccountsFile();
 
         _output.WriteLine(_fileName);
@@ -188,6 +189,13 @@ public class FileWatchingAccountSelectorTests : IDisposable
     }
 
     private static void DummyDispatch(Action a) => a.Invoke();
+
+    private static string CreateTempFile(string extension = ".tmp", [CallerMemberName] string caller = "")
+    {
+        var fileName = Path.Join(Path.GetTempPath(), $"{caller}_{Guid.NewGuid()}{extension}");
+        File.Create(fileName).Dispose();
+        return fileName;
+    }
 
     private void FillAccountsFile()
     {
