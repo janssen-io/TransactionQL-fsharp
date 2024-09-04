@@ -1,10 +1,9 @@
 ﻿using ReactiveUI;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using System;
-using System.IO;
-using System.Runtime.Serialization;
+using TransactionQL.DesktopApp.Models;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
@@ -68,7 +67,7 @@ public class SelectDataWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _module, value);
     }
 
-    private ObservableCollection<Module> _availableModules = new();
+    private ObservableCollection<Module> _availableModules = [];
 
     public ObservableCollection<Module> AvailableModules
     {
@@ -104,61 +103,5 @@ public class SelectDataWindowViewModel : ViewModelBase
 
         Cancel = ReactiveCommand.Create(() => SelectionCancelled?.Invoke(this, EventArgs.Empty));
         SelectBank = ReactiveCommand.Create<Module>(module => Module = module);
-    }
-
-    public class SelectedData
-    {
-        // Typically we want to select different/new transactions
-        [IgnoreDataMember] 
-        public required string TransactionsFile { get; init; }
-
-        [DataMember]
-        public required bool HasHeader { get; init; }
-
-        [DataMember]
-        public required string FiltersFile { get; init;  }
-
-        [DataMember]
-        public required string AccountsFile { get; init;  }
-
-        [DataMember]
-        public required string Module { get; init; }
-
-        [DataMember]
-        public required string DefaultCheckingAccount { get; init; }
-
-        [DataMember]
-        public required string DefaultCurrency { get; init; }
-    }
-}
-
-public class Module : ViewModelBase
-{
-    private string _title = "";
-
-    public string Title
-    {
-        get => _title;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _title, value);
-        }
-    }
-
-    private string _fileName = "";
-
-    public string FileName
-    {
-        get => _fileName;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _fileName, value);
-        }
-    }
-
-    public Module(string fileName, string? title)
-    {
-        FileName = fileName;
-        Title = title ?? Path.GetFileNameWithoutExtension(fileName);
     }
 }

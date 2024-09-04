@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using ReactiveUI;
+using System;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using ReactiveUI;
 using TransactionQL.DesktopApp.Application;
 using TransactionQL.DesktopApp.ViewModels;
 
@@ -28,7 +28,7 @@ public class CustomSuspensionHelper
 
             // SetupDefaultSuspendResume must be called after setting observables!
             // This method subscribes to them.
-            RxApp.SuspensionHost.SetupDefaultSuspendResume(new JsonSuspensionDriver("appstate.json"));
+            _ = RxApp.SuspensionHost.SetupDefaultSuspendResume(new JsonSuspensionDriver("appstate.json"));
         }
     }
 

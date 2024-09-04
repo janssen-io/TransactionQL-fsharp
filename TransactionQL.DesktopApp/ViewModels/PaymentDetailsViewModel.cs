@@ -1,15 +1,19 @@
 ﻿using Avalonia.Controls;
 using DynamicData;
+using Newtonsoft.Json;
 using ReactiveUI;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
-using System;
+using TransactionQL.DesktopApp.Models;
+using TransactionQL.DesktopApp.Services;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class PaymentDetailsViewModel : ViewModelBase
 {
     #region properties
@@ -20,10 +24,7 @@ public class PaymentDetailsViewModel : ViewModelBase
     public bool IsActive
     {
         get => _isActive;
-        set
-        {
-            this.RaiseAndSetIfChanged(ref _isActive, value);
-        }
+        set => this.RaiseAndSetIfChanged(ref _isActive, value);
     }
 
     private bool _hasError = false;
@@ -33,6 +34,15 @@ public class PaymentDetailsViewModel : ViewModelBase
     {
         get => _hasError;
         set => this.RaiseAndSetIfChanged(ref _hasError, value);
+    }
+
+    private string _error = "";
+
+    [DataMember]
+    public string Error
+    {
+        get => _error;
+        set => this.RaiseAndSetIfChanged(ref _error, value);
     }
 
     private string? _title = "";
@@ -59,14 +69,14 @@ public class PaymentDetailsViewModel : ViewModelBase
     public decimal Amount
     {
         get => _amount;
-        private set
+        set
         {
-            this.RaiseAndSetIfChanged(ref _amount, value);
+            _ = this.RaiseAndSetIfChanged(ref _amount, value);
             this.RaisePropertyChanged(nameof(IsNegativeAmount));
         }
     }
 
-    [IgnoreDataMember] public bool IsNegativeAmount => Amount < 0;
+    public bool IsNegativeAmount => Amount < 0;
 
 
     private string? _description = "";
@@ -84,113 +94,120 @@ public class PaymentDetailsViewModel : ViewModelBase
     public DateTime Date
     {
         get => _date;
-        private set => this.RaiseAndSetIfChanged(ref _date, value);
+        set => this.RaiseAndSetIfChanged(ref _date, value);
     }
 
     #endregion properties
 
-    [DataMember] public ObservableCollection<Posting> Postings { get; set; } = new();
+    [DataMember] public ObservableCollection<Posting> Postings { get; set; } = [];
 
-    [DataMember] public ObservableCollection<string> ValidAccounts { get; } = new();
+    public ICommand AddTransactionCommand { get; }
 
-    [IgnoreDataMember] public ICommand AddTransactionCommand { get; }
+    private AutoCompleteFilterPredicate<string> _accountAutoCompletePredicate;
 
-    public PaymentDetailsViewModel()
+    public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate
     {
-        AddTransactionCommand = ReactiveCommand.Create(() => { Postings.Add(Posting.Empty); });
+        get => _accountAutoCompletePredicate;
+        private set
+        {
+            this.RaiseAndSetIfChanged(ref _accountAutoCompletePredicate, value);
+        }
     }
 
-    public PaymentDetailsViewModel(string title, DateTime date, string description, string currency, decimal amount,
-        ObservableCollection<string> validAccounts) : this()
+    private ISelectAccounts _accountSelector;
+
+    public ISelectAccounts AccountSelector
+    {
+        get => _accountSelector;
+        private set
+        {
+            this.RaiseAndSetIfChanged(ref _accountSelector, value);
+        }
+    }
+
+    // For deserializer
+    private PaymentDetailsViewModel()
+    {
+        AddTransactionCommand = ReactiveCommand.Create(
+            () => Postings.Add(Posting.Empty));
+
+        _accountSelector = AccountSelector ?? EmptySelector.Instance;
+        _accountAutoCompletePredicate = _accountSelector.IsMatch;
+    }
+
+    public PaymentDetailsViewModel(ISelectAccounts accountSelector) : this()
+    {
+        AccountAutoCompletePredicate = accountSelector.IsMatch;
+        AccountSelector = accountSelector;
+    }
+
+    public PaymentDetailsViewModel(
+        ISelectAccounts accountSelector,
+        string title, DateTime date, string description,
+        string currency, decimal amount) : this(accountSelector)
     {
         Title = title;
         Date = date;
         Description = description;
         Currency = currency;
         Amount = amount;
+    }
 
-        ValidAccounts = validAccounts;
+    internal void Init(ISelectAccounts accountSelector)
+    {
+        AccountAutoCompletePredicate = accountSelector.IsMatch;
+        AccountSelector = accountSelector;
     }
 
     public void Activate()
     {
-        Postings.RemoveMany(Postings.Where(p => string.IsNullOrEmpty(p.Account)));
+        RemoveEmptyPostings();
         IsActive = true;
     }
 
     public void Deactivate()
     {
-        IsValid(out var _);
+        RemoveEmptyPostings();
+        _ = IsValid(out _);
         IsActive = false;
     }
 
     public bool IsValid(out string errorMessage)
     {
-        List<string> errors = new();
+        List<string> errors =
+        [
+            .. string.IsNullOrEmpty(Title)
+                ? ["The transaction's title must be set."]
+                : Array.Empty<string>(),
+            .. Postings.Count(p => !string.IsNullOrEmpty(p.Account)) < 2
+                ? ["The transaction must contain at least two postings."]
+                : Array.Empty<string>(),
+        ];
 
-        if (string.IsNullOrEmpty(Title)) errors.Add("The transaction's title must be set.");
-        if (Postings.Count(p => !string.IsNullOrEmpty(p.Account)) < 2)
-            errors.Add("The transaction must contain at least two postings.");
-
-        var nonEmptyPostings = Postings.Where(p => !string.IsNullOrEmpty(p.Account));
+        IEnumerable<Posting> nonEmptyPostings = Postings.Where(p => !string.IsNullOrEmpty(p.Account));
         if (nonEmptyPostings.Count(p => !p.HasAmount()) > 1)
-            errors.Add("The transaction may contain at most one auto-calculated posting (one without costs).");
-
-        // TODO: handle multiple currencies
-        var balance = nonEmptyPostings.Aggregate(0m, (total, p) => total + p.Value);
-        if (Postings.All(p => p.HasAmount()) && balance != 0m)
-            errors.Add($"The transaction's postings are not balanced, the total equals {balance:0.00}.");
-
-        errorMessage = string.Join(Environment.NewLine, errors);
-
-        HasError = errors.Any();
-        return !HasError;
-    }
-}
-
-public class Posting
-{
-
-    [DataMember]
-    public string? Account { get; set; } = "";
-    [DataMember] public string? Currency { get; set; }
-    [DataMember] public decimal? Amount { get; set; }
-    public decimal Value => Amount ?? 0m;
-
-    [IgnoreDataMember] public AutoCompleteFilterPredicate<string> AccountAutoCompletePredicate { get; }
-
-    public Posting()
-    {
-        AccountAutoCompletePredicate = FilterAccounts;
-    }
-
-    public static Posting Empty => new()
-    {
-        Account = "",
-        Currency = "EUR",
-        Amount = null
-    };
-
-    internal bool HasAmount()
-    {
-        return !string.IsNullOrEmpty(Currency) && Amount != null;
-    }
-
-    private static bool FilterAccounts(string? searchString, string item)
-    {
-        if (searchString is null) return true;
-        searchString = searchString.ToLowerInvariant();
-        item = item.ToLowerInvariant();
-
-        var searchIndex = 0;
-        for (var itemIndex = 0; itemIndex < item.Length && searchIndex < searchString.Length; itemIndex++)
         {
-            // Try to find the next letter of the search string in the remainder of the item
-            if (searchString[searchIndex] == item[itemIndex])
-                searchIndex++;
+            errors.Add("The transaction may contain at most one auto-calculated posting (one without costs).");
         }
 
-        // if all the letters of the searchString were found somewhere in the item, then it's a valid item.
-        return searchIndex == searchString.Length;
+        decimal balance = nonEmptyPostings.Aggregate(0m, (total, p) => total + p.Value);
+        if (Postings.All(p => p.HasAmount()) && balance != 0m)
+        {
+            var commodity = Postings[0].Currency;
+            var areAllSame = Postings.All(p => p.Currency == commodity);
+            if (areAllSame)
+            {
+                errors.Add($"The transaction's postings are not balanced, the total equals {balance:0.00}.");
+            }
+        }
+
+        errorMessage = string.Join(Environment.NewLine, errors);
+        Error = errorMessage;
+
+        HasError = errors.Count != 0;
+        return !HasError;
     }
+
+    private void RemoveEmptyPostings()
+        => Postings.RemoveMany(Postings.Where(p => string.IsNullOrEmpty(p.Account)));
 }

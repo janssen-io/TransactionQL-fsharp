@@ -1,25 +1,28 @@
-﻿using ReactiveUI;
+﻿using Avalonia.Threading;
+using DynamicData;
+using Newtonsoft.Json;
+using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
-using Microsoft.FSharp.Core;
 using TransactionQL.Application;
-using TransactionQL.Parser;
-using TransactionQL.Shared.Extensions;
+using TransactionQL.DesktopApp.Models;
+using TransactionQL.DesktopApp.Services;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 
+[JsonObject(MemberSerialization.OptIn)]
 public class MainWindowViewModel : ViewModelBase
 {
     public event EventHandler<string>? Saved;
     public event EventHandler? StateSaved;
 
     public event EventHandler<ErrorViewModel>? ErrorThrown;
+
+    private readonly ITransactionQLApi _api;
 
     public MainWindowViewModel()
     {
@@ -29,32 +32,36 @@ public class MainWindowViewModel : ViewModelBase
             StateSaved?.Invoke(this, EventArgs.Empty);
             LastSaved = DateTime.Now.ToShortTimeString();
         });
+
+        _accountSelector = EmptySelector.Instance;
+        _api = TransactionQLApiAdapter.Instance;
     }
 
-    [IgnoreDataMember] public ICommand SaveCommand { get; }
-    [IgnoreDataMember] public ICommand SaveStateCommand { get; }
+    public MainWindowViewModel(ITransactionQLApi api) : this() => _api = api;
+
+    public ICommand SaveCommand { get; }
+    public ICommand SaveStateCommand { get; }
 
     private string _lastSaved = "(not yet)";
 
-    [IgnoreDataMember]
     public string LastSaved
     {
         get => _lastSaved;
         set => this.RaiseAndSetIfChanged(ref _lastSaved, value);
     }
 
-    [DataMember] public ObservableCollection<PaymentDetailsViewModel> BankTransactions { get; set; } = new();
-
-    private string? _locale;
+    private ObservableCollection<PaymentDetailsViewModel> _bankTransactions = [];
 
     [DataMember]
-    public string? Locale
+    public ObservableCollection<PaymentDetailsViewModel> BankTransactions
     {
-        get => _locale;
+        get { return _bankTransactions; }
         set
         {
-            _locale = value;
-            CultureInfo.CurrentCulture = CultureInfo.CreateSpecificCulture(string.IsNullOrEmpty(value) ? "en-US" : value);
+
+            _bankTransactions = value;
+            foreach (var t in _bankTransactions)
+                t.Init(AccountSelector);
         }
     }
 
@@ -67,15 +74,6 @@ public class MainWindowViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _bankTransactionIndex, value);
     }
 
-    private bool _hasTransactions = false;
-
-    [DataMember]
-    public bool HasTransactions
-    {
-        get => _hasTransactions;
-        set => this.RaiseAndSetIfChanged(ref _hasTransactions, value);
-    }
-
     private int _numberOfValidTransactions = 0;
     [DataMember]
     public int NumberOfValidTransactions
@@ -83,139 +81,80 @@ public class MainWindowViewModel : ViewModelBase
         get => _numberOfValidTransactions;
         set
         {
-            this.RaiseAndSetIfChanged(ref _numberOfValidTransactions, value);
+            _ = this.RaiseAndSetIfChanged(ref _numberOfValidTransactions, value);
             this.RaisePropertyChanged(nameof(IsDone));
         }
     }
 
     [DataMember]
-    public SelectDataWindowViewModel.SelectedData? PreviouslySelectedData { get; set; }
+    public SelectedData? PreviouslySelectedData { get; set; }
+
+    private ISelectAccounts _accountSelector;
+
+    [DataMember]
+    public ISelectAccounts AccountSelector
+    {
+        get => _accountSelector;
+        set
+        {
+            _accountSelector = value;
+            foreach (var t in BankTransactions)
+                t.Init(value);
+        }
+    }
 
     public bool IsDone => _numberOfValidTransactions == BankTransactions.Count;
 
-    internal void Parse(SelectDataWindowViewModel.SelectedData data)
+
+    internal void Parse(SelectedData data)
     {
-        using var filterTql = new StreamReader(data.FiltersFile);
-        var parser = API.parseFilters(filterTql.ReadToEnd());
-        if (!parser.TryGetLeft(out var queries))
+        AccountSelector = FilewatchingAccountSelector.Monitor(data.AccountsFile, Dispatcher.UIThread.Invoke).Result;
+        var loader = new DataLoader(
+            TransactionQLApiAdapter.Instance, FilesystemStreamer.Instance, AccountSelector, Configuration.createAndGetPluginDir);
+
+        if (!loader.TryLoadData(data, out var ps, out var errorMessage))
         {
-            _ = parser.TryGetRight(out var message);
-            ErrorThrown?.Invoke(this, new ErrorViewModel(message));
+            ErrorThrown?.Invoke(this, new(errorMessage));
             return;
         }
 
-        using var accountsFile = new StreamReader(data.AccountsFile);
-        var accountLines = accountsFile
-            .ReadToEnd()
-            .Split(new[] { "\n", "\r\n" }, StringSplitOptions.TrimEntries);
-        var accounts = accountLines
-            .Where(line => line.StartsWith("account "))
-            .Select(line => line.Split(" ")[1]);
-        var validAccounts = new ObservableCollection<string>(accounts.ToArray());
-
-        var loader = API.loadReader(data.Module, Configuration.createAndGetPluginDir);
-        if (!loader.TryGetLeft(out var reader))
-        {
-            _ = parser.TryGetRight(out var message);
-            ErrorThrown?.Invoke(this, new ErrorViewModel(message));
-            return;
-        }
-
-        using var bankTransactionCsv = new StreamReader(data.TransactionsFile);
-        // TODO: temporarily change it? Or change it for the entire program?
-        // TODO: provide options object and read locale from options
-        Locale = "en-US";
-        if (data.HasHeader) bankTransactionCsv.ReadLine();
-        var rows = reader.Read(bankTransactionCsv.ReadToEnd());
-
-        var filteredRows = API.filter(reader, queries, rows).ToArray();
+        // Make sure we don't enumerate multiple times
+        var payments = ps.ToArray();
+        NumberOfValidTransactions = payments.Aggregate(0, (count, p) => p.IsValid(out string _) ? count + 1 : count);
 
         BankTransactions.Clear();
-
-        if (filteredRows.Length > 0) HasTransactions = true;
-
-        for (var i = 0; i < rows.Length; i++)
-        {
-            var filteredRow = filteredRows[i];
-            if (filteredRow.TryGetLeft(out var entry))
-            {
-                var title = entry.Header.Item2;
-                var description = string.Join(",", entry.Comments.ToArray()).Trim('\'');
-                var date = entry.Header.Item1;
-                var amount = decimal.Parse(rows[i]["Amount"],
-                    NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
-
-                var transaction = new PaymentDetailsViewModel(title, date, description, data.DefaultCurrency, amount, validAccounts)
-                {
-                    Postings = new ObservableCollection<Posting>(entry.Lines.Select(line =>
-                    {
-                        var amountOrDefault = line.Amount.Or(new(AST.Commodity.NewCommodity(""), 0));
-
-                        return new Posting()
-                        {
-                            Account = string.Join(':', line.Account.Item),
-                            // we don't want to display 0, if there's no amount.
-                            // But since Amount is a non-nullable double, we can't make it the default.
-                            Amount = line.Amount.HasValue() ? (decimal)amountOrDefault.Item2 : null,
-                            Currency = amountOrDefault.Item1.Item,
-                        };
-                    }))
-                };
-                transaction.IsValid(out var _);
-                BankTransactions.Add(transaction);
-            }
-            else if (filteredRow.TryGetRight(out var row))
-            {
-                var title = row["Name"]; // TODO: Define type for use in UI?
-                var description = row["Description"].Trim('\'');
-                var date = DateTime.ParseExact(row["Date"], reader.DateFormat, CultureInfo.InvariantCulture);
-                var amount = decimal.Parse(row["Amount"],
-                    NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
-                BankTransactions.Add(
-                    new PaymentDetailsViewModel(title, date, description, data.DefaultCurrency, amount, validAccounts)
-                    {
-                        HasError = true,
-                        Postings = { new Posting { Account = data.DefaultCheckingAccount, Currency = data.DefaultCurrency, Amount = amount } }
-                    });
-            }
-        }
-        CountValid();
+        BankTransactions.AddRange(payments);
 
         // If parsing was successful, only then save previously selected data.
         // If it's bogus, we probably don't want to remember it.
-        this.PreviouslySelectedData = data;
-
-        // TODO:
-        // - tags/notes (posting)
-        // - tags/notes (transaction)
-        // - (optional: if all currencies are the same, check if balanced)
+        PreviouslySelectedData = data;
     }
 
     private void Save()
     {
-        if (!AreEntriesValid(out var message))
+        if (!AreEntriesValid(out string message))
         {
-            ErrorThrown?.Invoke(this, new ErrorViewModel(message));
+            ErrorThrown?.Invoke(this, new(message));
             return;
         }
 
         try
         {
-            var postings = BankTransactions
-                .Select(posting => API.formatPosting(
+            IEnumerable<string> postings = BankTransactions
+                .Select(posting => _api.FormatPosting(
                     posting.Date,
-                    posting.Title?.Trim(),
-                    posting.Description?.Trim(),
+                    posting.Title!.Trim(), // Valid transactions must have a title
+                    posting.Description?.Trim() ?? string.Empty,
                     posting.Postings
                         .Where(trx => !string.IsNullOrEmpty(trx.Account))
-                        .Select(trx => Tuple.Create(trx.Account?.Trim(), trx.Currency?.Trim(), trx.Amount))
+                        .Select(trx => Tuple.Create(trx.Account!.Trim(), trx.Currency?.Trim(), trx.Amount))
                         .ToArray()));
 
-            Saved?.Invoke(this, string.Join(Environment.NewLine + Environment.NewLine, postings));
+            Saved?.Invoke(this, string.Join(Environment.NewLine + Environment.NewLine, postings) + Environment.NewLine);
         }
         catch (Exception e)
         {
-            ErrorThrown?.Invoke(this, new ErrorViewModel(e.Message));
+            ErrorThrown?.Invoke(this, new(e.Message));
         }
     }
 
@@ -223,13 +162,16 @@ public class MainWindowViewModel : ViewModelBase
     {
         errorMessage = string.Empty;
 
-        for (var i = 0; i < BankTransactions.Count; i++)
+        for (int i = 0; i < BankTransactions.Count; i++)
         {
-            var t = BankTransactions[i];
-            if (t.IsValid(out var message)) continue;
+            PaymentDetailsViewModel t = BankTransactions[i];
+            if (t.IsValid(out string? message))
+            {
+                continue;
+            }
 
             // Only display first error
-            // The others will get a red dot to display they also have errors.
+            // The others will get an error indicator
             if (string.IsNullOrEmpty(errorMessage))
             {
                 BankTransactionIndex = i;
@@ -242,6 +184,6 @@ public class MainWindowViewModel : ViewModelBase
 
     internal void CountValid()
     {
-        this.NumberOfValidTransactions = this.BankTransactions.Count(t => !t.HasError);
+        NumberOfValidTransactions = BankTransactions.Count(t => !t.HasError);
     }
 }

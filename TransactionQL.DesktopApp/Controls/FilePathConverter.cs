@@ -6,6 +6,9 @@ using System.IO;
 
 namespace TransactionQL.DesktopApp.Controls
 {
+    /// <summary>
+    /// Converts a file path to just the filename.
+    /// </summary>
     public class FilePathConverter : IValueConverter
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -19,18 +22,17 @@ namespace TransactionQL.DesktopApp.Controls
             {
                 return Path.GetFileName(path);
             }
-
-            if (value is Uri uri && targetType == typeof(string))
+            else if (value is Uri uri && targetType == typeof(string))
             {
-                return Path.GetFileName(uri.AbsolutePath);
+                return (object)Path.GetFileName(uri.AbsolutePath);
             }
-
-            throw new InvalidCastException($"{value} ({value.GetType()}) is not a file path.");
+            else
+            {
+                throw new InvalidCastException($"{value} ({value.GetType()}) is not a file path.");
+            }
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            return BindingOperations.DoNothing;
-        }
+            => BindingOperations.DoNothing;
     }
 }

@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace TransactionQL.DesktopApp
+namespace TransactionQL.DesktopApp.Controls
 {
     [Serializable]
     public class ControlInitializationException : Exception
@@ -24,10 +24,6 @@ namespace TransactionQL.DesktopApp
         }
 
         public ControlInitializationException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-
-        protected ControlInitializationException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

@@ -1,7 +1,5 @@
 ﻿namespace TransactionQL.Console
 
-open System.Reflection
-
 module Program =
     open Argu
     open System

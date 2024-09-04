@@ -20,8 +20,8 @@ public class Dropzone : TemplatedControl
 
     public string? FileTypes
     {
-        get { return GetValue(FileTypesProperty); }
-        set { SetValue(FileTypesProperty, value); }
+        get => GetValue(FileTypesProperty);
+        set => SetValue(FileTypesProperty, value);
     }
 
     public static readonly StyledProperty<string> FileDescriptionProperty =
@@ -29,8 +29,8 @@ public class Dropzone : TemplatedControl
 
     public string FileDescription
     {
-        get { return GetValue(FileDescriptionProperty); }
-        set { SetValue(FileDescriptionProperty, value); }
+        get => GetValue(FileDescriptionProperty);
+        set => SetValue(FileDescriptionProperty, value);
     }
 
     public static readonly StyledProperty<string> FileNameProperty =
@@ -38,10 +38,11 @@ public class Dropzone : TemplatedControl
 
     public string FileName
     {
-        get { return GetValue(FileNameProperty); }
-        set {
-            SetValue(FileNameProperty, value);
-            var icon = this.VisualChildren
+        get => GetValue(FileNameProperty);
+        set
+        {
+            _ = SetValue(FileNameProperty, value);
+            Projektanker.Icons.Avalonia.Icon? icon = VisualChildren
                 .FirstOrDefault()
                 .FindLogicalDescendantOfType<Projektanker.Icons.Avalonia.Icon>();
 
@@ -57,8 +58,8 @@ public class Dropzone : TemplatedControl
 
     public IBrush BrowseForeground
     {
-        get { return GetValue(BrowseForegroundProperty); }
-        set { SetValue(BrowseForegroundProperty, value); }
+        get => GetValue(BrowseForegroundProperty);
+        set => SetValue(BrowseForegroundProperty, value);
     }
 
     public static readonly StyledProperty<IBrush> HighlightProperty =
@@ -66,8 +67,8 @@ public class Dropzone : TemplatedControl
 
     public IBrush Highlight
     {
-        get { return GetValue(HighlightProperty); }
-        set { SetValue(HighlightProperty, value); }
+        get => GetValue(HighlightProperty);
+        set => SetValue(HighlightProperty, value);
     }
 
     public static readonly StyledProperty<IBrush> IconForegroundProperty =
@@ -75,8 +76,8 @@ public class Dropzone : TemplatedControl
 
     public IBrush IconForeground
     {
-        get { return GetValue(IconForegroundProperty); }
-        set { SetValue(IconForegroundProperty, value); }
+        get => GetValue(IconForegroundProperty);
+        set => SetValue(IconForegroundProperty, value);
     }
 
     public static readonly StyledProperty<BoxShadows> BoxShadowProperty =
@@ -84,8 +85,8 @@ public class Dropzone : TemplatedControl
 
     public BoxShadows BoxShadow
     {
-        get { return GetValue(BoxShadowProperty); }
-        set { SetValue(BoxShadowProperty, value); }
+        get => GetValue(BoxShadowProperty);
+        set => SetValue(BoxShadowProperty, value);
     }
 
     private Border? _area;
@@ -106,11 +107,13 @@ public class Dropzone : TemplatedControl
 
     private void InitializeControls(Border root)
     {
-        var browse = root.FindLogicalDescendantOfType<Button>();
-        var icon = root.FindLogicalDescendantOfType<Projektanker.Icons.Avalonia.Icon>();
+        Button? browse = root.FindLogicalDescendantOfType<Button>();
+        Projektanker.Icons.Avalonia.Icon? icon = root.FindLogicalDescendantOfType<Projektanker.Icons.Avalonia.Icon>();
 
         if (browse != null)
+        {
             browse.Click += SelectFile;
+        }
 
         if (!string.IsNullOrEmpty(FileName) && icon != null)
         {
@@ -137,27 +140,34 @@ public class Dropzone : TemplatedControl
     private void OnFileDrop(object? sender, DragEventArgs e)
     {
         if (sender != this)
+        {
             return;
+        }
 
         if (_area != null)
+        {
             _area.BorderBrush = new SolidColorBrush(new Color(0, 0, 0, 0));
+        }
 
         // We only care about files
-        var files = e.Data.GetFiles();
-        if (files == null) return;
+        System.Collections.Generic.IEnumerable<IStorageItem>? files = e.Data.GetFiles();
+        if (files == null)
+        {
+            return;
+        }
 
-        var file = files.First();
-        this.FileName = file.Path.AbsolutePath;
+        IStorageItem file = files.First();
+        FileName = file.Path.AbsolutePath;
     }
 
     private async void SelectFile(object? sender, RoutedEventArgs routedEventArgs)
     {
-        var fileTypes = (FileTypes ?? string.Empty)
+        System.Collections.Generic.IEnumerable<FilePickerFileType> fileTypes = (FileTypes ?? string.Empty)
             .Split(",", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Select(extension => new FilePickerFileType(extension) { Patterns = [extension] });
 
 
-        var options = new FilePickerOpenOptions
+        FilePickerOpenOptions options = new()
         {
             AllowMultiple = false,
             Title = $"Select {FileDescription}",
@@ -165,12 +175,16 @@ public class Dropzone : TemplatedControl
         };
 
 
-        var top = TopLevel.GetTopLevel(sender as Visual);
+        TopLevel? top = TopLevel.GetTopLevel(sender as Visual);
         if (top == null)
+        {
             return;
+        }
 
-        var files = await top.StorageProvider.OpenFilePickerAsync(options);
+        System.Collections.Generic.IReadOnlyList<IStorageFile> files = await top.StorageProvider.OpenFilePickerAsync(options);
         if (files.Count > 0)
-            Dispatcher.UIThread.Post(() => this.FileName = files[0].Path.AbsolutePath);
+        {
+            Dispatcher.UIThread.Post(() => FileName = files[0].Path.AbsolutePath);
+        }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using ReactiveUI;
+using System;
 using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
-using Newtonsoft.Json;
-using ReactiveUI;
 using TransactionQL.DesktopApp.ViewModels;
 
 namespace TransactionQL.DesktopApp.Application;
@@ -25,22 +25,33 @@ public class JsonSuspensionDriver : ISuspensionDriver
     public IObservable<Unit> InvalidateState()
     {
         if (File.Exists(_file))
+        {
             File.Delete(_file);
+        }
+
         return Observable.Return(Unit.Default);
     }
 
     public IObservable<object> LoadState()
     {
-        if (!File.Exists(_file)) return Observable.Throw<object>(new Exception("Invalid File"));
+        if (!File.Exists(_file))
+        {
+            return Observable.Throw<object>(new Exception("Invalid File"));
+        }
 
-        var lines = File.ReadAllText(_file);
-        var state = JsonConvert.DeserializeObject<object>(lines, _settings);
+        string lines = File.ReadAllText(_file);
+        object? state = null;
+        try
+        {
+            state = JsonConvert.DeserializeObject<object>(lines, _settings);
+        }
+        catch { } // TODO log? Show warning?
         return Observable.Return(state ?? new MainWindowViewModel());
     }
 
     public IObservable<Unit> SaveState(object state)
     {
-        var lines = JsonConvert.SerializeObject(state, _settings);
+        string lines = JsonConvert.SerializeObject(state, _settings);
         File.WriteAllText(_file, lines);
         return Observable.Return(Unit.Default);
     }

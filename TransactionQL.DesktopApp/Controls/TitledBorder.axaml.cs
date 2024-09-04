@@ -12,8 +12,8 @@ public class TitledBorder : ContentControl
 
     public string? Title
     {
-        get { return GetValue(TitleProperty); }
-        set { SetValue(TitleProperty, value); }
+        get => GetValue(TitleProperty);
+        set => SetValue(TitleProperty, value);
     }
 
     public static readonly StyledProperty<HorizontalAlignment> TitleAlignmentProperty =
@@ -21,8 +21,8 @@ public class TitledBorder : ContentControl
 
     public HorizontalAlignment TitleAlignment
     {
-        get { return GetValue(TitleAlignmentProperty); }
-        set { SetValue(TitleAlignmentProperty, value); }
+        get => GetValue(TitleAlignmentProperty);
+        set => SetValue(TitleAlignmentProperty, value);
     }
 
     public static readonly StyledProperty<IBrush> FocusBorderBrushProperty =
@@ -30,7 +30,7 @@ public class TitledBorder : ContentControl
 
     public IBrush FocusBorderBrush
     {
-        get { return GetValue(FocusBorderBrushProperty); }
-        set { SetValue(FocusBorderBrushProperty, value); }
+        get => GetValue(FocusBorderBrushProperty);
+        set => SetValue(FocusBorderBrushProperty, value);
     }
 }

@@ -1,8 +1,9 @@
 ﻿using Avalonia;
 using Avalonia.ReactiveUI;
-using System;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
+using Projektanker.Icons.Avalonia.MaterialDesign;
+using System;
 
 namespace TransactionQL.DesktopApp;
 
@@ -14,14 +15,25 @@ internal static class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        BuildAvaloniaApp()
-            .StartWithClassicDesktopLifetime(args);
+        try
+        {
+            _ = BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args);
+        }
+        catch (Exception ex)
+        {
+            // TODO: logging
+            throw;
+        }
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
     {
-        IconProvider.Current.Register<FontAwesomeIconProvider>();
+        _ = IconProvider.Current
+            .Register<FontAwesomeIconProvider>()
+            .Register<MaterialDesignIconProvider>();
+
         return AppBuilder.Configure<App>()
             .UsePlatformDetect()
             .LogToTrace()

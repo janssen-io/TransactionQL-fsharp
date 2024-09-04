@@ -9,17 +9,19 @@ public partial class AboutWindow : Window
     public AboutWindow()
     {
         InitializeComponent();
-        this.KeyDown += HandleKeyDown;
+        KeyDown += HandleKeyDown;
     }
 
     public void Close(object? sender, RoutedEventArgs ea)
     {
-        this.Close();
+        Close();
     }
 
     private void HandleKeyDown(object? sender, KeyEventArgs e)
     {
         if (e.Key == Key.Escape)
-            this.Close();
+        {
+            Close();
+        }
     }
 }

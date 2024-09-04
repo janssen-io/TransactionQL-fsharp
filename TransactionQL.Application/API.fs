@@ -12,7 +12,6 @@ module API =
     open TransactionQL.Parser
     open TransactionQL.Parser.AST
     open TransactionQL.Parser.QLInterpreter
-    open TransactionQL.Parser.Interpretation
     open TransactionQL.Shared.Types
 
     let parseFilters filterContents =
