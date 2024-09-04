@@ -5,6 +5,7 @@ TransactionQL.v3.ncrunchsolution
 TransactionQL.lutconfig
 todo
 copy.sh
+setup/*.exe
 
 # User-specific files
 *.suo
