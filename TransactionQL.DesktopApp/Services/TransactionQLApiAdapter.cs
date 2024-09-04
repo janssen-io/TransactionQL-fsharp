@@ -1,7 +1,6 @@
 ﻿using Microsoft.FSharp.Collections;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using TransactionQL.Application;
 using TransactionQL.Parser;
 using static TransactionQL.Input.Converters;
@@ -12,6 +11,9 @@ namespace TransactionQL.DesktopApp.Services;
 
 using Row = FSharpMap<string, string>;
 
+/// <summary>
+/// Interface to make components that interact with <see cref="TransactionQL.Application" /> testable.
+/// </summary>
 public interface ITransactionQLApi
 {
     IEnumerable<Either<QLInterpreter.Entry, Row>> Filter(IConverter reader, Query[] queries, IEnumerable<Row> rows);

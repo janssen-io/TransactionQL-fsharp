@@ -11,10 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		azure-pipelines.yml = azure-pipelines.yml
-		.github\workflows\dotnet-core.yml = .github\workflows\dotnet-core.yml
 		publish.ps1 = publish.ps1
 		publish.sh = publish.sh
+		.github\workflows\publish.yml = .github\workflows\publish.yml
 		readme.md = readme.md
+		.github\workflows\test.yml = .github\workflows\test.yml
 		tql.vim = tql.vim
 	EndProjectSection
 EndProject
@@ -38,7 +39,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Shared", "Tra
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Application", "TransactionQL.Application\TransactionQL.Application.fsproj", "{D5623022-6630-4437-8C17-9FBF0A55C46C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionQL.DesktopApp.Tests", "TransactionQL.DesktopApp.Tests\TransactionQL.DesktopApp.Tests.csproj", "{75A0C712-1663-49A2-9A06-7B010B042873}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionQL.DesktopApp.Tests", "TransactionQL.DesktopApp.Tests\TransactionQL.DesktopApp.Tests.csproj", "{75A0C712-1663-49A2-9A06-7B010B042873}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

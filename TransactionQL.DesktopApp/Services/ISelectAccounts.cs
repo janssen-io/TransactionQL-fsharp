@@ -15,14 +15,16 @@ namespace TransactionQL.DesktopApp.Services;
 
 public interface ISelectAccounts : IMatchAccounts
 {
+    /// <summary>
+    /// Accounts to be used for auto-completion in input fields.
+    /// </summary>
     ObservableCollection<string> AvailableAccounts { get; }
 }
 
-public interface IMatchAccounts
-{
-    bool IsMatch(string? searchString, string item);
-}
-
+/// <summary>
+/// Updates its collection of accounts when the specified file is updated.
+/// Instantiated using <see cref="FilewatchingAccountSelector.Monitor(string, Action{Action}?, IMatchAccounts?)"/>.
+/// </summary>
 public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
 {
     private string _path;
@@ -161,10 +163,12 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
     }
 }
 
-public class AccountsChangedEventArgs : EventArgs
-{
-}
+public class AccountsChangedEventArgs : EventArgs { }
 
+/// <summary>
+/// Account selector without matcher or accounts. Primarily used as a fallback for when
+/// an actual account selector cannot be injected and prevent errors from being thrown.
+/// </summary>
 public class EmptySelector : ISelectAccounts
 {
     public static readonly EmptySelector Instance = new();
@@ -173,31 +177,4 @@ public class EmptySelector : ISelectAccounts
     public bool IsMatch(string? searchString, string item) => true;
 
     private EmptySelector() { }
-}
-
-public class FuzzyMatcher : IMatchAccounts
-{
-    public bool IsMatch(string? searchString, string item)
-    {
-        if (searchString is null)
-        {
-            return true;
-        }
-
-        searchString = searchString.ToLowerInvariant();
-        item = item.ToLowerInvariant();
-
-        int searchIndex = 0;
-        for (int itemIndex = 0; itemIndex < item.Length && searchIndex < searchString.Length; itemIndex++)
-        {
-            // Try to find the next letter of the search string in the remainder of the item
-            if (searchString[searchIndex] == item[itemIndex])
-            {
-                searchIndex++;
-            }
-        }
-
-        // if all the letters of the searchString were found somewhere in the item, then it's a valid item.
-        return searchIndex == searchString.Length;
-    }
 }

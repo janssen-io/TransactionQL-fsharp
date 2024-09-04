@@ -26,9 +26,5 @@ namespace TransactionQL.DesktopApp.Controls
         public ControlInitializationException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
-
-        protected ControlInitializationException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
     }
 }

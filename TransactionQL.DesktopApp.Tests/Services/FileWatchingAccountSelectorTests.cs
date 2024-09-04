@@ -9,7 +9,7 @@ namespace TransactionQL.DesktopApp.Tests.Services;
 [SuppressMessage("Major Code Smell", "S3881:\"IDisposable\" should be implemented correctly", Justification = "File delete has exists-check as safeguard")]
 public class FileWatchingAccountSelectorTests : IDisposable
 {
-    private string _fileName;
+    private string? _fileName;
     private readonly ITestOutputHelper _output;
 
     public FileWatchingAccountSelectorTests(ITestOutputHelper output)
@@ -21,7 +21,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
     public async Task ItContains_InitialAccounts()
     {
         _fileName = CreateTempFile();
-        FillAccountsFile();
+        FillAccountsFile(_fileName);
 
         _output.WriteLine(_fileName);
 
@@ -40,19 +40,14 @@ public class FileWatchingAccountSelectorTests : IDisposable
     public async Task ItMonitors_Adds()
     {
         _fileName = CreateTempFile();
-        FillAccountsFile();
+        FillAccountsFile(_fileName);
 
         _output.WriteLine(_fileName);
 
         // Arrange
         var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
         ManualResetEvent waitForUpdate = new(false);
-        watcher.AccountsChanged += (sender, args) =>
-        {
-            // Ensure we only signal the MRE when the last expected
-            // account is added (AddRange adds them one by one)
-            waitForUpdate.Set();
-        };
+        watcher.AccountsChanged += (sender, args) => waitForUpdate.Set();
 
         // Act
         using StreamWriter write = new(new FileStream(_fileName, FileMode.Append), Encoding.Default, 4 * 1024 * 1024);
@@ -76,17 +71,14 @@ public class FileWatchingAccountSelectorTests : IDisposable
     public async Task ItMonitors_Deletes()
     {
         _fileName = CreateTempFile();
-        FillAccountsFile();
+        FillAccountsFile(_fileName);
 
         _output.WriteLine(_fileName);
 
         // Arrange
         var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
         ManualResetEvent waitForUpdate = new(false);
-        watcher.AccountsChanged += (sender, args) =>
-        {
-            waitForUpdate.Set();
-        };
+        watcher.AccountsChanged += (sender, args) => waitForUpdate.Set();
 
         // Act
         string[] contents;
@@ -117,7 +109,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
     public async Task ItMonitors_Replace()
     {
         _fileName = CreateTempFile();
-        FillAccountsFile();
+        FillAccountsFile(_fileName);
 
         _output.WriteLine(_fileName);
 
@@ -133,10 +125,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
         var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
 
         ManualResetEvent waitForUpdate = new(false);
-        watcher.AccountsChanged += (sender, args) =>
-        {
-            waitForUpdate.Set();
-        };
+        watcher.AccountsChanged += (sender, args) => waitForUpdate.Set();
 
         // Act
         File.Copy(newFile, _fileName, overwrite: true);
@@ -156,7 +145,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
     public async Task ItDebouncesFilesystemEvents()
     {
         _fileName = CreateTempFile();
-        FillAccountsFile();
+        FillAccountsFile(_fileName);
 
         _output.WriteLine(_fileName);
 
@@ -197,9 +186,9 @@ public class FileWatchingAccountSelectorTests : IDisposable
         return fileName;
     }
 
-    private void FillAccountsFile()
+    private static void FillAccountsFile(string accountsFile)
     {
-        string contents = """
+        const string contents = """
             commodity EUR
             commodity USD
 
@@ -214,7 +203,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
             tag Event
             """;
 
-        using StreamWriter write = new(new FileStream(_fileName, FileMode.OpenOrCreate, FileAccess.Write));
+        using StreamWriter write = new(new FileStream(accountsFile, FileMode.OpenOrCreate, FileAccess.Write));
         write.Write(contents);
         write.Flush();
         write.Close();

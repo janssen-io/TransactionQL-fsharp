@@ -19,17 +19,6 @@ public interface ILoadData
     bool TryLoadData(SelectedData data, out IEnumerable<PaymentDetailsViewModel> payments, out string error);
 }
 
-public interface IStreamFiles
-{
-    Stream Open(string path);
-}
-
-public class FilesystemStreamer : IStreamFiles
-{
-    public static readonly FilesystemStreamer Instance = new();
-    public Stream Open(string path) => new FileStream(path, FileMode.Open);
-}
-
 public class DataLoader : ILoadData
 {
     private static readonly Tuple<AST.Commodity, double> _defaultAmount = new(AST.Commodity.NewCommodity(""), 0);

@@ -5,6 +5,14 @@ using System.Globalization;
 
 namespace TransactionQL.DesktopApp.Controls;
 
+/// <summary>
+/// Converts a list of items to a boolean.
+/// <list type="bullet">
+/// <item>True, if the collection is empty;</item>
+/// <item>True, all items are equal (==);</item>
+/// <item>False, otherwise.</item>
+/// </list>
+/// </summary>
 public class EqualityConverter : IMultiValueConverter
 {
     public object? Convert(IList<object?> values, Type targetType, object? parameter, CultureInfo culture)

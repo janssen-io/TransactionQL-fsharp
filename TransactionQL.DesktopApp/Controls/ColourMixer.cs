@@ -7,6 +7,12 @@ namespace TransactionQL.DesktopApp.Controls
 {
     public static class ColourMixer
     {
+        /// <summary>
+        /// Combines the colour channels (RGB) of the first <see cref="Color"/> with the alpha channel (A) of the second.
+        /// <para>
+        /// For example MixOpacity(#FF8765, #33000000) => #33FF8765
+        /// </para>
+        /// </summary>
         public static FuncMultiValueConverter<Color?, Color> MixOpacity { get; } =
             new FuncMultiValueConverter<Color?, Color>(cs =>
             {
