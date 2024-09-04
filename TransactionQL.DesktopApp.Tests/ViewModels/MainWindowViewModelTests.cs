@@ -41,7 +41,7 @@ public class MainWindowViewModelTests
                 Assets                                      €  110.00
                 Expenses:B                                  € -110.00
 
-            """;
+            """.ReplaceLineEndings(Environment.NewLine);
 
         var vm = new MainWindowViewModel() { BankTransactions = new(transactions) };
         vm.Saved += (sender, outputToSave) =>

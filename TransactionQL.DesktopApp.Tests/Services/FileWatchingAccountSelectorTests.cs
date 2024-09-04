@@ -90,7 +90,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
         using StreamWriter write = new(new FileStream(_fileName, FileMode.Truncate, FileAccess.Write), Encoding.Default, 4 * 1024 * 1024);
         foreach (var line in contents)
         {
-            if (line != "account Expenses:Recreation")
+            if (!line.StartsWith("account Expenses:Recreation"))
                 write.WriteLine(line);
         }
         write.Flush();
