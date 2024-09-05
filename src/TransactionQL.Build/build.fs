@@ -162,7 +162,7 @@ let initTargets () =
     Target.create "Complete" (fun _ -> ( Trace.log "✅ Job's done!" ))
 
     "Clean" <=> "Restore"
-      =?> ("Test", Environment.hasEnvironVar "SkipTests")
+      =?> ("Test", Environment.hasEnvironVar "SkipTests" |> not)
       ==> "Publish"
       ==> "Stage Artifacts"
       =?> ("Setup", OperatingSystem.IsWindows ()) <=> "Archive" <=> "Vim"
