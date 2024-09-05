@@ -2,13 +2,11 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "TransactionQL"
-#include "version.iss"
+#define MyAppVersion "{version}" ; replaced by FAKE - Build
+#define Source "{sourceDir}"     ; replaced by FAKE - Build
 #define MyAppPublisher "Stan Ionițoiu-Janssen"
 #define MyAppURL "https://github.com/janssen-io/TransactionQL-fsharp"
 #define MyAppExeName "TransactionQL.DesktopApp.exe"
-#define MyAppAssocName MyAppName + " Filters"
-#define MyAppAssocExt ".tql"
-#define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -37,7 +35,7 @@ DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 OutputDir=C:\Users\mail\Data\Software\TransactionQL-fsharp\Setup
 OutputBaseFilename=tql_setup
-SetupIconFile=C:\Users\mail\Data\Software\TransactionQL-fsharp\TransactionQL.DesktopApp\Assets\lion.ico
+SetupIconFile=C:\Users\mail\Data\Software\TransactionQL-fsharp\src\TransactionQL.DesktopApp\Assets\lion.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -62,19 +60,12 @@ Name: "Plugins\Bunq";  Description: "Bunq";                                   Ty
 Name: "Plugins\ING";   Description: "ING";                                    Types: full cli-only custom; Flags: checkablealone
 
 [Files]
-Source: "C:\Users\mail\Data\Software\TransactionQL-fsharp\TransactionQL.DesktopApp\bin\Release\net8.0\win-x64\publish\*"; DestDir: "{app}\app";   Components: GUI; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Users\mail\Data\Software\TransactionQL-fsharp\TransactionQL.Console\bin\Release\net8.0\win-x64\publish\TransactionQL.Console.exe";    Components: CLI;          DestDir: "{app}";         DestName: "tql.exe"; Flags: ignoreversion
-Source: "C:\Users\mail\Data\Software\TransactionQL-fsharp\TransactionQL.Plugins.ASN\bin\Release\net8.0\publish\TransactionQL.Plugins.ASN.dll";    Components: Plugins\ASN;  DestDir: "{app}\plugins"; DestName: "asn.dll"; Flags: ignoreversion
-Source: "C:\Users\mail\Data\Software\TransactionQL-fsharp\TransactionQL.Plugins.Bunq\bin\Release\net8.0\publish\TransactionQL.Plugins.Bunq.dll";  Components: Plugins\Bunq; DestDir: "{app}\plugins"; DestName: "bunq.dll"; Flags: ignoreversion
-Source: "C:\Users\mail\Data\Software\TransactionQL-fsharp\TransactionQL.Plugins.ING\bin\Release\net8.0\publish\TransactionQL.Plugins.ING.dll";    Components: Plugins\ING;  DestDir: "{app}\plugins"; DestName: "ing.dll"; Flags: ignoreversion
+Source: "{#Source}\desktop\*";          Components: GUI;          DestDir: "{app}\app";                           Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#Source}\tql.exe";            Components: CLI;          DestDir: "{app}";         DestName: "tql.exe";  Flags: ignoreversion
+Source: "{#Source}\plugins\asn.dll";    Components: Plugins\ASN;  DestDir: "{app}\plugins"; DestName: "asn.dll";  Flags: ignoreversion
+Source: "{#Source}\plugins\bunq.dll";   Components: Plugins\Bunq; DestDir: "{app}\plugins"; DestName: "bunq.dll"; Flags: ignoreversion
+Source: "{#Source}\plugins\ing.dll";    Components: Plugins\ING;  DestDir: "{app}\plugins"; DestName: "ing.dll";  Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-
-[Registry]
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}"; ValueType: string; ValueName: ""; ValueData: "{#MyAppAssocName}"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#MyAppExeName},0"
-Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""
-Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".myp"; ValueData: ""
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

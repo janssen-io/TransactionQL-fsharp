@@ -4,31 +4,46 @@ open Fake.IO
 open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
+open Fake.Installer
+open System.Runtime.InteropServices
+open System
 
+// Directory Definitions
 let rootDirectory =
     __SOURCE_DIRECTORY__ </> ".." </> ".."
+    |> Path.getFullName
 
 let srcDirectory =
     rootDirectory </> "src"
 
-let plugins =
-    !! (srcDirectory </> "TransactionQL.Plugins.*/*proj")
+let plugins = !! (srcDirectory </> "TransactionQL.Plugins.*/*proj")
+let cli = srcDirectory </> "TransactionQL.Console/TransactionQL.Console.fsproj"
+let gui = srcDirectory </> "TransactionQL.DesktopApp/TransactionQL.DesktopApp.csproj"
 
-let apps =
-    !! (srcDirectory </> "TransactionQL.Console/*proj")
-    ++ (srcDirectory </> "TransactionQL.DesktopApp/*proj")
+let ciDirectory =
+    rootDirectory </> "ci"
+
+let buildDirectory =
+    ciDirectory </> "build"
+
+let stagingDirectory =
+    ciDirectory </> "staging"
+
+let distDirectory =
+    ciDirectory </> "dist"
 
 let sln =
     rootDirectory </> "TransactionQL.sln"
 
-let configuration () =
+// Build configuration helpers
+let getConfiguration () =
     match Environment.environVarOrDefault "CONFIGURATION" "Release" with
     | "Debug" -> DotNet.BuildConfiguration.Debug
     | "Release" -> DotNet.BuildConfiguration.Release
     | config -> DotNet.BuildConfiguration.Custom config
 
-let version orDefault =
-    Environment.environVarOrDefault "VERSION" orDefault 
+let getVersion () =
+    Environment.environVarOrDefault "VERSION" "0.0.0" 
 
 /// Add a DotNet Build parameter to the list of custom parameters (-p).
 let addParam key value param =
@@ -37,76 +52,135 @@ let addParam key value param =
     | None -> Some newParam
     | Some prevParams -> Some $"{prevParams} {newParam}"
 
-let withVersion ( v : string) (c : DotNet.PublishOptions) =
-    { c with Common = { c.Common with CustomParams = addParam "Version" v c.Common.CustomParams } }
+let withConfiguration version outputDir (c : DotNet.PublishOptions) =
+    { c with 
+        Common = { c.Common with CustomParams = addParam "Version" version c.Common.CustomParams }
+        OutputPath = Some outputDir
+    }
 
 let appConfig (c : DotNet.PublishOptions) =
     { c with 
-        Configuration = configuration ()
+        Configuration = getConfiguration ()
         Common = { c.Common with CustomParams = addParam "PublishSingleFile" "true" c.Common.CustomParams }
         SelfContained = Some false
     }
 
-let initTargets () =
+/// FAKE Target Definitions
+let initTargets =
     Target.create "Clean" (fun _ ->
-      Trace.log " --- Cleaning stuff --- "
-      let dirs = 
-        !! (srcDirectory </> "**" </> "bin") 
-        ++ (srcDirectory </> "**" </> "obj")
-        -- (srcDirectory </> "TransactionQL.Build" </> "bin")
-        -- (srcDirectory </> "TransactionQL.Build" </> "obj")
+      Trace.log " --- Cleaning previous builds --- "
+      let dirs = !! (ciDirectory) 
 
       dirs 
       |> Shell.cleanDirs
     )
 
+    Target.create "Restore" (fun _ ->
+      Trace.log " --- Restoring packages --- "
+      DotNet.restore (fun c -> c) sln
+    )
+
     Target.create "Test" (fun _ ->
       Trace.log " --- Testing the app --- "
       DotNet.test
-          (fun c -> { c with Configuration = configuration () })
-          sln
-    )
-
-    Target.create "Build" (fun _ ->
-      Trace.log " --- Building the app --- "
-      DotNet.build
-          (fun c -> { c with Configuration = configuration () })
+          (fun c -> { c with Configuration = getConfiguration (); NoRestore = true })
           sln
     )
 
     Target.create "Publish" (fun _ ->
       Trace.log " --- Publishing the app --- "
-      let v = version "1.0.0"
+      Directory.ensure buildDirectory
+      let version = getVersion ()
 
       plugins |> (Seq.iter (fun (s : string) ->
-        DotNet.publish (fun c -> c |> withVersion v) s))
+        DotNet.publish (fun c -> c |> withConfiguration version (buildDirectory </> "plugins")) s))
 
-      apps |> (Seq.iter (fun (s : string) -> 
-        DotNet.publish (fun c -> appConfig c |> withVersion v) s) )
+      cli 
+      |> DotNet.publish (fun c -> appConfig c |> withConfiguration version (buildDirectory </> "console"))
+
+      gui 
+      |> DotNet.publish (fun c -> appConfig c |> withConfiguration version (buildDirectory </> "desktop"))
     )
 
-    Target.create "Deploy" (fun _ ->
-      Trace.log " --- Deploying app --- "
+    Target.create "Stage Artifacts" (fun _ ->
+        Directory.ensure stagingDirectory
+        Directory.ensure (stagingDirectory </> "plugins")
+        Directory.ensure (stagingDirectory </> "desktop")
+
+        let plugins = ["ASN"; "Bunq"; "ING"]
+        let src = plugins |> List.map (fun p -> buildDirectory </> "plugins" </> $"TransactionQL.Plugins.{p}.dll")
+        let dst = plugins |> List.map (fun p -> stagingDirectory </> "plugins" </> $"{String.toLower p}.dll")
+
+        List.zip src dst
+        |> List.iter (fun (s, d) -> Shell.copyFile d s)
+
+        Shell.copyDir  (stagingDirectory </> "desktop") (buildDirectory </> "desktop") (fun f -> f.EndsWith(".dll") || f.EndsWith(".exe"))
+        Shell.copyFile (stagingDirectory </> "tql.exe") (buildDirectory </> "console" </> "TransactionQL.Console.exe")
     )
 
-    "Clean"
-      //=?> ("Test", Environment.hasEnvironVar "VERSION")
-      ==> "Test"
+    Target.create "Dist" (fun _ ->
+      Directory.ensure distDirectory
+    )
+
+    Target.create "Setup" (fun _ ->
+      let setup = __SOURCE_DIRECTORY__ </> "tql.iss"
+
+      // Keep original for when building locally
+      Shell.copyFile $"{setup}.bk" setup
+      Shell.replaceInFiles 
+        [
+          ("{version}", getVersion ())
+          ("{sourceDir}", stagingDirectory)
+        ] [__SOURCE_DIRECTORY__ </> "tql.iss"]
+
+      try
+        InnoSetup.build(fun p ->
+          { p with
+              OutputFolder = distDirectory
+              ScriptFile = __SOURCE_DIRECTORY__ </> "tql.iss"
+          }
+        )
+      finally
+        Shell.moveFile setup $"{setup}.bk"
+    )
+
+    Target.create "Archive" (fun _ ->
+      Trace.log " --- Creating app archive --- "
+      let os = if OperatingSystem.IsWindows () then "windows" else "linux"
+      let filename = distDirectory </> $"tql-{os}-x64.zip"
+
+      (!! stagingDirectory)
+      |> Zip.zip stagingDirectory filename 
+    )
+
+    Target.create "Vim" (fun _ ->
+      Trace.log " --- Copy Vim Highlighting --- "
+      Shell.copyFile distDirectory (__SOURCE_DIRECTORY__ </> "tql.vim")
+    )
+
+    /// Nothing to do, just to have a single node at the end of the dependency graph
+    Target.create "Complete" (fun _ -> Trace.log "✅ Job's done!" )
+
+    "Clean" <=> "Restore"
+      //=?> ("Test", Environment.environVarAsBool "SkipTests")
       ==> "Publish"
-      //==> "Deploy"
-
+      ==> "Stage Artifacts"
+      ==> "Dist"
+      =?> ("Setup", OperatingSystem.IsWindows ()) <=> "Archive" <=> "Vim"
+      ==> "Complete"
 
 [<EntryPoint>]
 let main args =
-    // *** Start Build ***
     args
     |> Array.toList
     |> Context.FakeExecutionContext.Create false "build.fsx"
     |> Context.RuntimeContext.Fake
     |> Context.setExecutionContext
 
-    initTargets ()
+    Target.initEnvironment()
+
+    initTargets 
     |> ignore
 
-    Target.runOrDefault "Publish"
+    Target.runOrDefault "Complete"
     0

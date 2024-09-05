@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="tql.vim" />
+    <None Include="tql.iss" />
     <Compile Include="build.fs" />
   </ItemGroup>
 
@@ -13,6 +15,7 @@
     <PackageReference Include="Fake.Core.Target" Version="6.1.1" />
     <PackageReference Include="Fake.DotNet.Cli" Version="6.1.1" />
     <PackageReference Include="Fake.Installer.InnoSetup" Version="6.1.1" />
+    <PackageReference Include="Fake.IO.Zip" Version="6.1.1" />
   </ItemGroup>
 
   <ItemGroup>

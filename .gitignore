@@ -6,6 +6,7 @@ TransactionQL.lutconfig
 todo
 copy.sh
 setup/*.exe
+ci/
 
 # User-specific files
 *.suo
