@@ -5,7 +5,6 @@ open Fake.IO.FileSystemOperators
 open Fake.IO.Globbing.Operators
 open Fake.Core.TargetOperators
 open Fake.Installer
-open System.Runtime.InteropServices
 open System
 
 // Directory Definitions
@@ -66,7 +65,7 @@ let appConfig (c : DotNet.PublishOptions) =
     }
 
 /// FAKE Target Definitions
-let initTargets =
+let initTargets () =
     Target.create "Clean" (fun _ ->
       Trace.log " --- Cleaning previous builds --- "
       let dirs = !! (ciDirectory) 
@@ -124,9 +123,10 @@ let initTargets =
 
     Target.create "Setup" (fun _ ->
       let setup = __SOURCE_DIRECTORY__ </> "tql.iss"
+      let backup = $"{setup}.bk"
 
       // Keep original for when building locally
-      Shell.copyFile $"{setup}.bk" setup
+      Shell.copyFile backup setup
       Shell.replaceInFiles 
         [
           ("{version}", getVersion ())
@@ -141,7 +141,7 @@ let initTargets =
           }
         )
       finally
-        Shell.moveFile setup $"{setup}.bk"
+        Shell.mv backup setup
     )
 
     Target.create "Archive" (fun _ ->
@@ -158,14 +158,13 @@ let initTargets =
       Shell.copyFile distDirectory (__SOURCE_DIRECTORY__ </> "tql.vim")
     )
 
-    /// Nothing to do, just to have a single node at the end of the dependency graph
-    Target.create "Complete" (fun _ -> Trace.log "✅ Job's done!" )
+    // Nothing to do, just to have a single node at the end of the dependency graph
+    Target.create "Complete" (fun _ -> ( Trace.log "✅ Job's done!" ))
 
     "Clean" <=> "Restore"
-      //=?> ("Test", Environment.environVarAsBool "SkipTests")
+      =?> ("Test", Environment.hasEnvironVar "SkipTests")
       ==> "Publish"
       ==> "Stage Artifacts"
-      ==> "Dist"
       =?> ("Setup", OperatingSystem.IsWindows ()) <=> "Archive" <=> "Vim"
       ==> "Complete"
 
@@ -179,7 +178,7 @@ let main args =
 
     Target.initEnvironment()
 
-    initTargets 
+    initTargets ()
     |> ignore
 
     Target.runOrDefault "Complete"
