@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="build.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fake.Core.Target" Version="6.1.1" />
+    <PackageReference Include="Fake.DotNet.Cli" Version="6.1.1" />
+    <PackageReference Include="Fake.Installer.InnoSetup" Version="6.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="8.0.400" />
+  </ItemGroup>
+
+</Project>
