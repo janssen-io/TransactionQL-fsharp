@@ -89,13 +89,24 @@ let initTargets () =
     Target.create "Publish" (fun _ ->
       Trace.log " --- Publishing the app --- "
       Directory.ensure buildDirectory
+    )
+
+    Target.create "Publish Plugins" (fun _ ->
       let version = getVersion ()
 
       plugins |> (Seq.iter (fun (s : string) ->
         DotNet.publish (fun c -> c |> withConfiguration version (buildDirectory </> "plugins")) s))
+    )
+
+    Target.create "Publish CLI" (fun _ ->
+      let version = getVersion ()
 
       cli 
       |> DotNet.publish (fun c -> appConfig c |> withConfiguration version (buildDirectory </> "console"))
+    )
+
+    Target.create "Publish GUI" (fun _ ->
+      let version = getVersion ()
 
       gui 
       |> DotNet.publish (fun c -> appConfig c |> withConfiguration version (buildDirectory </> "desktop"))
@@ -164,7 +175,8 @@ let initTargets () =
     "Clean" <=> "Restore"
       =?> ("Test", Environment.hasEnvironVar "SkipTests" |> not)
       ==> "Publish"
-      ==> "Stage Artifacts"
+      ==> "Publish Plugins" <=> "Publish CLI" <=> "Publish GUI"
+      ==> "Stage Artifacts" <=> "Dist"
       =?> ("Setup", OperatingSystem.IsWindows ()) <=> "Archive" <=> "Vim"
       ==> "Complete"
 
