@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "TransactionQL"
-#define MyAppVersion "2.2.4"
+#include "version.iss"
 #define MyAppPublisher "Stan Ionițoiu-Janssen"
 #define MyAppURL "https://github.com/janssen-io/TransactionQL-fsharp"
 #define MyAppExeName "TransactionQL.DesktopApp.exe"
@@ -54,7 +54,7 @@ Name: "cli-only"; Description: "Just the CLI"
 Name: "Custom";   Description: "Custom installation"; Flags: iscustom
 
 [Components]
-Name: "CLI";           Description: "Command Line Interface (tql.exe)";       Types: full cli-only custom; Flags: fixed
+Name: "CLI";           Description: "Command Line Interface (tql.exe)";       Types: full cli-only custom;
 Name: "GUI";           Description: "Graphical User Interface (Ledger Leo)";  Types: full custom;
 Name: "Plugins";       Description: "Transaction Parsers";                    Types: full custom;
 Name: "Plugins\ASN";   Description: "ASN";                                    Types: full cli-only custom; Flags: checkablealone
