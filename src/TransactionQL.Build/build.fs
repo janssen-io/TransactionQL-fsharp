@@ -183,11 +183,14 @@ let initTargets () =
     // Nothing to do, just to have a single node at the end of the dependency graph
     Target.create "Complete" (fun _ -> ( Trace.log "✅ Job's done!" ))
 
+    Target.create "StartDist" (fun _ -> ( Trace.log " --- Preparing files for distribution --- " ))
+
     "Clean" <=> "Restore"
       =?> ("Test", Environment.hasEnvironVar "SkipTests" |> not)
-      ==> "Publish" <=> "Dist"
+      ==> "Publish" ==> "Dist"
       ==> "Publish Plugins" <=> "Publish CLI" <=> "Publish GUI"
       ==> "Stage Artifacts"
+      ==> "StartDist"
       =?> ("Setup", OperatingSystem.IsWindows ()) <=> "Archive" <=> "Vim"
       ==> "Complete"
 
