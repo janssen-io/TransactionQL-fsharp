@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TransactionQL.Build": {
+      "commandName": "Project",
+      "commandLineArgs": "-e parallel-jobs=4"
+    }
+  }
+}

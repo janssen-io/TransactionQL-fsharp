@@ -3,44 +3,44 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Parser", "TransactionQL.Parser\TransactionQL.Parser.fsproj", "{5E741343-6C90-480E-BA15-D7267A9482D4}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Parser", "src\TransactionQL.Parser\TransactionQL.Parser.fsproj", "{5E741343-6C90-480E-BA15-D7267A9482D4}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Parser.Tests", "TransactionQL.Parser.Tests\TransactionQL.Parser.Tests.fsproj", "{67D7EF7D-6D2E-4B04-9860-C3D7A7A3F970}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Parser.Tests", "src\TransactionQL.Parser.Tests\TransactionQL.Parser.Tests.fsproj", "{67D7EF7D-6D2E-4B04-9860-C3D7A7A3F970}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{722E35DF-E970-48AF-A7BA-5CF86EAF9670}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
-		azure-pipelines.yml = azure-pipelines.yml
-		publish.ps1 = publish.ps1
-		publish.sh = publish.sh
+		CONTRIBUTE.md = CONTRIBUTE.md
+		LICENSE.md = LICENSE.md
 		.github\workflows\publish.yml = .github\workflows\publish.yml
-		readme.md = readme.md
+		README.md = README.md
 		.github\workflows\test.yml = .github\workflows\test.yml
-		tql.vim = tql.vim
 	EndProjectSection
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Input", "TransactionQL.Input\TransactionQL.Input.fsproj", "{89E761CA-7D31-48BE-8B4D-1AC3A268A358}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Input", "src\TransactionQL.Input\TransactionQL.Input.fsproj", "{89E761CA-7D31-48BE-8B4D-1AC3A268A358}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Console", "TransactionQL.Console\TransactionQL.Console.fsproj", "{4A1E69DA-C6CC-48B8-88F3-B62B2AE34485}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Console", "src\TransactionQL.Console\TransactionQL.Console.fsproj", "{4A1E69DA-C6CC-48B8-88F3-B62B2AE34485}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Console.Tests", "TransactionQL.Console.Tests\TransactionQL.Console.Tests.fsproj", "{F43A5F1B-1EB4-45B7-9C79-92F3DD31EEE1}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Console.Tests", "src\TransactionQL.Console.Tests\TransactionQL.Console.Tests.fsproj", "{F43A5F1B-1EB4-45B7-9C79-92F3DD31EEE1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{B645AC52-7FA5-47ED-8162-E39B705813C6}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Plugins.Bunq", "TransactionQL.Plugins.Bunq\TransactionQL.Plugins.Bunq.fsproj", "{EA0A782C-D5BF-4DA6-9710-25FDE5123B79}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Plugins.Bunq", "src\TransactionQL.Plugins.Bunq\TransactionQL.Plugins.Bunq.fsproj", "{EA0A782C-D5BF-4DA6-9710-25FDE5123B79}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Plugins.ING", "TransactionQL.Plugins.ING\TransactionQL.Plugins.ING.fsproj", "{32027311-05E4-465B-9F5A-F5C59768B99A}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Plugins.ING", "src\TransactionQL.Plugins.ING\TransactionQL.Plugins.ING.fsproj", "{32027311-05E4-465B-9F5A-F5C59768B99A}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Plugins.ASN", "TransactionQL.Plugins.ASN\TransactionQL.Plugins.ASN.fsproj", "{F6F92978-83BF-4DB9-B513-2B8ABD22AC5F}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Plugins.ASN", "src\TransactionQL.Plugins.ASN\TransactionQL.Plugins.ASN.fsproj", "{F6F92978-83BF-4DB9-B513-2B8ABD22AC5F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionQL.DesktopApp", "TransactionQL.DesktopApp\TransactionQL.DesktopApp.csproj", "{54E23E7B-6F20-4A52-BACA-C2941ADC631F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionQL.DesktopApp", "src\TransactionQL.DesktopApp\TransactionQL.DesktopApp.csproj", "{54E23E7B-6F20-4A52-BACA-C2941ADC631F}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Shared", "TransactionQL.Shared\TransactionQL.Shared.fsproj", "{F341E003-6D84-443B-B373-83B640892072}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Shared", "src\TransactionQL.Shared\TransactionQL.Shared.fsproj", "{F341E003-6D84-443B-B373-83B640892072}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Application", "TransactionQL.Application\TransactionQL.Application.fsproj", "{D5623022-6630-4437-8C17-9FBF0A55C46C}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Application", "src\TransactionQL.Application\TransactionQL.Application.fsproj", "{D5623022-6630-4437-8C17-9FBF0A55C46C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionQL.DesktopApp.Tests", "TransactionQL.DesktopApp.Tests\TransactionQL.DesktopApp.Tests.csproj", "{75A0C712-1663-49A2-9A06-7B010B042873}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransactionQL.DesktopApp.Tests", "src\TransactionQL.DesktopApp.Tests\TransactionQL.DesktopApp.Tests.csproj", "{75A0C712-1663-49A2-9A06-7B010B042873}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Build", "src\TransactionQL.Build\TransactionQL.Build.fsproj", "{4EE573F5-E881-430C-80AA-A71DEF20161D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,6 +96,10 @@ Global
 		{75A0C712-1663-49A2-9A06-7B010B042873}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75A0C712-1663-49A2-9A06-7B010B042873}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75A0C712-1663-49A2-9A06-7B010B042873}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EE573F5-E881-430C-80AA-A71DEF20161D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EE573F5-E881-430C-80AA-A71DEF20161D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EE573F5-E881-430C-80AA-A71DEF20161D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EE573F5-E881-430C-80AA-A71DEF20161D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -32,5 +32,8 @@ jobs:
         run: dotnet format --verify-no-changes --verbosity diagnostic
 
       - name: Test
-        run: dotnet test
+        run: >
+            dotnet run
+            --project src/TransactionQL.Build/TransactionQL.Build.fsproj
+            -t Test
 
