@@ -144,21 +144,15 @@ let initTargets () =
     )
 
     Target.create "Setup" (fun _ ->
-      let programFiles =
-          Environment.GetFolderPath Environment.SpecialFolder.ProgramFilesX86
-
-      let inno = (programFiles </> "Inno Setup 6" </> "iscc.exe")
-      File.checkExists inno
-
       InnoSetup.build(fun p ->
         { p with
-            ToolPath = inno
             Defines = Map.ofList [
               ("MyAppVersion", getVersion ())
-              ("Source", stagingDirectory)
+              ("Staging", stagingDirectory)
+              ("RepositoryRoot", rootDirectory)
             ]
             OutputFolder = distDirectory
-            ScriptFile = __SOURCE_DIRECTORY__ </> "tql.iss"
+            ScriptFile = srcDirectory </> "TransactionQL.Build" </> "tql.iss"
         }
       )
     )

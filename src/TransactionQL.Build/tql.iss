@@ -31,9 +31,8 @@ ChangesAssociations=yes
 DisableProgramGroupPage=yes
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
-OutputDir=C:\Users\mail\Data\Software\TransactionQL-fsharp\Setup
 OutputBaseFilename=tql_setup
-SetupIconFile=C:\Users\mail\Data\Software\TransactionQL-fsharp\src\TransactionQL.DesktopApp\Assets\lion.ico
+SetupIconFile={#RepositoryRoot}\src\TransactionQL.DesktopApp\Assets\lion.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -58,11 +57,11 @@ Name: "Plugins\Bunq";  Description: "Bunq";                                   Ty
 Name: "Plugins\ING";   Description: "ING";                                    Types: full cli-only custom; Flags: checkablealone
 
 [Files]
-Source: "{#Source}\desktop\*";          Components: GUI;          DestDir: "{app}\app";                           Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#Source}\tql.exe";            Components: CLI;          DestDir: "{app}";         DestName: "tql.exe";  Flags: ignoreversion
-Source: "{#Source}\plugins\asn.dll";    Components: Plugins\ASN;  DestDir: "{app}\plugins"; DestName: "asn.dll";  Flags: ignoreversion
-Source: "{#Source}\plugins\bunq.dll";   Components: Plugins\Bunq; DestDir: "{app}\plugins"; DestName: "bunq.dll"; Flags: ignoreversion
-Source: "{#Source}\plugins\ing.dll";    Components: Plugins\ING;  DestDir: "{app}\plugins"; DestName: "ing.dll";  Flags: ignoreversion
+Source: "{#Staging}\desktop\*";          Components: GUI;          DestDir: "{app}\app";                           Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#Staging}\tql.exe";            Components: CLI;          DestDir: "{app}";         DestName: "tql.exe";  Flags: ignoreversion
+Source: "{#Staging}\plugins\asn.dll";    Components: Plugins\ASN;  DestDir: "{app}\plugins"; DestName: "asn.dll";  Flags: ignoreversion
+Source: "{#Staging}\plugins\bunq.dll";   Components: Plugins\Bunq; DestDir: "{app}\plugins"; DestName: "bunq.dll"; Flags: ignoreversion
+Source: "{#Staging}\plugins\ing.dll";    Components: Plugins\ING;  DestDir: "{app}\plugins"; DestName: "ing.dll";  Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
