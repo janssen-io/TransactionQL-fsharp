@@ -32,6 +32,7 @@ jobs:
         shell: bash
         run: |
             version=`echo "${{ github.ref_name }}" | cut -c 2-`
+            echo "Setting version to '$version'"
             echo "VERSION=$version" >> $GITHUB_OUTPUT
 
       - name: Build
@@ -39,6 +40,7 @@ jobs:
             dotnet run
             --project ./src/TransactionQL.Build/TransactionQL.Build.fsproj
             -e parallel-jobs=4
+            -e VERSION=${{ steps.version.outputs.VERSION }}
 
       - name: Publish
         uses: softprops/action-gh-release@v1
