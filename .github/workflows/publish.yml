@@ -27,48 +27,18 @@ jobs:
         with:
           dotnet-version: 8.x
 
-      - name: Test
-        run: dotnet test
-
-      - name: Build
+      - name: Get version number
+        id: version
         shell: bash
         run: |
-          # Define some variables for things we need
-          release_name="tql-${{ matrix.target }}"
-          version=$(cut -c 2- <<< "${{ github.ref_name }}")
+            version=`echo "${{ github.ref_name }}" | cut -c 2-`
+            echo "VERSION=$version" >> $GITHUB_OUTPUT
 
-          echo "Building version > $version <"
-
-          # Build everything
-          dotnet publish TransactionQL.Plugins.ING/TransactionQL.Plugins.ING.fsproj \
-            -c Release --runtime "${{ matrix.target }}" -o "dist/ing" -p:Version=$version
-          dotnet publish TransactionQL.Plugins.Bunq/TransactionQL.Plugins.Bunq.fsproj \
-            -c Release --runtime "${{ matrix.target }}" -o "dist/bunq" -p:Version=$version
-          dotnet publish TransactionQL.Plugins.ASN/TransactionQL.Plugins.ASN.fsproj \
-            -c Release --runtime "${{ matrix.target }}" -o "dist/asn" -p:Version=$version
-
-          dotnet publish TransactionQL.Console/TransactionQL.Console.fsproj \
-            -c Release --runtime "${{ matrix.target }}" -o "$release_name/console" \
-            -p:PublishSingleFile=true --no-self-contained -p:Version=$version
-          dotnet publish TransactionQL.DesktopApp/TransactionQL.DesktopApp.csproj \
-            -c Release --runtime "${{ matrix.target }}" -o "$release_name/desktop" \
-            -p:PublishSingleFile=true --no-self-contained -p:Version=$version
-
-          # Copy plugin DLLs
-          mkdir "$release_name/plugins"
-          cp "dist/asn/TransactionQL.Plugins.ASN.dll" "$release_name/plugins/asn.dll"
-          cp "dist/bunq/TransactionQL.Plugins.Bunq.dll" "$release_name/plugins/bunq.dll"
-          cp "dist/ing/TransactionQL.Plugins.ING.dll" "$release_name/plugins/ing.dll"
-
-          # Pack files
-          if [ "${{ matrix.target }}" == "win-x64" ]; then
-            7z a -tzip "${release_name}.zip" "./${release_name}/*"
-          else
-            tar czvf "${release_name}.tar.gz" "$release_name"
-          fi
-
-          # Delete output directory
-          rm -r "$release_name"
+      - name: Build
+        run: >
+            dotnet run
+            --project src/TransactionQL.Build/TransactionQL.Build.fsproj
+            -e parallel-jobs=4
 
       - name: Publish
         uses: softprops/action-gh-release@v1
