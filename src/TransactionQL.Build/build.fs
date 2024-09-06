@@ -144,26 +144,23 @@ let initTargets () =
     )
 
     Target.create "Setup" (fun _ ->
-      let setup = __SOURCE_DIRECTORY__ </> "tql.iss"
-      let backup = $"{setup}.bk"
+      let programFiles =
+          Environment.GetFolderPath Environment.SpecialFolder.ProgramFilesX86
 
-      // Keep original for when building locally
-      Shell.copyFile backup setup
-      Shell.replaceInFiles 
-        [
-          ("{version}", getVersion ())
-          ("{sourceDir}", stagingDirectory)
-        ] [__SOURCE_DIRECTORY__ </> "tql.iss"]
+      let inno = (programFiles </> "Inno Setup 6" </> "iscc.exe")
+      File.checkExists inno
 
-      try
-        InnoSetup.build(fun p ->
-          { p with
-              OutputFolder = distDirectory
-              ScriptFile = __SOURCE_DIRECTORY__ </> "tql.iss"
-          }
-        )
-      finally
-        Shell.mv backup setup
+      InnoSetup.build(fun p ->
+        { p with
+            ToolPath = inno
+            Defines = Map.ofList [
+              ("MyAppVersion", getVersion ())
+              ("Source", stagingDirectory)
+            ]
+            OutputFolder = distDirectory
+            ScriptFile = __SOURCE_DIRECTORY__ </> "tql.iss"
+        }
+      )
     )
 
     Target.create "Archive" (fun _ ->

@@ -2,8 +2,6 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "TransactionQL"
-#define MyAppVersion "{version}" ; replaced by FAKE - Build
-#define Source "{sourceDir}"     ; replaced by FAKE - Build
 #define MyAppPublisher "Stan Ionițoiu-Janssen"
 #define MyAppURL "https://github.com/janssen-io/TransactionQL-fsharp"
 #define MyAppExeName "TransactionQL.DesktopApp.exe"
