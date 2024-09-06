@@ -68,6 +68,7 @@ let appConfig (c : DotNet.PublishOptions) =
 let initTargets () =
     Target.create "Clean" (fun _ ->
       Trace.log " --- Cleaning previous builds --- "
+      Directory.create ciDirectory
       let dirs = !! (ciDirectory) 
 
       dirs 
@@ -88,7 +89,7 @@ let initTargets () =
 
     Target.create "Publish" (fun _ ->
       Trace.log " --- Publishing the app --- "
-      Directory.ensure buildDirectory
+      Directory.create buildDirectory
     )
 
     Target.create "Publish Plugins" (fun _ ->
@@ -113,9 +114,10 @@ let initTargets () =
     )
 
     Target.create "Stage Artifacts" (fun _ ->
-        Directory.ensure stagingDirectory
-        Directory.ensure (stagingDirectory </> "plugins")
-        Directory.ensure (stagingDirectory </> "desktop")
+        Trace.log " --- Staging Artifacts --- "
+        Directory.create stagingDirectory
+        Directory.create (stagingDirectory </> "plugins")
+        Directory.create (stagingDirectory </> "desktop")
 
         let plugins = ["ASN"; "Bunq"; "ING"]
         let src = plugins |> List.map (fun p -> buildDirectory </> "plugins" </> $"TransactionQL.Plugins.{p}.dll")
@@ -124,12 +126,21 @@ let initTargets () =
         List.zip src dst
         |> List.iter (fun (s, d) -> Shell.copyFile d s)
 
-        Shell.copyDir  (stagingDirectory </> "desktop") (buildDirectory </> "desktop") (fun f -> f.EndsWith(".dll") || f.EndsWith(".exe"))
-        Shell.copyFile (stagingDirectory </> "tql.exe") (buildDirectory </> "console" </> "TransactionQL.Console.exe")
+        Shell.copyDir
+            (stagingDirectory </> "desktop")
+            (buildDirectory </> "desktop")
+            (fun f -> not (f.EndsWith(".xml") || f.EndsWith(".pdb")))
+
+        let execExt =
+            if OperatingSystem.IsWindows ()
+            then ".exe"
+            else String.Empty
+
+        Shell.copyFile (stagingDirectory </> $"tql{execExt}") (buildDirectory </> "console" </> $"TransactionQL.Console{execExt}")
     )
 
     Target.create "Dist" (fun _ ->
-      Directory.ensure distDirectory
+      Directory.create distDirectory
     )
 
     Target.create "Setup" (fun _ ->
@@ -157,16 +168,16 @@ let initTargets () =
 
     Target.create "Archive" (fun _ ->
       Trace.log " --- Creating app archive --- "
-      let os = if OperatingSystem.IsWindows () then "windows" else "linux"
+      let os = if OperatingSystem.IsWindows () then "win" else "linux"
       let filename = distDirectory </> $"tql-{os}-x64.zip"
 
-      (!! stagingDirectory)
-      |> Zip.zip stagingDirectory filename 
+      !! (stagingDirectory </> "**")
+      |> Zip.zip stagingDirectory filename
     )
 
     Target.create "Vim" (fun _ ->
       Trace.log " --- Copy Vim Highlighting --- "
-      Shell.copyFile distDirectory (__SOURCE_DIRECTORY__ </> "tql.vim")
+      Shell.copy distDirectory [(__SOURCE_DIRECTORY__ </> "tql.vim")]
     )
 
     // Nothing to do, just to have a single node at the end of the dependency graph
@@ -174,9 +185,9 @@ let initTargets () =
 
     "Clean" <=> "Restore"
       =?> ("Test", Environment.hasEnvironVar "SkipTests" |> not)
-      ==> "Publish"
+      ==> "Publish" <=> "Dist"
       ==> "Publish Plugins" <=> "Publish CLI" <=> "Publish GUI"
-      ==> "Stage Artifacts" <=> "Dist"
+      ==> "Stage Artifacts"
       =?> ("Setup", OperatingSystem.IsWindows ()) <=> "Archive" <=> "Vim"
       ==> "Complete"
 
