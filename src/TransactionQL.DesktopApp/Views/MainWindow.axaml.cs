@@ -31,6 +31,43 @@ public partial class MainWindow : Window
 
     private void HandleKeyDown(object? sender, KeyEventArgs e)
     {
+        if (e.Key == Key.F1)
+        {
+            new MessageDialog()
+            {
+                DataContext = new MessageDialogViewModel
+                {
+                    Message = "Your transactions were successfully exported to /dev/null.",
+                    Title = "Export Successful",
+                    Icon = DialogIcon.Success,
+                }
+            }.Show(this);
+        }
+        if (e.Key == Key.F2)
+        {
+            new MessageDialog()
+            {
+                DataContext = new MessageDialogViewModel
+                {
+                    Message = "You pressed F2 which shows this dialog.",
+                    Title = "For your information",
+                    Icon = DialogIcon.Info,
+                }
+            }.Show(this);
+        }
+        if (e.Key == Key.F3)
+        {
+            new MessageDialog()
+            {
+                DataContext = new MessageDialogViewModel
+                {
+                    Message = "You pressed F3 which shows this dialog.",
+                    Title = "Error (not really)",
+                    IsError = true,
+                    Icon = DialogIcon.Error,
+                }
+            }.Show(this);
+        }
         if (e.Key == Key.F11)
         {
             WindowState = WindowState != WindowState.FullScreen ? WindowState.FullScreen : WindowState.Normal;
@@ -86,6 +123,7 @@ public partial class MainWindow : Window
         {
             Message = "Transactions were successfully appended to " + path,
             Title = "Export Successful",
+            Icon = DialogIcon.Success,
         };
         new MessageDialog() { DataContext = message }.Show(this);
     }

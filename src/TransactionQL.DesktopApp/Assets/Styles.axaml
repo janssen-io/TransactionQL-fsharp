@@ -1,6 +1,7 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:app="using:TransactionQL.DesktopApp.Application"
         xmlns:c="using:TransactionQL.DesktopApp.Controls"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Design.PreviewWith>
     <StackPanel Orientation="Horizontal">
@@ -89,6 +90,32 @@
     <Setter Property="Foreground" Value="{DynamicResource FG.Base.Primary}" />
   </Style>
 
+  <Style Selector="i|Icon.Primary">
+    <Setter Property="Foreground" Value="{DynamicResource FG.Base.Primary}" />
+  </Style>
+
+  <Style Selector="i|Icon.Negative">
+    <Setter Property="Foreground" Value="{DynamicResource FG.Base.Error}" />
+  </Style>
+
+  <Style Selector="Button.Primary">
+    <Setter Property="Foreground" Value="{DynamicResource FG.Contrast.Neutral}" />
+    <Setter Property="Background" Value="{DynamicResource FG.Base.Primary}" />
+    <Style Selector="^:pointerover /template/ ContentPresenter">
+      <Setter Property="Foreground" Value="{DynamicResource FG.Contrast.Neutral}" />
+      <Setter Property="Background" Value="{DynamicResource FG.Elevated.Primary}" />
+    </Style>
+  </Style>
+
+  <Style Selector="Button.Negative">
+    <Setter Property="Foreground" Value="{DynamicResource FG.Contrast.Neutral}" />
+    <Setter Property="Background" Value="{DynamicResource FG.Base.Error}" />
+    <Style Selector="^:pointerover /template/ ContentPresenter">
+      <Setter Property="Foreground" Value="{DynamicResource FG.Contrast.Neutral}" />
+      <Setter Property="Background" Value="{DynamicResource FG.Elevated.Error}" />
+    </Style>
+  </Style>
+
   <Style Selector="TextBlock.subtitle">
     <Setter Property="Foreground" Value="#688878" />
 
@@ -111,7 +138,7 @@
   </Style>
 
   <Style Selector="TextBlock.Negative">
-    <Setter Property="Foreground" Value="{DynamicResource FG.Base.Error}" />
+    <Setter Property="Foreground" Value="{DynamicResource FG.Elevated.Error}" />
   </Style>
 
   <!-- Toolbar -->
@@ -158,6 +185,6 @@
   </Style>
 
   <Style Selector="Border.ErrorBorder TextBlock">
-    <Setter Property="Foreground" Value="{DynamicResource FG.Base.Error}" />
+    <Setter Property="Foreground" Value="{DynamicResource FG.Elevated.Error}" />
   </Style>
 </Styles>

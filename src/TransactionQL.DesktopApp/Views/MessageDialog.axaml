@@ -4,33 +4,46 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
         xmlns:dd="using:TransactionQL.DesktopApp"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
         mc:Ignorable="d"
-        Width="400" Title="{Binding Title}"
+        Width="300" Title="{Binding Title}"
         x:Class="TransactionQL.DesktopApp.Views.MessageDialog"
         DataContext="{x:Static dd:DesignData.Popup}"
         SizeToContent="Height"
-        TransparencyLevelHint="AcrylicBlur"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
+        Name="Dialog"
         x:DataType="vm:MessageDialogViewModel"
         WindowStartupLocation="CenterOwner">
+  <Window.Styles>
+    <StyleInclude Source="/Assets/Styles.axaml" />
+    <Style Selector="#Dialog TextBlock.h2">
+      <Setter Property="Foreground" Value="{DynamicResource FG.Base.Neutral}" />
+    </Style>
+  </Window.Styles>
 
-    <Panel>
-        <ExperimentalAcrylicBorder IsHitTestVisible="False">
-            <ExperimentalAcrylicBorder.Material>
-                <ExperimentalAcrylicMaterial
-                    BackgroundSource="Digger"
-                    TintColor="#FFFFFF"
-                    TintOpacity="1"
-                    MaterialOpacity="0.6" />
-            </ExperimentalAcrylicBorder.Material>
-        </ExperimentalAcrylicBorder>
-        <Grid RowDefinitions="Auto,Auto,Auto" Margin="20, 10, 20, 20">
-            <TextBlock Text="{Binding Title}" />
-            <TextBlock Grid.Row="1" Margin="0,20,0,0" Name="Error" Text="{Binding Message}" TextWrapping="Wrap" />
-            <Button Grid.Row="2" Click="Button_OnClick" HorizontalAlignment="Right" Margin="0,10,0,0">
-                OK
-            </Button>
-        </Grid>
-    </Panel>
+  <StackPanel Spacing="10">
+    <i:Icon Value="{Binding Icon}"
+            Classes.Negative="{Binding IsError}"
+            Classes.Primary="{Binding !IsError}"
+            FontSize="32"
+            Margin="0 30 0 20" />
+    
+    <TextBlock Text="{Binding Title}"
+               TextAlignment="Center" Classes="h2" />
+    <TextBlock Text="{Binding Message}"
+               TextAlignment="Center"
+               Foreground="{DynamicResource FG.Elevated.Neutral}"
+               TextWrapping="Wrap" />
+    <Button Click="Button_OnClick"
+            HorizontalAlignment="Stretch"
+            Classes.Negative="{Binding IsError}"
+            Classes.Primary="{Binding !IsError}"
+            Margin="0 20 0 0"
+            CornerRadius="0">
+      <TextBlock TextAlignment="Center">
+        Dismiss
+      </TextBlock>
+    </Button>
+  </StackPanel>
 </Window>

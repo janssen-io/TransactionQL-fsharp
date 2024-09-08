@@ -63,6 +63,8 @@ public static class DesignData
     {
         Message = "This is a preview message.",
         Title = "Preview Title",
+        IsError = false,
+        Icon = DialogIcon.Success,
     };
 }
 

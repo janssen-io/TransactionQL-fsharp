@@ -114,7 +114,7 @@ public class MainWindowViewModel : ViewModelBase
 
         if (!loader.TryLoadData(data, out var ps, out var errorMessage))
         {
-            ErrorThrown?.Invoke(this, new() { Message = errorMessage, Title = "Error" });
+            ErrorThrown?.Invoke(this, new() { Message = errorMessage, Title = "Error", IsError = true, });
             return;
         }
 
@@ -134,7 +134,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (!AreEntriesValid(out string message))
         {
-            ErrorThrown?.Invoke(this, new() { Message = message, Title = "Error" });
+            ErrorThrown?.Invoke(this, new() { Message = message, Title = "Error", IsError = true, });
             return;
         }
 
@@ -154,7 +154,7 @@ public class MainWindowViewModel : ViewModelBase
         }
         catch (Exception e)
         {
-            ErrorThrown?.Invoke(this, new() { Message = e.Message, Title = "Error" });
+            ErrorThrown?.Invoke(this, new() { Message = e.Message, Title = "Error", IsError = true, });
         }
     }
 

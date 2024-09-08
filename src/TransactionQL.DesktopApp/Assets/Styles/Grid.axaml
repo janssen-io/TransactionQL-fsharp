@@ -2,7 +2,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:c="using:TransactionQL.DesktopApp.Controls">
   <Design.PreviewWith>
+    <StackPanel Orientation="Horizontal">
     <c:ThemePreviewStack />
+    <ThemeVariantScope RequestedThemeVariant="Dark">
+      <c:ThemePreviewStack />
+    </ThemeVariantScope>
+    </StackPanel>
   </Design.PreviewWith>
 
   <Style Selector="Grid.Editable, Grid.TableHeader">
@@ -29,7 +34,7 @@
   <Style Selector="Grid.TableHeader">
     <Setter Property="Background" Value="{DynamicResource BG.Soft.Primary}"/>
     <Style Selector="^ TextBlock">
-      <Setter Property="Foreground" Value="{DynamicResource FG.Base.Primary}"/>
+      <Setter Property="Foreground" Value="{DynamicResource FG.Elevated.Primary}"/>
       <Setter Property="TextAlignment" Value="Right" />
       <Setter Property="FontWeight" Value="500" />
       <Setter Property="FontSize" Value="10"/>
