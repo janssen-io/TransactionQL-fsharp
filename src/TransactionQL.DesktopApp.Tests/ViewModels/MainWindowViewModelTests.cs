@@ -1,6 +1,5 @@
 ﻿using Moq;
 using TransactionQL.DesktopApp.Services;
-using TransactionQL.DesktopApp.Tests.Services;
 using TransactionQL.DesktopApp.ViewModels;
 
 namespace TransactionQL.DesktopApp.Tests.ViewModels;

@@ -6,6 +6,7 @@ using Avalonia.Platform.Storage;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -98,9 +99,26 @@ public partial class MainWindow : Window
         FileInfo[] files = dir.GetFiles("*.dll");
         ObservableCollection<Models.Module> availableModules = new(files.Select(f =>
             {
+                string? title;
+                try
+                {
 #pragma warning disable S3885 // "Assembly.Load" should be used - Load results in an exception
-                string? title = Assembly.LoadFrom(f.FullName).GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
+                    title = Assembly.LoadFrom(f.FullName).GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
 #pragma warning restore S3885 // "Assembly.Load" should be used
+                }
+                catch (FileLoadException e) when (e.Message.Contains("already loaded"))
+                {
+                    // When restarting the app (published as single file), the assembly is automatically loaded?
+                    // Quick fix, as the name of the DLL is close enough to its title.
+                    title = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(
+                        Path.GetFileNameWithoutExtension(f.FullName));
+                }
+
+                if (string.IsNullOrEmpty(title))
+                {
+                    throw new TypeLoadException($"Could not load plugin {f.Name} or it does not have a title set.");
+                }
+
                 return new Models.Module { Title = title!, FileName = f.Name };
             }));
 
