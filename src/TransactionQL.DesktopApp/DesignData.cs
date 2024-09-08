@@ -58,6 +58,14 @@ public static class DesignData
     };
 
     public static readonly AboutViewModel About = AboutViewModel.From(Models.About.Default);
+
+    public static readonly MessageDialogViewModel Popup = new()
+    {
+        Message = "This is a preview message.",
+        Title = "Preview Title",
+        IsError = false,
+        Icon = DialogIcon.Success,
+    };
 }
 
 internal class MockAccountSelector : ISelectAccounts

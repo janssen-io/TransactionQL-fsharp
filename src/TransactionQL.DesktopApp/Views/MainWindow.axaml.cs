@@ -6,6 +6,7 @@ using Avalonia.Platform.Storage;
 using ReactiveUI;
 using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
@@ -47,9 +48,9 @@ public partial class MainWindow : Window
         ((MainWindowViewModel)DataContext).ErrorThrown += ShowError;
     }
 
-    private void ShowError(object? sender, ErrorViewModel e)
+    private void ShowError(object? sender, MessageDialogViewModel e)
     {
-        ErrorDialog errorDialog = new() { DataContext = e };
+        MessageDialog errorDialog = new() { DataContext = e };
         errorDialog.Show(this);
     }
 
@@ -77,9 +78,31 @@ public partial class MainWindow : Window
         }
 
         string path = file.Path.AbsolutePath;
-        await using FileStream stream = new(path, FileMode.Append);
-        await using StreamWriter writer = new(stream);
-        await writer.WriteLineAsync(postings);
+        MessageDialogViewModel message = new()
+        {
+            Message = "Transactions were successfully appended to " + path,
+            Title = "Export Successful",
+            Icon = DialogIcon.Success,
+        };
+
+        try
+        {
+            await using FileStream stream = new(path, FileMode.Append);
+            await using StreamWriter writer = new(stream);
+            await writer.WriteLineAsync(postings);
+        }
+        catch (Exception e)
+        {
+            message = new()
+            {
+                Message = $"Failed to export transactions to ledger.{Environment.NewLine}{Environment.NewLine}{e.Message}",
+                Title = "Export Failed",
+                IsError = true,
+                Icon = DialogIcon.Error,
+            };
+        }
+
+        new MessageDialog() { DataContext = message }.Show(this);
     }
 
     private void Open(object? sender, RoutedEventArgs ea)
@@ -91,9 +114,26 @@ public partial class MainWindow : Window
         FileInfo[] files = dir.GetFiles("*.dll");
         ObservableCollection<Models.Module> availableModules = new(files.Select(f =>
             {
+                string? title;
+                try
+                {
 #pragma warning disable S3885 // "Assembly.Load" should be used - Load results in an exception
-                string? title = Assembly.LoadFrom(f.FullName).GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
+                    title = Assembly.LoadFrom(f.FullName).GetCustomAttribute<AssemblyTitleAttribute>()?.Title;
 #pragma warning restore S3885 // "Assembly.Load" should be used
+                }
+                catch (FileLoadException e) when (e.Message.Contains("already loaded"))
+                {
+                    // When restarting the app (published as single file), the assembly is automatically loaded?
+                    // Quick fix, as the name of the DLL is close enough to its title.
+                    title = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(
+                        Path.GetFileNameWithoutExtension(f.FullName));
+                }
+
+                if (string.IsNullOrEmpty(title))
+                {
+                    throw new TypeLoadException($"Could not load plugin {f.Name} or it does not have a title set.");
+                }
+
                 return new Models.Module { Title = title!, FileName = f.Name };
             }));
 

@@ -20,7 +20,7 @@ public class MainWindowViewModel : ViewModelBase
     public event EventHandler<string>? Saved;
     public event EventHandler? StateSaved;
 
-    public event EventHandler<ErrorViewModel>? ErrorThrown;
+    public event EventHandler<MessageDialogViewModel>? ErrorThrown;
 
     private readonly ITransactionQLApi _api;
 
@@ -114,7 +114,7 @@ public class MainWindowViewModel : ViewModelBase
 
         if (!loader.TryLoadData(data, out var ps, out var errorMessage))
         {
-            ErrorThrown?.Invoke(this, new(errorMessage));
+            ErrorThrown?.Invoke(this, new() { Message = errorMessage, Title = "Error", IsError = true, });
             return;
         }
 
@@ -134,7 +134,7 @@ public class MainWindowViewModel : ViewModelBase
     {
         if (!AreEntriesValid(out string message))
         {
-            ErrorThrown?.Invoke(this, new(message));
+            ErrorThrown?.Invoke(this, new() { Message = message, Title = "Error", IsError = true, });
             return;
         }
 
@@ -154,7 +154,7 @@ public class MainWindowViewModel : ViewModelBase
         }
         catch (Exception e)
         {
-            ErrorThrown?.Invoke(this, new(e.Message));
+            ErrorThrown?.Invoke(this, new() { Message = e.Message, Title = "Error", IsError = true, });
         }
     }
 

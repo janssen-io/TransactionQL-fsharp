@@ -5,9 +5,9 @@ using Avalonia.Markup.Xaml;
 
 namespace TransactionQL.DesktopApp.Views;
 
-public partial class ErrorDialog : Window
+public partial class MessageDialog : Window
 {
-    public ErrorDialog()
+    public MessageDialog()
     {
         InitializeComponent();
 #if DEBUG

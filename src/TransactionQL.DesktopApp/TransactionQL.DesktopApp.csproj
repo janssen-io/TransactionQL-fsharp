@@ -7,6 +7,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <ApplicationIcon>Assets\lion.ico</ApplicationIcon>
+    <InformationalVersion>0.0.0-dev</InformationalVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -84,6 +85,9 @@
   <ItemGroup>
     <Compile Update="Controls\Dropzone.axaml.cs">
       <DependentUpon>Dropzone.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MessageDialog.axaml.cs">
+      <DependentUpon>MessageDialog.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\PaymentDetails.axaml.cs">
       <DependentUpon>PaymentDetails.axaml</DependentUpon>
