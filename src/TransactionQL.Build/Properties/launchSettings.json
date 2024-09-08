@@ -2,7 +2,11 @@
   "profiles": {
     "TransactionQL.Build": {
       "commandName": "Project",
-      "commandLineArgs": "-e parallel-jobs=4"
+      "commandLineArgs": "-e parallel-jobs=4\r\n-e CONFIGURATION=Debug\r\n-e VERSION=0.0.0-dev"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
     }
   }
 }

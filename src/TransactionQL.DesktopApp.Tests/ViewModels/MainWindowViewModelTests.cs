@@ -1,5 +1,6 @@
 ﻿using Moq;
 using TransactionQL.DesktopApp.Services;
+using TransactionQL.DesktopApp.Tests.Services;
 using TransactionQL.DesktopApp.ViewModels;
 
 namespace TransactionQL.DesktopApp.Tests.ViewModels;
@@ -44,7 +45,7 @@ public class MainWindowViewModelTests
             """.ReplaceLineEndings(Environment.NewLine);
 
         var vm = new MainWindowViewModel() { BankTransactions = new(transactions) };
-        vm.Saved += (sender, outputToSave) =>
+        vm.Saved += (_, outputToSave) =>
         {
 
             actualLedger = outputToSave;

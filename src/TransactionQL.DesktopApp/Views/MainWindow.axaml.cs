@@ -47,9 +47,9 @@ public partial class MainWindow : Window
         ((MainWindowViewModel)DataContext).ErrorThrown += ShowError;
     }
 
-    private void ShowError(object? sender, ErrorViewModel e)
+    private void ShowError(object? sender, MessageDialogViewModel e)
     {
-        ErrorDialog errorDialog = new() { DataContext = e };
+        MessageDialog errorDialog = new() { DataContext = e };
         errorDialog.Show(this);
     }
 
@@ -80,6 +80,13 @@ public partial class MainWindow : Window
         await using FileStream stream = new(path, FileMode.Append);
         await using StreamWriter writer = new(stream);
         await writer.WriteLineAsync(postings);
+
+        MessageDialogViewModel message = new()
+        {
+            Message = "Transactions were successfully appended to " + path,
+            Title = "Export Successful",
+        };
+        new MessageDialog() { DataContext = message }.Show(this);
     }
 
     private void Open(object? sender, RoutedEventArgs ea)
