@@ -66,8 +66,6 @@
     <Styles>
 
       <Style Selector="Border.Section">
-        <Setter Property="BorderThickness" Value="{TemplateBinding BorderThickness}" />
-        <Setter Property="BorderBrush" Value="{TemplateBinding BorderBrush}" />
         <Setter Property="Margin" Value="10" />
 
         <Style Selector="^:focus-within">
@@ -95,7 +93,11 @@
     </Styles>
     <Setter Property="Template">
       <ControlTemplate>
-        <Border Classes="Section" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="Top">
+        <Border Classes="Section" 
+                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                VerticalAlignment="Top"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" >
           <StackPanel Orientation="Vertical">
             <TextBlock Classes="Title" Text="{TemplateBinding Title}"
                        Grid.Row="0" />
