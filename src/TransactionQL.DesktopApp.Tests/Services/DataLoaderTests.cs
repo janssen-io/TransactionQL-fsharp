@@ -3,6 +3,7 @@ using System.Globalization;
 using TransactionQL.DesktopApp.Models;
 using TransactionQL.DesktopApp.Services;
 using TransactionQL.Parser;
+using TransactionQL.Shared.Disposables;
 using static TransactionQL.Input.Converters;
 using static TransactionQL.Shared.Types;
 
@@ -83,7 +84,7 @@ public class DataLoaderTests
     [Fact]
     public void ParsesFilteredTransactions()
     {
-        CultureInfo.CurrentCulture = new CultureInfo("en-us");
+        using var _ = Disposables.changeCulture("en-us");
         var transactions = """
             13-02-2025,NL12ASNB13243546,NL98BANK75645342,AH,,,,EUR,50.00,EUR,-10.00,,,,,,,,
             14-02-2025,NL12ASNB13243546,NL98BANK75645342,AH,,,,EUR,40.00,EUR,-15.00,,,,,,,,
@@ -158,7 +159,7 @@ public class DataLoaderTests
     [Fact]
     public void ParsesUnfilteredTransactions()
     {
-        CultureInfo.CurrentCulture = new CultureInfo("en-us");
+        using var _ = Disposables.changeCulture("en-us");
         var transactions = """
             13-02-2025,NL12ASNB13243546,NL98BANK75645342,AH,,,,EUR,50.00,EUR,-10.00,,,,,,,,
             14-02-2025,NL12ASNB13243546,NL98BANK75645342,AH,,,,EUR,40.00,EUR,-15.00,,,,,,,,
@@ -215,7 +216,7 @@ public class DataLoaderTests
     [Fact]
     public void ParsesMixedTransactions()
     {
-        CultureInfo.CurrentCulture = new CultureInfo("en-us");
+        using var _ = Disposables.changeCulture("en-us");
         var transactions = """
             13-02-2025,NL12ASNB13243546,NL98BANK75645342,AH,,,,EUR,50.00,EUR,-10.00,,,,,,,,
             14-02-2025,NL12ASNB13243546,NL98BANK75645342,Jumbo,,,,EUR,40.00,EUR,-15.00,,,,,,,,

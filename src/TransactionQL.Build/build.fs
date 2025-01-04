@@ -119,7 +119,7 @@ let initTargets () =
         Directory.create (stagingDirectory </> "plugins")
         Directory.create (stagingDirectory </> "desktop")
 
-        let plugins = ["ASN"; "Bunq"; "ING"]
+        let plugins = ["ASN"; "Bunq"; "ING"; "Amex"]
         let src = plugins |> List.map (fun p -> buildDirectory </> "plugins" </> $"TransactionQL.Plugins.{p}.dll")
         let dst = plugins |> List.map (fun p -> stagingDirectory </> "plugins" </> $"{String.toLower p}.dll")
 

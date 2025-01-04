@@ -6,6 +6,7 @@ open FSharp.Data
 open TransactionQL.Parser.AST
 open TransactionQL.Parser.QLInterpreter
 open TransactionQL.Input.Converters
+open TransactionQL.Shared.Disposables
 
 module Amex =
 
@@ -33,7 +34,9 @@ module Amex =
             member this.DateFormat = dateFormat
 
             member this.Read lines =
-                lines |> AmexTransactions.ParseRows |> Array.map toMap
+                using (Disposables.changeCulture "nl-NL") (fun _ -> 
+                    lines |> AmexTransactions.ParseRows |> Array.map toMap
+                )
 
             member this.Map row =
                 let fromRow col = Map.find col row
