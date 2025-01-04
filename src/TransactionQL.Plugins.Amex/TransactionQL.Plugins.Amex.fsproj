@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\TransactionQL.Input\TransactionQL.Input.fsproj" />
-    <ProjectReference Include="..\src\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
+    <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
+    <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
   </ItemGroup>
 
 </Project>
