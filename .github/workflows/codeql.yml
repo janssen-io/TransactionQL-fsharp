@@ -16,6 +16,13 @@ jobs:
             build-mode: autobuild
 
     runs-on: ubuntu-latest
+    permissions:
+      # required for all workflows
+      security-events: write
+
+      # required to fetch internal or private CodeQL packs
+      packages: read
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,3 +39,8 @@ jobs:
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
