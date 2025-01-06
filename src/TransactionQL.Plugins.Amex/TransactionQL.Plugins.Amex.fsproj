@@ -2,23 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <AssemblyTitle>ING</AssemblyTitle>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyTitle>Amex</AssemblyTitle>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="ing.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <Compile Include="ING.fs" />
+    <None Include="Amex.csv" />
+    <Compile Include="Amex.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\TransactionQL.Input\TransactionQL.Input.fsproj" />
     <ProjectReference Include="..\TransactionQL.Parser\TransactionQL.Parser.fsproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="9.0.100" />
+    <ProjectReference Include="..\TransactionQL.Shared\TransactionQL.Shared.fsproj" />
   </ItemGroup>
 
 </Project>

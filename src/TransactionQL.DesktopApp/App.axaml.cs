@@ -11,6 +11,7 @@ using System.Threading;
 using TransactionQL.DesktopApp.Application;
 using TransactionQL.DesktopApp.ViewModels;
 using TransactionQL.DesktopApp.Views;
+using TransactionQL.Shared.Disposables;
 
 namespace TransactionQL.DesktopApp;
 
