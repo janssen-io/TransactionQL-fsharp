@@ -5,6 +5,7 @@ using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
@@ -105,12 +106,43 @@ public class MainWindowViewModel : ViewModelBase
 
     public bool IsDone => _numberOfValidTransactions == BankTransactions.Count;
 
-
     internal void Parse(SelectedData data)
     {
+        try
+        {
+            this.ParseUnsafe(data);
+        }
+        catch (IOException e) when (e.Message.Contains("it is being used by another process"))
+        {
+            ErrorThrown?.Invoke(this, new()
+            {
+                Message = "One of the selected files is opened elsewhere. Please close it first.",
+                Title = "Error",
+                IsError = true,
+            });
+            return;
+        }
+        catch (Exception e)
+        {
+            ErrorThrown?.Invoke(this, new()
+            {
+                Message = "Unexpected error encountered while opening files. Please consider filing a bug report.\r\n\r\n" + e.Message,
+                Title = "Unexpected Error",
+                IsError = true,
+            });
+            return;
+        }
+    }
+
+    private void ParseUnsafe(SelectedData data)
+    {
         AccountSelector = FilewatchingAccountSelector.Monitor(data.AccountsFile, Dispatcher.UIThread.Invoke).Result;
-        var loader = new DataLoader(
-            TransactionQLApiAdapter.Instance, FilesystemStreamer.Instance, AccountSelector, Configuration.createAndGetPluginDir);
+
+        DataLoader loader = new(
+                TransactionQLApiAdapter.Instance,
+                FilesystemStreamer.Instance,
+                AccountSelector,
+                Configuration.createAndGetPluginDir);
 
         if (!loader.TryLoadData(data, out var ps, out var errorMessage))
         {
