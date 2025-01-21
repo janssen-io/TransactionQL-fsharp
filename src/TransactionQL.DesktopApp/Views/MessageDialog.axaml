@@ -30,11 +30,13 @@
             Margin="0 30 0 20" />
     
     <TextBlock Text="{Binding Title}"
-               TextAlignment="Center" Classes="h2" />
+               TextAlignment="Center" Classes="h2"
+               Margin="20 0 20 0"/>
     <TextBlock Text="{Binding Message}"
                TextAlignment="Center"
                Foreground="{DynamicResource FG.Elevated.Neutral}"
-               TextWrapping="Wrap" />
+               TextWrapping="Wrap"
+               Margin="20 0 20 0"/>
     <Button Click="Button_OnClick"
             HorizontalAlignment="Stretch"
             Classes.Negative="{Binding IsError}"

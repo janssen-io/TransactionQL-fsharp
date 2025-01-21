@@ -61,7 +61,7 @@ public static class DesignData
 
     public static readonly MessageDialogViewModel Popup = new()
     {
-        Message = "This is a preview message.",
+        Message = "This is a preview message. With a bit more extra text to make sure we see some line wrapping too.",
         Title = "Preview Title",
         IsError = false,
         Icon = DialogIcon.Success,
