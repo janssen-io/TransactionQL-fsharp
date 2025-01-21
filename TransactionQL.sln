@@ -44,6 +44,8 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "TransactionQL.Build", "src\
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TransactionQL.Plugins.Amex", "src\TransactionQL.Plugins.Amex\TransactionQL.Plugins.Amex.fsproj", "{11ACCFD8-1CF6-4F56-B822-A661A289774C}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TransactionQL.Plugins.Triodos", "src\TransactionQL.Plugins.Triodos\TransactionQL.Plugins.Triodos.fsproj", "{1B99474E-7F10-4CE1-ACF6-1D6D3047D1F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -106,6 +108,10 @@ Global
 		{11ACCFD8-1CF6-4F56-B822-A661A289774C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11ACCFD8-1CF6-4F56-B822-A661A289774C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11ACCFD8-1CF6-4F56-B822-A661A289774C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B99474E-7F10-4CE1-ACF6-1D6D3047D1F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B99474E-7F10-4CE1-ACF6-1D6D3047D1F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B99474E-7F10-4CE1-ACF6-1D6D3047D1F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B99474E-7F10-4CE1-ACF6-1D6D3047D1F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -115,6 +121,7 @@ Global
 		{32027311-05E4-465B-9F5A-F5C59768B99A} = {B645AC52-7FA5-47ED-8162-E39B705813C6}
 		{F6F92978-83BF-4DB9-B513-2B8ABD22AC5F} = {B645AC52-7FA5-47ED-8162-E39B705813C6}
 		{11ACCFD8-1CF6-4F56-B822-A661A289774C} = {B645AC52-7FA5-47ED-8162-E39B705813C6}
+		{1B99474E-7F10-4CE1-ACF6-1D6D3047D1F1} = {B645AC52-7FA5-47ED-8162-E39B705813C6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {55AA355A-8CC6-47CA-BEAB-C07FDEFB4BAB}

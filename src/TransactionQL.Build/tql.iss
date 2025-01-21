@@ -49,21 +49,23 @@ Name: "cli-only"; Description: "Just the CLI"
 Name: "Custom";   Description: "Custom installation"; Flags: iscustom
 
 [Components]
-Name: "CLI";           Description: "Command Line Interface (tql.exe)";       Types: full cli-only custom;
-Name: "GUI";           Description: "Graphical User Interface (Ledger Leo)";  Types: full custom;
-Name: "Plugins";       Description: "Transaction Parsers";                    Types: full custom;
-Name: "Plugins\ASN";   Description: "ASN";                                    Types: full cli-only custom; Flags: checkablealone
-Name: "Plugins\Bunq";  Description: "Bunq";                                   Types: full cli-only custom; Flags: checkablealone
-Name: "Plugins\ING";   Description: "ING";                                    Types: full cli-only custom; Flags: checkablealone
-Name: "Plugins\Amex";   Description: "American Express";                      Types: full cli-only custom; Flags: checkablealone
+Name: "CLI";				Description: "Command Line Interface (tql.exe)";       Types: full cli-only custom;
+Name: "GUI";				Description: "Graphical User Interface (Ledger Leo)";  Types: full custom;
+Name: "Plugins";			Description: "Transaction Parsers";                    Types: full custom;
+Name: "Plugins\ASN";		Description: "ASN";                                    Types: full cli-only custom; Flags: checkablealone
+Name: "Plugins\Amex";		Description: "American Express";				       Types: full cli-only custom; Flags: checkablealone
+Name: "Plugins\Bunq";		Description: "Bunq";                                   Types: full cli-only custom; Flags: checkablealone
+Name: "Plugins\ING";		Description: "ING";                                    Types: full cli-only custom; Flags: checkablealone
+Name: "Plugins\Triodos";	Description: "Triodos";						           Types: full cli-only custom; Flags: checkablealone
 
 [Files]
-Source: "{#Staging}\desktop\*";          Components: GUI;          DestDir: "{app}\app";                           Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "{#Staging}\tql.exe";            Components: CLI;          DestDir: "{app}";         DestName: "tql.exe";  Flags: ignoreversion
-Source: "{#Staging}\plugins\asn.dll";    Components: Plugins\ASN;  DestDir: "{app}\plugins"; DestName: "asn.dll";  Flags: ignoreversion
-Source: "{#Staging}\plugins\bunq.dll";   Components: Plugins\Bunq; DestDir: "{app}\plugins"; DestName: "bunq.dll"; Flags: ignoreversion
-Source: "{#Staging}\plugins\ing.dll";    Components: Plugins\ING;  DestDir: "{app}\plugins"; DestName: "ing.dll";  Flags: ignoreversion
-Source: "{#Staging}\plugins\amex.dll";   Components: Plugins\Amex; DestDir: "{app}\plugins"; DestName: "amex.dll"; Flags: ignoreversion
+Source: "{#Staging}\desktop\*";				Components: GUI;			 DestDir: "{app}\app";								Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#Staging}\tql.exe";				Components: CLI;			 DestDir: "{app}";         DestName: "tql.exe";		Flags: ignoreversion
+Source: "{#Staging}\plugins\amex.dll";		Components: Plugins\Amex;	 DestDir: "{app}\plugins"; DestName: "amex.dll";	Flags: ignoreversion
+Source: "{#Staging}\plugins\asn.dll";		Components: Plugins\ASN;	 DestDir: "{app}\plugins"; DestName: "asn.dll";		Flags: ignoreversion
+Source: "{#Staging}\plugins\bunq.dll";		Components: Plugins\Bunq;	 DestDir: "{app}\plugins"; DestName: "bunq.dll";	Flags: ignoreversion
+Source: "{#Staging}\plugins\ing.dll";		Components: Plugins\ING;	 DestDir: "{app}\plugins"; DestName: "ing.dll";		Flags: ignoreversion
+Source: "{#Staging}\plugins\triodos.dll";   Components: Plugins\triodos; DestDir: "{app}\plugins"; DestName: "triodos.dll"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
