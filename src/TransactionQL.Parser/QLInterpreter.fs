@@ -44,6 +44,11 @@ module QLInterpreter =
 
         eval' expr |> fun n -> Interpretation(env, n)
 
+    let evalAccount (env: Env) (account: Account) =
+        match account with
+        | AccountLiteral l -> l
+        | AccountVariable v -> getVar env v |> (fun s -> s.Split(":")) |> List.ofArray
+
     let generatePostingLine
         env
         ({ Account = accounts
@@ -64,10 +69,7 @@ module QLInterpreter =
 
         let commodity = Option.map getCommodity amount
         let amount = Option.map evalAmount amount
-        let account = 
-            match accounts with
-            | AccountLiteral l -> l
-            | AccountVariable v -> getVar env v |> (fun s -> s.Split(":")) |> List.ofArray
+        let account = evalAccount env accounts
 
         match commodity, amount with
         | Some c, Some f ->

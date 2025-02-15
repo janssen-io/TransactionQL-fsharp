@@ -21,7 +21,12 @@ let evalFilter' = uncurry evalFilter >> Interpretation.result
 let trx (accounts, amount) =
     { Account = accounts
       Amount = amount
-      Tag = None }
+      Tag = None } : Transaction
+
+let line (accounts, amount) =
+    { Account = accounts
+      Amount = amount
+      Tag = None } : Line
 
 let testAmount ({ Amount = amount }: Line) expectedAmount =
     match expectedAmount with
@@ -234,6 +239,16 @@ let ``Inference: number column - notequalto`` () =
     Assert.True(evalFilter' (env', Filter(Column "Amount", NotEqualTo, (Number 2.0))))
 
 [<Fact>]
+let ``Accounts: variable`` () =
+    let account = AccountVariable "account:checking"
+    let env' = { env with EnvVars = Map.ofList [ ("account:checking", "Default:Checking") ] }
+    let accountParts = evalAccount env' account
+
+    Assert.Collection(accountParts,
+        (fun part -> Assert.Equal("Default", part)),
+        (fun part -> Assert.Equal("Checking", part)))
+
+[<Fact>]
 let ``Payee: words`` () =
     let payeeParts = Interpolation [ Word "American"; Word "Express"]
     let payee = evalPayee env payeeParts
@@ -314,14 +329,19 @@ let ``Posting lines: with amount expression`` () =
 let ``Posting: multiple lines`` () =
     let env' =
         { env with
-            Variables = Map.add "remainder" 0.00 env.Variables }
+            Variables = Map.add "remainder" 0.00 env.Variables
+            EnvVars = Map.add "account:checking" "Default" env.EnvVars
+        }
 
     let transactions =
         [ trx (AccountLiteral [ "Expenses"; "Food" ], Some <| AmountExpression(Commodity "€", ExprNum 20.00))
-          trx (AccountLiteral [ "Assets"; "Checking" ], None) ]
+          trx (AccountVariable "account:checking", None) ]
 
     let (Interpretation(_, lines)) = generatePosting env' transactions
-    Assert.Equal(2, lines.Length)
+    Assert.Collection(lines, 
+        (fun l -> Assert.Equal(line(["Expenses"; "Food"], Some ("€", float 20)), l)),
+        (fun l -> Assert.Equal(line(["Default"], None), l))
+    )
 
 [<Fact>]
 let ``Posting: updates remainder between lines`` () =
