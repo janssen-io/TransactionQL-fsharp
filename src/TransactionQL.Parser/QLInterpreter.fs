@@ -12,7 +12,7 @@ module QLInterpreter =
 
     type Line =
         { Account: string list
-          Amount: (Commodity * float) option
+          Amount: (string * float) option
           Tag: string option }
 
     type Entry = // Entry of Header * Line list
@@ -66,8 +66,8 @@ module QLInterpreter =
         let amount = Option.map evalAmount amount
         let account = 
             match accounts with
-            | Account a -> a
-            | VariableAccount v -> getVar env v |> (fun s -> s.Split(":")) |> List.ofArray
+            | AccountLiteral l -> l
+            | AccountVariable v -> getVar env v |> (fun s -> s.Split(":")) |> List.ofArray
 
         match commodity, amount with
         | Some c, Some f ->
@@ -75,7 +75,7 @@ module QLInterpreter =
 
             { env with Variables = vars },
             { Account = account
-              Amount = Some(Commodity c, f)
+              Amount = Some(c, f)
               Tag = tag }
         | _ ->
             let vars = Map.add "remainder" 0.0 env.Variables // update remainder to 0

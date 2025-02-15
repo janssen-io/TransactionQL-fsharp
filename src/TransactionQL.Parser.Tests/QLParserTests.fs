@@ -66,7 +66,11 @@ let ``Expressions: subtraction is left associative`` () =
 
 [<Fact>]
 let ``Accounts: words separated by colons`` () =
-    test QLParser.qaccount "Expenses:Recreation:Hobby" (Account [ "Expenses"; "Recreation"; "Hobby" ])
+    test QLParser.qaccount "Expenses:Recreation:Hobby" (AccountLiteral [ "Expenses"; "Recreation"; "Hobby" ])
+
+[<Fact>]
+let ``Accounts: variables`` () =
+    test QLParser.qaccount "(account:checking)" (AccountVariable "account:checking")
 
 [<Fact>]
 let ``Commodity: string literals`` () =
@@ -90,7 +94,7 @@ let ``Transactions: expression`` () =
         QLParser.qtransaction
         "Expenses:Living:Food EUR (total - 5.25)"
         (trx (
-            Account [ "Expenses"; "Living"; "Food" ],
+            AccountLiteral [ "Expenses"; "Living"; "Food" ],
             Some
             <| AmountExpression(Commodity "EUR", Subtract(Variable "total", ExprNum 5.25))
         ))
@@ -100,18 +104,18 @@ let ``Transactions: amount`` () =
     test
         QLParser.qtransaction
         "Expenses:Living:Food EUR 13.37"
-        (trx (Account [ "Expenses"; "Living"; "Food" ], Some <| Amount(Commodity "EUR", 13.37)))
+        (trx (AccountLiteral [ "Expenses"; "Living"; "Food" ], Some <| Amount(Commodity "EUR", 13.37)))
 
 [<Fact>]
 let ``Transactions: just account`` () =
-    test QLParser.qtransaction "Expenses" (trx (Account [ "Expenses" ], None))
+    test QLParser.qtransaction "Expenses" (trx (AccountLiteral [ "Expenses" ], None))
 
 [<Fact>]
 let ``Transactions: amount with tag`` () =
     test
         QLParser.qtransaction
         "Expenses:Living:Food EUR 13.37 ; Key: value"
-        { Account = Account [ "Expenses"; "Living"; "Food" ]
+        { Account = AccountLiteral [ "Expenses"; "Living"; "Food" ]
           Amount = Amount(Commodity "EUR", 13.37) |> Some
           Tag = "Key: value" |> Some }
 
@@ -120,7 +124,7 @@ let ``Transactions: just account with tag`` () =
     test
         QLParser.qtransaction
         "Expenses:Living:Food ; Key: value"
-        { Account = Account [ "Expenses"; "Living"; "Food" ]
+        { Account = AccountLiteral [ "Expenses"; "Living"; "Food" ]
           Amount = None
           Tag = "Key: value" |> Some }
 
@@ -153,9 +157,9 @@ let ``Posting: two transactions`` () =
         posting
         (Posting(
             None,
-            [ trx (Account [ "Expenses"; "Rent" ], Some <| AmountExpression(Commodity "EUR", Variable "total"))
-              trx (Account [ "Expenses"; "Rent" ], Some <| Amount(Commodity "EUR", 5.0))
-              trx (Account [ "Assets"; "Checking" ], None) ]
+            [ trx (AccountLiteral [ "Expenses"; "Rent" ], Some <| AmountExpression(Commodity "EUR", Variable "total"))
+              trx (AccountLiteral [ "Expenses"; "Rent" ], Some <| Amount(Commodity "EUR", 5.0))
+              trx (AccountLiteral [ "Assets"; "Checking" ], None) ]
         ))
 
 [<Fact>]
@@ -234,14 +238,14 @@ let ``Query: <payee> <filters> <posting>`` () =
             Posting(
                 None,
                 [ trx (
-                      Account [ "Assets"; "TestAccount" ],
+                      AccountLiteral [ "Assets"; "TestAccount" ],
                       Some <| AmountExpression(Commodity "EUR", Divide(Variable "total", ExprNum 2.0))
                   )
                   trx (
-                      Account [ "Assets"; "TestSavings" ],
+                      AccountLiteral [ "Assets"; "TestSavings" ],
                       Some <| AmountExpression(Commodity "EUR", Variable "remainder")
                   )
-                  trx (Account [ "Expenses"; "Development" ], None) ]
+                  trx (AccountLiteral [ "Expenses"; "Development" ], None) ]
             )
         ))
 
@@ -274,7 +278,7 @@ let ``Queries: multiple queries`` () =
         ([ Query(
                Interpolation [ Word "First"; Word "query" ],
                [ Filter(Column "Creditor", EqualTo, String "NL") ],
-               Posting(None, [ trx (Account [ "Test"; "Account" ], None) ])
+               Posting(None, [ trx (AccountLiteral [ "Test"; "Account" ], None) ])
            )
 
            Query(
@@ -284,5 +288,5 @@ let ``Queries: multiple queries`` () =
                      [ Filter(Column "A", EqualTo, Number 5.0)
                        Filter(Column "B", EqualTo, Number 2.0) ]
                  Filter(Column "C", EqualTo, Number 1.0) ],
-               Posting(None, [ trx (Account [ "Assets"; "Checking" ], None) ])
+               Posting(None, [ trx (AccountLiteral [ "Assets"; "Checking" ], None) ])
            ) ])

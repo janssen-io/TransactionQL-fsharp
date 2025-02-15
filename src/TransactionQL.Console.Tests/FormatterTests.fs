@@ -69,7 +69,7 @@ let ``Line: concatenates accounts with colon`` () =
 
 [<Fact>]
 let ``Line: separates accounts and commodity with at least two spaces`` () =
-    let line = line (Account [ "A"; "B" ], Some(Commodity "$", 25.00), None)
+    let line = line ([ "A"; "B" ], Some("$", 25.00), None)
 
     let result =
         Formatter.sprintLine
@@ -95,7 +95,7 @@ let ``Line: prints the float with the given precision`` () =
           Comment = "# " }
 
     let amount = 25.12345678
-    let line = line (Account [ "A"; "B" ], Some(Commodity "€", amount), None)
+    let line = line ([ "A"; "B" ], Some("€", amount), None)
     let result = Formatter.sprintLine format 0 line
     Assert.EndsWith("25.123", result)
 
@@ -107,7 +107,7 @@ let ``Line: Adds tags (if any) after two spaces`` () =
           Comment = "; " }
 
     let amount = 25.12345678
-    let line = line (Account [ "A"; "B" ], Some(Commodity "€", amount), Some "My: Tag")
+    let line = line ([ "A"; "B" ], Some("€", amount), Some "My: Tag")
     let result = Formatter.sprintLine format 0 line
     Assert.EndsWith("  ; My: Tag", result)
 
@@ -116,8 +116,8 @@ let ``Posting: prints header and lines on separate lines`` () =
     let posting =
         { Header = Header(new DateTime(2019, 1, 1), "Payee")
           Lines =
-            [ line (Account [ "A"; "B" ], Some(Commodity "€", 10.00), None)
-              line (Account [ "C"; "D" ], None, None) ]
+            [ line ([ "A"; "B" ], Some("€", 10.00), None)
+              line ([ "C"; "D" ], None, None) ]
           Comments = [] }
 
     let result =
@@ -137,8 +137,8 @@ let ``Posting: aligns amounts to the right`` () =
     let posting =
         { Header = Header(new DateTime(2019, 1, 1), "Payee")
           Lines =
-            [ line (Account [ "Assets"; "Checking" ], Some(Commodity "€", 10.), None)
-              line (Account [ "Expenses"; "Vacation" ], Some(Commodity "$", -1000.), None) ]
+            [ line ([ "Assets"; "Checking" ], Some("€", 10.), None)
+              line ([ "Expenses"; "Vacation" ], Some("$", -1000.), None) ]
           Comments = [] }
 
     let result =
@@ -160,8 +160,8 @@ let ``Missing posting: adds comment before each line`` () =
     let posting =
         { Header = Header(new DateTime(2019, 1, 1), "Payee")
           Lines =
-            [ line (Account [ "A"; "B" ], Some(Commodity "€", 10.00), None)
-              line (Account [ "C"; "D" ], None, None) ]
+            [ line ([ "A"; "B" ], Some("€", 10.00), None)
+              line ([ "C"; "D" ], None, None) ]
           Comments = [] }
 
     let format: Format =
@@ -178,8 +178,8 @@ let ``Comments: comments are added between the header and transactions`` () =
     let posting =
         { Header = Header(new DateTime(2019, 1, 1), "Payee")
           Lines =
-            [ line (Account [ "A"; "B" ], Some(Commodity "€", 10.00), None)
-              line (Account [ "C"; "D" ], None, None) ]
+            [ line ([ "A"; "B" ], Some("€", 10.00), None)
+              line ([ "C"; "D" ], None, None) ]
           Comments = [ "Two lines"; "Of comments" ] }
 
     let format: Format =

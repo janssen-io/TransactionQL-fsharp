@@ -28,6 +28,7 @@ module API =
         rows
         |> Seq.map (fun row ->
             { Variables = Map.empty
+              EnvVars = variables
               Row = row
               DateFormat = reader.DateFormat })
         |> Seq.map (fun env -> QLInterpreter.evalProgram env (List.ofArray queries))
@@ -43,7 +44,7 @@ module API =
         let lines =
             trx
             |> Array.map (fun (account, (currency: string), (amount: Nullable<decimal>)) ->
-                let acc = Account(account :: [])
+                let acc = (account :: [])
 
                 match (String.IsNullOrEmpty currency, Option.ofNullable amount) with
                 | true, _
@@ -53,7 +54,7 @@ module API =
                       Tag = None }
                 | _, Some a ->
                     { Account = acc
-                      Amount = Some(Commodity currency, float a)
+                      Amount = Some(currency, float a)
                       Tag = None })
             |> List.ofArray
 

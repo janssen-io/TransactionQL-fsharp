@@ -10,8 +10,8 @@ module AST =
         | Multiply of Expression * Expression
 
     type Account = 
-        | Account of string list
-        | VariableAccount of string
+        | AccountLiteral of string list
+        | AccountVariable of string
 
     type Commodity = Commodity of string
 

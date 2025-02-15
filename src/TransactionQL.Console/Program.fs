@@ -106,6 +106,7 @@ module Program =
         |> options.Reader.Read
         |> Seq.map (fun row ->
             { Variables = Map.empty
+              EnvVars = Map.empty
               Row = row
               DateFormat = options.Reader.DateFormat })
         |> Seq.map (fun env -> QLInterpreter.evalProgram env parsedFilters)

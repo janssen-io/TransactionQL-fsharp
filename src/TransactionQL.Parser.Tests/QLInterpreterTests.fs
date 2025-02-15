@@ -8,7 +8,8 @@ open AST
 open Xunit
 
 let env =
-    { Variables = Map.ofList []
+    { Variables = Map.empty
+      EnvVars = Map.empty
       Row = Map.ofList []
       DateFormat = "yyyy/MM/dd" }
 
@@ -26,7 +27,7 @@ let testAmount ({ Amount = amount }: Line) expectedAmount =
     match expectedAmount with
     | None -> Assert.Equal(None, amount)
     | Some f ->
-        let (Commodity _, f') = Option.get amount
+        let (_, f') = Option.get amount
         Assert.Equal(f, f')
 
 [<Fact>]
@@ -265,7 +266,7 @@ let ``Posting lines: No amount`` () =
             Variables = Map.add "remainder" 10.00 env.Variables }
 
     let transaction =
-        { Account = Account [ "Expenses"; "Food" ]
+        { Account = AccountLiteral [ "Expenses"; "Food" ]
           Amount = None
           Tag = None }
 
@@ -282,14 +283,14 @@ let ``Posting lines: with amount`` () =
             Variables = Map.add "remainder" 20.00 env.Variables }
 
     let transaction =
-        { Account = Account [ "Expenses"; "Food" ]
+        { Account = AccountLiteral [ "Expenses"; "Food" ]
           Amount = Some <| Amount(Commodity "€", 5.00)
           Tag = None }
 
     let (Interpretation(updatedEnv, ({ Amount = amount }: Line))) =
         generatePostingLine env' transaction
 
-    Assert.Equal(Some(Commodity "€", 5.0), amount)
+    Assert.Equal(Some("€", 5.0), amount)
     Assert.Equal(25.0, Map.find "remainder" updatedEnv.Variables)
 
 [<Fact>]
@@ -299,14 +300,14 @@ let ``Posting lines: with amount expression`` () =
             Variables = Map.add "remainder" 10.00 env.Variables }
 
     let transaction =
-        { Account = Account [ "Expenses"; "Food" ]
+        { Account = AccountLiteral [ "Expenses"; "Food" ]
           Amount = Some <| AmountExpression(Commodity "€", ExprNum 20.00)
           Tag = None }
 
     let (Interpretation(updatedEnv, ({ Amount = amount }: Line))) =
         generatePostingLine env' transaction
 
-    Assert.Equal(Some(Commodity "€", 20.0), amount)
+    Assert.Equal(Some("€", 20.0), amount)
     Assert.Equal(30.0, Map.find "remainder" updatedEnv.Variables)
 
 [<Fact>]
@@ -316,8 +317,8 @@ let ``Posting: multiple lines`` () =
             Variables = Map.add "remainder" 0.00 env.Variables }
 
     let transactions =
-        [ trx (Account [ "Expenses"; "Food" ], Some <| AmountExpression(Commodity "€", ExprNum 20.00))
-          trx (Account [ "Assets"; "Checking" ], None) ]
+        [ trx (AccountLiteral [ "Expenses"; "Food" ], Some <| AmountExpression(Commodity "€", ExprNum 20.00))
+          trx (AccountLiteral [ "Assets"; "Checking" ], None) ]
 
     let (Interpretation(_, lines)) = generatePosting env' transactions
     Assert.Equal(2, lines.Length)
@@ -329,14 +330,14 @@ let ``Posting: updates remainder between lines`` () =
             Variables = Map.ofList [ ("remainder", 0.00) ] }
 
     let transactions =
-        [ trx (Account [ "Expenses"; "Food" ], Some <| Amount(Commodity "€", 50.00))
+        [ trx (AccountLiteral [ "Expenses"; "Food" ], Some <| Amount(Commodity "€", 50.00))
           trx (
-              Account [ "Assets"; "Receivables" ],
+              AccountLiteral [ "Assets"; "Receivables" ],
               Some
               <| AmountExpression(Commodity "€", Subtract(ExprNum 20.00, Variable "remainder"))
           )
           trx (
-              Account [ "Assets"; "Checking" ],
+              AccountLiteral [ "Assets"; "Checking" ],
               Some
               <| AmountExpression(Commodity "€", Multiply(ExprNum -1.0, Variable "remainder"))
           ) ]
@@ -356,8 +357,8 @@ let ``Query: given a matching row, a posting is generated`` () =
             [ Filter(Column "Amount", GreaterThan, Number 0.00) ],
             Posting(
                 None,
-                [ trx (Account [ "Expenses"; "Misc" ], Some <| AmountExpression(Commodity "€", Variable "total"))
-                  trx (Account [ "Assets"; "Checking" ], None) ]
+                [ trx (AccountLiteral [ "Expenses"; "Misc" ], Some <| AmountExpression(Commodity "€", Variable "total"))
+                  trx (AccountLiteral [ "Assets"; "Checking" ], None) ]
             )
         )
 
@@ -381,8 +382,8 @@ let ``Query: given a row that does not match, no posting is generated`` () =
             [ Filter(Column "Amount", GreaterThan, Number 0.00) ],
             Posting(
                 None,
-                [ trx (Account [ "Expenses"; "Misc" ], Some <| AmountExpression(Commodity "€", Variable "total"))
-                  trx (Account [ "Assets"; "Checking" ], None) ]
+                [ trx (AccountLiteral [ "Expenses"; "Misc" ], Some <| AmountExpression(Commodity "€", Variable "total"))
+                  trx (AccountLiteral [ "Assets"; "Checking" ], None) ]
             )
         )
 
@@ -399,9 +400,9 @@ let ``Queries: multiple matching queries only applies the first match`` () =
               [ Filter(Column "Amount", GreaterThan, Number 0.00) ],
               Posting(
                   None,
-                  [ trx (Account [ "Expenses"; "Misc" ], Some <| AmountExpression(Commodity "€", Variable "total"))
+                  [ trx (AccountLiteral [ "Expenses"; "Misc" ], Some <| AmountExpression(Commodity "€", Variable "total"))
                     trx (
-                        Account [ "Assets"; "Checking" ],
+                        AccountLiteral [ "Assets"; "Checking" ],
                         Some
                         <| AmountExpression(Commodity "€", Multiply(ExprNum -1.0, Variable "remainder"))
                     ) ]
@@ -413,10 +414,10 @@ let ``Queries: multiple matching queries only applies the first match`` () =
               Posting(
                   None,
                   [ trx (
-                        Account [ "Expenses"; "Subscription" ],
+                        AccountLiteral [ "Expenses"; "Subscription" ],
                         Some <| AmountExpression(Commodity "€", Variable "total")
                     )
-                    trx (Account [ "Assets"; "Savings" ], None) ]
+                    trx (AccountLiteral [ "Assets"; "Savings" ], None) ]
               )
           ) ]
 
@@ -441,9 +442,9 @@ let ``Queries: multiple queries only applies the match`` () =
               [ Filter(Column "Amount", LessThan, Number 0.00) ],
               Posting(
                   None,
-                  [ trx (Account [ "Expenses"; "Misc" ], Some <| AmountExpression(Commodity "€", Variable "total"))
+                  [ trx (AccountLiteral [ "Expenses"; "Misc" ], Some <| AmountExpression(Commodity "€", Variable "total"))
                     trx (
-                        Account [ "Assets"; "Checking" ],
+                        AccountLiteral [ "Assets"; "Checking" ],
                         Some
                         <| AmountExpression(Commodity "€", Multiply(ExprNum -1.0, Variable "remainder"))
                     ) ]
@@ -455,10 +456,10 @@ let ``Queries: multiple queries only applies the match`` () =
               Posting(
                   None,
                   [ trx (
-                        Account [ "Expenses"; "Subscription" ],
+                        AccountLiteral [ "Expenses"; "Subscription" ],
                         Some <| AmountExpression(Commodity "€", Variable "total")
                     )
-                    trx (Account [ "Assets"; "Savings" ], None) ]
+                    trx (AccountLiteral [ "Assets"; "Savings" ], None) ]
               )
           ) ]
 
@@ -490,10 +491,10 @@ let ``Queries: notes are added to the comments`` () =
               Posting(
                   "this is a note" |> Some,
                   [ trx (
-                        Account [ "Expenses"; "Subscription" ],
+                        AccountLiteral [ "Expenses"; "Subscription" ],
                         Some <| AmountExpression(Commodity "€", Variable "total")
                     )
-                    trx (Account [ "Assets"; "Savings" ], None) ]
+                    trx (AccountLiteral [ "Assets"; "Savings" ], None) ]
               )
           ) ]
 
@@ -516,10 +517,10 @@ let ``Queries: tags are added to the posting line`` () =
               [ Filter(Column "Amount", GreaterThan, Number 0.00) ],
               Posting(
                   "this is a note" |> Some,
-                  [ { Account = Account [ "Expenses"; "Subscription" ]
+                  [ { Account = AccountLiteral [ "Expenses"; "Subscription" ]
                       Amount = (Some << AmountExpression) (Commodity "€", Variable "total")
                       Tag = Some "My: FirstTag" }
-                    { Account = Account [ "Assets"; "Savings" ]
+                    { Account = AccountLiteral [ "Assets"; "Savings" ]
                       Amount = None
                       Tag = Some "My: OtherTag" } ]
               )
