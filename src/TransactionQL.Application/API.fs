@@ -4,8 +4,6 @@ open System
 open TransactionQL.Input.Converters
 open TransactionQL.Parser.Interpretation
 
-
-
 module API =
     open FParsec
     open TransactionQL.Input
@@ -26,7 +24,7 @@ module API =
         | Some reader -> Left reader
         | None -> Right $"Unable to load plugin from directory %s{pluginDirectory}"
 
-    let filter (reader: IConverter) (queries: Query array) rows =
+    let filter (reader: IConverter) (queries: Query array) (variables: Map<string, string>) rows =
         rows
         |> Seq.map (fun row ->
             { Variables = Map.empty

@@ -41,7 +41,7 @@ let ``Header: ends with the payee`` () =
 
 [<Fact>]
 let ``Line: is indented`` () =
-    let line = line (Account [ "A"; "B" ], None, None)
+    let line = line ([ "A"; "B" ], None, None)
 
     let result =
         Formatter.sprintLine
@@ -55,7 +55,7 @@ let ``Line: is indented`` () =
 
 [<Fact>]
 let ``Line: concatenates accounts with colon`` () =
-    let line = line (Account [ "A"; "B" ], None, None)
+    let line = line ([ "A"; "B" ], None, None)
 
     let result =
         Formatter.sprintLine

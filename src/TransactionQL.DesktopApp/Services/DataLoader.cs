@@ -24,7 +24,7 @@ public class DataLoader : ILoadData
     private static readonly Tuple<AST.Commodity, double> _defaultAmount = new(AST.Commodity.NewCommodity(""), 0);
     private readonly ITransactionQLApi _api;
     private readonly IStreamFiles _streamer;
-    private SelectedData _data;
+    private SelectedData? _data;
     private readonly ISelectAccounts _accountSelector;
     private readonly string _pluginDir;
 
@@ -37,18 +37,19 @@ public class DataLoader : ILoadData
         _pluginDir = pluginDir;
     }
 
+    [MemberNotNull(nameof(_data))]
     public bool TryLoadData(SelectedData data, out IEnumerable<PaymentDetailsViewModel> payments, out string error)
     {
         _data = data;
         payments = [];
 
-        if (!TryParseFilters(_data.FiltersFile, out var queries, out error))
+        if (!TryParseFilters(out var queries, out error))
             return false;
 
-        if (!TryCreateReader(_data, out var reader, out error, _pluginDir))
+        if (!TryCreateReader(out var reader, out error, _pluginDir))
             return false;
 
-        payments = ParseTransactions(_data, queries, reader);
+        payments = ParseTransactions(queries, reader);
         return true;
     }
 
@@ -69,18 +70,23 @@ public class DataLoader : ILoadData
         });
     }
 
-    private IEnumerable<PaymentDetailsViewModel> ParseTransactions(SelectedData data, AST.Query[] queries, IConverter reader)
+    private IEnumerable<PaymentDetailsViewModel> ParseTransactions(AST.Query[] queries, IConverter reader)
     {
-        using Stream t = _streamer.Open(data.TransactionsFile);
+        using Stream t = _streamer.Open(_data.TransactionsFile);
         using StreamReader bankTransactionCsv = new(t);
-        if (data.HasHeader)
+        if (_data.HasHeader)
         {
             _ = bankTransactionCsv.ReadLine();
         }
 
+        FSharpMap<string, string> variables = new([
+            new("account:checking", _data.DefaultCheckingAccount),
+            new("currency", _data.DefaultCurrency),
+        ]);
+
         FSharpMap<string, string>[] rows = reader.Read(bankTransactionCsv.ReadToEnd());
         Either<QLInterpreter.Entry, FSharpMap<string, string>>[] filteredRows
-            = _api.Filter(reader, queries, rows).ToArray();
+            = _api.Filter(reader, queries, variables, rows).ToArray();
 
         foreach (var filteredRow in filteredRows.Zip(rows))
         {
@@ -126,10 +132,10 @@ public class DataLoader : ILoadData
         };
     }
 
-    private bool TryCreateReader(SelectedData data, [NotNullWhen(true)] out IConverter? reader, out string error, string pluginDir)
+    private bool TryCreateReader([NotNullWhen(true)] out IConverter? reader, out string error, string pluginDir)
     {
         error = string.Empty;
-        Either<IConverter, string> loader = _api.LoadReader(data.Module, pluginDir);
+        Either<IConverter, string> loader = _api.LoadReader(_data.Module, pluginDir);
 
         if (!loader.TryGetLeft(out reader))
         {
@@ -141,11 +147,11 @@ public class DataLoader : ILoadData
     }
 
 
-    private bool TryParseFilters(string filtersFile, [NotNullWhen(true)] out AST.Query[]? queries, out string error)
+    private bool TryParseFilters([NotNullWhen(true)] out AST.Query[]? queries, out string error)
     {
         error = string.Empty;
 
-        using Stream f = _streamer.Open(filtersFile);
+        using Stream f = _streamer.Open(_data.FiltersFile);
         using StreamReader filterTql = new(f);
 
         Either<AST.Query[], string> parser = _api.ParseFilters(filterTql.ReadToEnd());

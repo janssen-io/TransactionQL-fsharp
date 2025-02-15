@@ -6,6 +6,7 @@ module Interpretation =
 
     type Env =
         { Variables: Map<string, float>
+          EnvVars: Map<string, string>
           Row: Row
           DateFormat: string }
 

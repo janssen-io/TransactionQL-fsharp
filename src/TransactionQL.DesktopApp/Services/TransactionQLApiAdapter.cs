@@ -16,9 +16,16 @@ using Row = FSharpMap<string, string>;
 /// </summary>
 public interface ITransactionQLApi
 {
-    IEnumerable<Either<QLInterpreter.Entry, Row>> Filter(IConverter reader, Query[] queries, IEnumerable<Row> rows);
+    IEnumerable<Either<QLInterpreter.Entry, Row>> Filter(
+        IConverter reader,
+        Query[] queries,
+        FSharpMap<string, string> variables,
+        IEnumerable<Row> rows);
+
     string FormatPosting(DateTime date, string title, string description, Tuple<string, string?, decimal?>[] trx);
+
     Either<IConverter, string> LoadReader(string name, string pluginDirectory);
+
     Either<Query[], string> ParseFilters(string filterContents);
 }
 
@@ -26,8 +33,12 @@ public class TransactionQLApiAdapter : ITransactionQLApi
 {
     public static readonly TransactionQLApiAdapter Instance = new();
 
-    public IEnumerable<Either<QLInterpreter.Entry, Row>> Filter(IConverter reader, Query[] queries, IEnumerable<Row> rows)
-        => API.filter(reader, queries, rows);
+    public IEnumerable<Either<QLInterpreter.Entry, Row>> Filter(
+        IConverter reader,
+        Query[] queries,
+        FSharpMap<string, string> variables,
+        IEnumerable<Row> rows)
+        => API.filter(reader, queries, variables, rows);
 
     public string FormatPosting(DateTime date, string title, string description, Tuple<string, string?, decimal?>[] trx)
         => API.formatPosting(date, title, description, trx);
