@@ -81,7 +81,6 @@ public class DataLoader : ILoadData
 
         FSharpMap<string, string> variables = new([
             new("account:default", data.DefaultCheckingAccount),
-            new("currency", data.DefaultCurrency),
         ]);
 
         FSharpMap<string, string>[] rows = reader.Read(bankTransactionCsv.ReadToEnd());
