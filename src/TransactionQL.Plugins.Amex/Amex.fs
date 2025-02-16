@@ -47,10 +47,10 @@ module Amex =
                         fromRow "Name"
                     )
                   Lines =
-                    [ { Account = Account [ fromRow "Receiver" ]
-                        Amount = (Commodity "EUR", float (fromRow "Total")) |> Some
+                    [ { Account = [ fromRow "Receiver" ]
+                        Amount = ("EUR", float (fromRow "Total")) |> Some
                         Tag = None }
-                      { Account = Account [ fromRow "Sender" ]
+                      { Account = [ fromRow "Sender" ]
                         Amount = None
                         Tag = None } ]
                   Comments = [ fromRow "Description" ] }

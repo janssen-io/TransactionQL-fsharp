@@ -1,5 +1,7 @@
 ﻿namespace TransactionQL.Parser
 
+open System
+
 module QLParser =
     open FParsec
     open AST
@@ -75,7 +77,12 @@ module QLParser =
 
         opp.ExpressionParser |> between (pchar '(') (pchar ')')
 
-    let qaccount = sepBy1 (pword) (pstring ":") |>> Account
+    let qaccount = 
+        let qliteral = sepBy1 (pword) (pstring ":") |>> id
+        let qvariable = 
+            (pchar '(' >>. qliteral .>> pchar ')') |>> (fun n -> String.Join(":", n))
+        choice [qliteral |>> AccountLiteral; qvariable |>> AccountVariable]
+            
 
     let qcommodity = choice [ stringLiteral; pword ] |>> Commodity
 

@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using TransactionQL.DesktopApp.Models;
 using TransactionQL.DesktopApp.ViewModels;
 using TransactionQL.Parser;
@@ -21,10 +22,9 @@ public interface ILoadData
 
 public class DataLoader : ILoadData
 {
-    private static readonly Tuple<AST.Commodity, double> _defaultAmount = new(AST.Commodity.NewCommodity(""), 0);
+    private static readonly Tuple<string, double> _defaultAmount = new(string.Empty, 0);
     private readonly ITransactionQLApi _api;
     private readonly IStreamFiles _streamer;
-    private SelectedData _data;
     private readonly ISelectAccounts _accountSelector;
     private readonly string _pluginDir;
 
@@ -39,16 +39,15 @@ public class DataLoader : ILoadData
 
     public bool TryLoadData(SelectedData data, out IEnumerable<PaymentDetailsViewModel> payments, out string error)
     {
-        _data = data;
         payments = [];
 
-        if (!TryParseFilters(_data.FiltersFile, out var queries, out error))
+        if (!TryParseFilters(data.FiltersFile, out var queries, out error))
             return false;
 
-        if (!TryCreateReader(_data, out var reader, out error, _pluginDir))
+        if (!TryCreateReader(data.Module, out var reader, out error, _pluginDir))
             return false;
 
-        payments = ParseTransactions(_data, queries, reader);
+        payments = ParseTransactions(data, queries, reader);
         return true;
     }
 
@@ -56,20 +55,22 @@ public class DataLoader : ILoadData
     {
         return entry.Lines.Select(line =>
         {
-            Tuple<AST.Commodity, double> amountOrDefault = line.Amount.Or(_defaultAmount);
+            Tuple<string, double> amountOrDefault = line.Amount.Or(_defaultAmount);
 
             return new Posting()
             {
-                Account = string.Join(':', line.Account.Item),
+                Account = string.Join(':', line.Account),
                 // we don't want to display 0, if there's no amount.
                 // But since Amount is a non-nullable double, we can't make it the default.
                 Amount = line.Amount.HasValue() ? (decimal)amountOrDefault.Item2 : null,
-                Currency = amountOrDefault.Item1.Item,
+                Currency = amountOrDefault.Item1,
             };
         });
     }
 
-    private IEnumerable<PaymentDetailsViewModel> ParseTransactions(SelectedData data, AST.Query[] queries, IConverter reader)
+    private IEnumerable<PaymentDetailsViewModel> ParseTransactions(
+        SelectedData data,
+        AST.Query[] queries, IConverter reader)
     {
         using Stream t = _streamer.Open(data.TransactionsFile);
         using StreamReader bankTransactionCsv = new(t);
@@ -78,19 +79,28 @@ public class DataLoader : ILoadData
             _ = bankTransactionCsv.ReadLine();
         }
 
+        FSharpMap<string, string> variables = new([
+            new("account:default", data.DefaultCheckingAccount),
+        ]);
+
         FSharpMap<string, string>[] rows = reader.Read(bankTransactionCsv.ReadToEnd());
         Either<QLInterpreter.Entry, FSharpMap<string, string>>[] filteredRows
-            = _api.Filter(reader, queries, rows).ToArray();
+            = _api.Filter(reader, queries, variables, rows).ToArray();
 
         foreach (var filteredRow in filteredRows.Zip(rows))
         {
             yield return filteredRow.First.TryGetLeft(out QLInterpreter.Entry? entry)
-                ? CreateFilteredTransaction(filteredRow.Second, entry)
-                : CreateTransaction(reader, filteredRow.Second);
+                ? CreateFilteredTransaction(
+                    data.DefaultCurrency, filteredRow.Second, entry)
+                : CreateTransaction(
+                    data.DefaultCheckingAccount, data.DefaultCurrency,
+                    reader, filteredRow.Second);
         }
     }
 
-    private PaymentDetailsViewModel CreateTransaction(IConverter reader, FSharpMap<string, string> row)
+    private PaymentDetailsViewModel CreateTransaction(
+        string defaultAccount, string defaultCurrency,
+        IConverter reader, FSharpMap<string, string> row)
     {
         string title = row["Name"];
         string description = row["Description"].Trim('\'');
@@ -100,15 +110,15 @@ public class DataLoader : ILoadData
             row["Amount"],
             NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
 
-        var posting = new Posting { Account = _data.DefaultCheckingAccount, Currency = _data.DefaultCurrency, Amount = amount };
+        var posting = new Posting { Account = defaultAccount, Currency = defaultCurrency, Amount = amount };
 
-        return new PaymentDetailsViewModel(_accountSelector, title, date, description, _data.DefaultCurrency, amount)
+        return new PaymentDetailsViewModel(_accountSelector, title, date, description, defaultCurrency, amount)
         {
             Postings = { posting }
         };
     }
 
-    private PaymentDetailsViewModel CreateFilteredTransaction(FSharpMap<string, string> row, QLInterpreter.Entry entry)
+    private PaymentDetailsViewModel CreateFilteredTransaction(string defaultCurrency, FSharpMap<string, string> row, QLInterpreter.Entry entry)
     {
         string title = entry.Header.Item2;
         string description = string.Join(",", entry.Comments.ToArray()).Trim('\'');
@@ -120,16 +130,19 @@ public class DataLoader : ILoadData
 
         var postings = ParsePostings(entry);
 
-        return new PaymentDetailsViewModel(_accountSelector, title, date, description, _data.DefaultCurrency, amount)
+        return new PaymentDetailsViewModel(_accountSelector, title, date, description, defaultCurrency, amount)
         {
             Postings = new(postings)
         };
     }
 
-    private bool TryCreateReader(SelectedData data, [NotNullWhen(true)] out IConverter? reader, out string error, string pluginDir)
+    private bool TryCreateReader(
+        string module,
+        [NotNullWhen(true)] out IConverter? reader, out string error, string pluginDir)
     {
         error = string.Empty;
-        Either<IConverter, string> loader = _api.LoadReader(data.Module, pluginDir);
+        Either<IConverter, string> loader = _api.LoadReader(
+            module, pluginDir);
 
         if (!loader.TryGetLeft(out reader))
         {
@@ -141,7 +154,10 @@ public class DataLoader : ILoadData
     }
 
 
-    private bool TryParseFilters(string filtersFile, [NotNullWhen(true)] out AST.Query[]? queries, out string error)
+    private bool TryParseFilters(
+        string filtersFile,
+        [NotNullWhen(true)] out AST.Query[]? queries,
+        out string error)
     {
         error = string.Empty;
 

@@ -11,14 +11,20 @@ module QLInterpreter =
     type Header = Header of System.DateTime * string
 
     type Line =
-        { Account: Account
-          Amount: (Commodity * float) option
+        { Account: string list
+          Amount: (string * float) option
           Tag: string option }
 
     type Entry = // Entry of Header * Line list
         { Header: Header
           Lines: Line list
           Comments: string list }
+
+    let getVar (env: Env) (name: string) =
+        if env.EnvVars.ContainsKey name then
+            Map.find name env.EnvVars
+        else
+            failwith <| $"Unknown variable '%s{name}'"
 
     let rec eval (env: Env) (expr: Expression) =
         let rec eval' e =
@@ -37,6 +43,11 @@ module QLInterpreter =
             | Divide(l, r) -> arithmetic (/) (l, r)
 
         eval' expr |> fun n -> Interpretation(env, n)
+
+    let evalAccount (env: Env) (account: Account) =
+        match account with
+        | AccountLiteral l -> l
+        | AccountVariable v -> getVar env v |> (fun s -> s.Split(":")) |> List.ofArray
 
     let generatePostingLine
         env
@@ -58,20 +69,21 @@ module QLInterpreter =
 
         let commodity = Option.map getCommodity amount
         let amount = Option.map evalAmount amount
+        let account = evalAccount env accounts
 
         match commodity, amount with
         | Some c, Some f ->
             let vars = Map.add "remainder" (remainder + f) env.Variables
 
             { env with Variables = vars },
-            { Account = accounts
-              Amount = Some(Commodity c, f)
+            { Account = account
+              Amount = Some(c, f)
               Tag = tag }
         | _ ->
             let vars = Map.add "remainder" 0.0 env.Variables // update remainder to 0
 
             { env with Variables = vars },
-            { Account = accounts
+            { Account = account
               Amount = None
               Tag = tag }
         |> Interpretation

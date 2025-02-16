@@ -17,4 +17,8 @@
     <ProjectReference Include="..\TransactionQL.Shared\TransactionQL.Shared.fsproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="9.0.201" />
+  </ItemGroup>
+
 </Project>

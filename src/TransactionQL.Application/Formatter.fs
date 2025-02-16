@@ -25,7 +25,7 @@ module Formatter =
     let sprintLine
         format
         floatWidth
-        ({ Account = Account accountParts
+        ({ Account = accountParts
            Amount = amount
            Tag = tag }: Line)
         =
@@ -34,7 +34,7 @@ module Formatter =
 
         let line =
             match amount with
-            | Some(Commodity commodity, sum) ->
+            | Some(commodity, sum) ->
                 // Accounts and commodities must be separated by atleast two spaces
                 sprintf "%s  %*s %*.*f" account numOfSpaces commodity floatWidth format.Precision sum
             | None -> account
@@ -54,7 +54,7 @@ module Formatter =
             lines
             |> List.map (fun ({ Amount = amount }: Line) ->
                 match amount with
-                | Some(Commodity _, number) -> (sprintf "%.*f" format.Precision number).Length
+                | Some(_, number) -> (sprintf "%.*f" format.Precision number).Length
                 | None -> 0)
             |> List.max
 

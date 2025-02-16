@@ -38,9 +38,9 @@ jobs:
       - name: Build
         run: >
             dotnet run
-            --project ./src/TransactionQL.Build/TransactionQL.Build.fsproj
-            -e parallel-jobs=4
-            -e VERSION=${{ steps.version.outputs.VERSION }}
+            --project "./src/TransactionQL.Build/TransactionQL.Build.fsproj"
+            -e VERSION="${{ steps.version.outputs.VERSION }}"
+            --parallel 4
 
       - name: Publish
         uses: softprops/action-gh-release@v1

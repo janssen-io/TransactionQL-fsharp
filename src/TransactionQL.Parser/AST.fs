@@ -9,7 +9,9 @@ module AST =
         | Divide of Expression * Expression
         | Multiply of Expression * Expression
 
-    type Account = Account of string list
+    type Account = 
+        | AccountLiteral of string list
+        | AccountVariable of string
 
     type Commodity = Commodity of string
 

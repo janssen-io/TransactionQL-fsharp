@@ -42,10 +42,10 @@ module Bunq =
                         fromRow "Name"
                     )
                   Lines =
-                    [ { Account = Account [ fromRow "Receiver" ]
-                        Amount = ((fromRow >> Commodity) "Currency", (fromRow >> float) "Total") |> Some
+                    [ { Account = [ fromRow "Receiver" ]
+                        Amount = (fromRow "Currency", (fromRow >> float) "Total") |> Some
                         Tag = None }
-                      { Account = Account [ fromRow "Sender" ]
+                      { Account = [ fromRow "Sender" ]
                         Amount = None
                         Tag = None } ]
                   Comments = [ fromRow "Description" ] }
