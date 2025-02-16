@@ -70,7 +70,7 @@ let ``Accounts: words separated by colons`` () =
 
 [<Fact>]
 let ``Accounts: variables`` () =
-    test QLParser.qaccount "(account:checking)" (AccountVariable "account:checking")
+    test QLParser.qaccount "(account:default)" (AccountVariable "account:default")
 
 [<Fact>]
 let ``Commodity: string literals`` () =

@@ -80,7 +80,7 @@ public class DataLoader : ILoadData
         }
 
         FSharpMap<string, string> variables = new([
-            new("account:checking", data.DefaultCheckingAccount),
+            new("account:default", data.DefaultCheckingAccount),
             new("currency", data.DefaultCurrency),
         ]);
 

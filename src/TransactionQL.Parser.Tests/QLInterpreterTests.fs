@@ -240,8 +240,8 @@ let ``Inference: number column - notequalto`` () =
 
 [<Fact>]
 let ``Accounts: variable`` () =
-    let account = AccountVariable "account:checking"
-    let env' = { env with EnvVars = Map.ofList [ ("account:checking", "Default:Checking") ] }
+    let account = AccountVariable "account:default"
+    let env' = { env with EnvVars = Map.ofList [ ("account:default", "Default:Checking") ] }
     let accountParts = evalAccount env' account
 
     Assert.Collection(accountParts,
@@ -330,12 +330,12 @@ let ``Posting: multiple lines`` () =
     let env' =
         { env with
             Variables = Map.add "remainder" 0.00 env.Variables
-            EnvVars = Map.add "account:checking" "Default" env.EnvVars
+            EnvVars = Map.add "account:default" "Default" env.EnvVars
         }
 
     let transactions =
         [ trx (AccountLiteral [ "Expenses"; "Food" ], Some <| AmountExpression(Commodity "€", ExprNum 20.00))
-          trx (AccountVariable "account:checking", None) ]
+          trx (AccountVariable "account:default", None) ]
 
     let (Interpretation(_, lines)) = generatePosting env' transactions
     Assert.Collection(lines, 
