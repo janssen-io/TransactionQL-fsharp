@@ -72,8 +72,7 @@
               RelativePanel.AlignBottomWithPanel="False"
               Name="Table"
               ClipToBounds="True"
-              CornerRadius="{StaticResource Radius}"
-                >
+              CornerRadius="{StaticResource Radius}" >
           <DockPanel>
             <Grid ShowGridLines="False"
                   RowDefinitions="*,*"

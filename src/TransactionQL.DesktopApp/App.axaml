@@ -15,6 +15,7 @@
         <ResourceInclude Source="/Assets/ThemeVariants/Dark.axaml" />
         <ResourceInclude Source="/Assets/ThemeVariants/Light.axaml" />
         <ResourceInclude Source="/Assets/Variables.axaml" />
+        <ResourceInclude Source="/Controls/Badge.axaml" />
         <ResourceInclude Source="/Controls/Dropzone.axaml" />
         <ResourceInclude Source="/Controls/StepIndicator.axaml" />
         <ResourceInclude Source="/Controls/TitledBorder.axaml" />
