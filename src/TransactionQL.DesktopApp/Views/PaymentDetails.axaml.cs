@@ -27,3 +27,4 @@ public partial class PaymentDetails : UserControl
         container.Loaded -= OnContainerOnLoaded;
     }
 }
+    

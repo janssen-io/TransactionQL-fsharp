@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using TransactionQL.DesktopApp.Models;
 using TransactionQL.DesktopApp.Services;
 using TransactionQL.DesktopApp.ViewModels;
 
@@ -19,7 +20,7 @@ public static class DesignData
         Postings =
         [
             new() { Account = "Assets:Checking", Currency = "EUR", Amount = -127.11m },
-            new() { Account = "Expenses:Living:Utilities" }
+            new() { Account = "Expenses:Living:Utilities", Tags = [ new Tag("Events", "2025-Yadayada")] }
         ],
         IsActive = true,
         HasError = true,
@@ -38,7 +39,7 @@ public static class DesignData
         Postings =
         [
             new() { Account = "Assets:Checking", Currency = "EUR", Amount = -127.11m },
-            new() { Account = "Expenses:Living:Utilities" }
+            new() { Account = "Expenses:Living:Utilities", Tags = [ new Tag("Events", "2025-Yadayada")] }
         ],
         IsActive = false
     };
