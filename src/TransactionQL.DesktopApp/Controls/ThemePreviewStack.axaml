@@ -40,18 +40,22 @@
               <TextBlock Grid.Column="1" >COLUMN 2</TextBlock>
               <Separator Grid.Row="1" Grid.ColumnSpan="2" />
             </Grid>
-            <Grid RowDefinitions="*,*,*,*,*" Classes="Editable">
+            <Grid RowDefinitions="*,*,*,*,*,*" Classes="Editable">
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
               </Grid.ColumnDefinitions>
               <TextBlock Grid.Column="0">John Doe</TextBlock>
+              <WrapPanel Grid.Column="0" Grid.Row="1">
+                <c:Badge Text="Events: Birthday-Joe" />
+                <c:Badge Text="Gifts: Joe" />
+              </WrapPanel>
               <TextBlock Grid.Column="1" TextAlignment="Right">1337.42</TextBlock>
-              <Separator Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" />
-              <TextBox Grid.Column="0" Grid.Row="2">Some Text</TextBox>
-              <TextBox Grid.Column="1" Grid.Row="2" TextAlignment="Right">123.45</TextBox>
-              <Separator Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" />
-              <AutoCompleteBox Grid.Column="0" Grid.Row="4" Text="Test" Watermark="Test"></AutoCompleteBox>
+              <Separator Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3" />
+              <TextBox Grid.Column="0" Grid.Row="3">Some Text</TextBox>
+              <TextBox Grid.Column="1" Grid.Row="3" TextAlignment="Right">123.45</TextBox>
+              <Separator Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="3" />
+              <AutoCompleteBox Grid.Column="0" Grid.Row="5" Text="Test" Watermark="Test"></AutoCompleteBox>
             </Grid>
           </StackPanel>
         </Border>

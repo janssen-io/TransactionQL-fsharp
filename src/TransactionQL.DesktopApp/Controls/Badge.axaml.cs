@@ -1,21 +1,21 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
-using Avalonia.Input;
 using Avalonia.Interactivity;
-using System;
+using ReactiveUI;
+using System.Reactive;
 
 namespace TransactionQL.DesktopApp.Controls;
 
-public class Badge : TemplatedControl
+public class Badge : Button
 {
-    public static readonly StyledProperty<string?> TitleProperty =
-        AvaloniaProperty.Register<Badge, string?>(nameof(Title), "Untitled");
+    public static readonly StyledProperty<string?> TextProperty =
+        AvaloniaProperty.Register<Badge, string?>(nameof(Text), "");
 
-    public string? Title
+    public string? Text
     {
-        get => GetValue(TitleProperty);
-        set => SetValue(TitleProperty, value);
+        get => GetValue(TextProperty);
+        set => SetValue(TextProperty, value);
     }
 
     public static readonly StyledProperty<string?> IconProperty =
@@ -36,32 +36,25 @@ public class Badge : TemplatedControl
         set => SetValue(IsRemovableProperty, value);
     }
 
-    public static readonly RoutedEvent<RoutedEventArgs> BadgeRemoved =
-        RoutedEvent.Register<RoutedEventArgs>(
-            "Removed",
-            RoutingStrategies.Bubble,
-            typeof(Badge));
+    public static readonly StyledProperty<IReactiveCommand<Badge, Unit>> RemoveCommandProperty =
+    AvaloniaProperty.Register<Badge, IReactiveCommand<Badge, Unit>>(nameof(RemoveCommand));
 
-    public event EventHandler<RoutedEventArgs> Removed
+    public IReactiveCommand<Badge, Unit> RemoveCommand
     {
-        add => AddHandler(BadgeRemoved, value);
-        remove => RemoveHandler(BadgeRemoved, value);
+        get => GetValue(RemoveCommandProperty);
+        set => SetValue(RemoveCommandProperty, value);
     }
 
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
-
         var button = e.NameScope.Find<Button>("RemoveButton");
         if (button != null)
         {
-            button.Click += OnRemove;
+            button.Click += Remove_PointerPressed;
         }
     }
 
-    protected void OnRemove(object? sender, RoutedEventArgs e)
-    {
-        var args = new RoutedEventArgs(BadgeRemoved);
-        RaiseEvent(args);
-    }
+    private void Remove_PointerPressed(object? sender, RoutedEventArgs e)
+        => this.RemoveCommand.Execute(this).Subscribe(Observer.Create<Unit>(_ => { }));
 }
