@@ -129,7 +129,8 @@
                 HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                 VerticalAlignment="Top"
                 BorderBrush="{TemplateBinding BorderBrush}"
-                BorderThickness="{TemplateBinding BorderThickness}" >
+                BorderThickness="{TemplateBinding BorderThickness}" 
+                ToolTip.Tip="{TemplateBinding Detail}">
           <StackPanel Orientation="Horizontal">
             <i:Icon Value="{TemplateBinding Icon}"
                     Classes="Label" Classes.WithText="{TemplateBinding Text, Converter={StaticResource hasValue} }" 

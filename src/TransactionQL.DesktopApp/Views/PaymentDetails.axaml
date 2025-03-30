@@ -123,6 +123,7 @@
                           <ItemsControl.ItemTemplate>
                             <DataTemplate>
                               <c:Badge Text="{Binding Key}"
+                                       Detail="{Binding Value}"
                                        RemoveCommand="{Binding $parent[ItemsControl].((m:Posting)DataContext).RemoveTagCommand}" />
                             </DataTemplate>
                           </ItemsControl.ItemTemplate>

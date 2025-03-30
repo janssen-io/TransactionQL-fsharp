@@ -18,6 +18,15 @@ public class Badge : Button
         set => SetValue(TextProperty, value);
     }
 
+    public static readonly StyledProperty<string?> DetailProperty =
+        AvaloniaProperty.Register<Badge, string?>(nameof(Detail), null);
+
+    public string? Detail
+    {
+        get => GetValue(DetailProperty);
+        set => SetValue(DetailProperty, value);
+    }
+
     public static readonly StyledProperty<string?> IconProperty =
         AvaloniaProperty.Register<Badge, string?>(nameof(Icon), null);
 

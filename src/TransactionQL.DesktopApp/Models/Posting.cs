@@ -48,7 +48,8 @@ public class Posting
         {
             try
             {
-                Tags.Add(t);
+                if (!Tags.Contains(t))
+                    Tags.Add(t);
             }
             finally
             {
@@ -76,7 +77,7 @@ public class Posting
     }
 }
 
-public class Tag
+public struct Tag
 {
     [DataMember] public required string Key { get; set; }
     [DataMember] public string? Value { get; set; }
