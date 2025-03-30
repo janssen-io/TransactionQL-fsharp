@@ -1,11 +1,15 @@
-﻿using DynamicData;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using DynamicData;
 using ReactiveUI;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
 using TransactionQL.DesktopApp.Controls;
+using TransactionQL.DesktopApp.ViewModels;
 
 namespace TransactionQL.DesktopApp.Models;
 public class Posting
@@ -30,20 +34,40 @@ public class Posting
 
     public Posting()
     {
-        AddTagCommand = ReactiveCommand.Create(
-            () =>
-            {
-                // To do: show prompt
-                // Phase 1: plain text fields
-                // Phase 2: autocomplete based on accounts file (predefined tags)
-                Tags.Add(new Tag() { Key = "Blaat", Value = "Schaap" });
-            });
         RemoveTagCommand = ReactiveCommand.Create(
-            (Badge e) =>
+            (Badge e) => Tags.RemoveMany(Tags.Where(t => t.Equals(e.DataContext))));
+        AddTagCommand = ReactiveCommand.Create(CreateTag);
+    }
+
+    private void CreateTag()
+    {
+        var vm = new NewTagPromptViewModel();
+        var prompt = new NewTagPrompt() { DataContext = vm };
+
+        vm.TagCreated += (object? sender, Tag t) =>
+        {
+            try
             {
-                // To do: remove display logic/mapping to a central place?
-                Tags.RemoveMany(Tags.Where(t => $"{t.Key}: {t.Value}" == e.Text));
-            });
+                Tags.Add(t);
+            }
+            finally
+            {
+                prompt.Close();
+            }
+        };
+        vm.Cancelled += (object? sender, EventArgs ea) =>
+        {
+            prompt.Close();
+        };
+
+        if (Avalonia.Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && desktop is { MainWindow: Window })
+        {
+            prompt.ShowDialog(desktop.MainWindow);
+        }
+        else
+        {
+            prompt.Show();
+        }
     }
 
     internal bool HasAmount()

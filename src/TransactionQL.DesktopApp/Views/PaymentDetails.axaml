@@ -131,7 +131,7 @@
                                  Icon="fa-plus" Text="Add"
                                  Foreground="{DynamicResource FG.Soft.Neutral}"
                                  BorderBrush="{DynamicResource FG.Soft.Primary}"
-                                 Command="{Binding AddTagCommand}"/>
+                                 Command="{Binding AddTagCommand}" />
                       </WrapPanel>
                       <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" />
                     </Grid>

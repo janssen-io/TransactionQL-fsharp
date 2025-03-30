@@ -1,0 +1,58 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
+        xmlns:dd="using:TransactionQL.DesktopApp"
+        xmlns:c="using:TransactionQL.DesktopApp.Controls"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="300"
+        x:Class="TransactionQL.DesktopApp.NewTagPrompt"
+        Width="300" Title="New Tag"
+        DataContext="{x:Static dd:DesignData.NewTagPrompt}"
+        x:DataType="vm:NewTagPromptViewModel"
+        SizeToContent="Height"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        Name="Prompt"
+        >
+  <Window.Styles>
+    <StyleInclude Source="/Assets/Styles.axaml" />
+    <Style Selector="#Prompt TextBox /template/ Border:nth-child(1)">
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Border.Base.Neutral}" />
+    </Style>
+    <Style Selector="#Prompt TextBox:focus /template/ Border:nth-child(1), #DataWizard TextBox:pointerover /template/ Border:nth-child(1)">
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BorderBrush" Value="{DynamicResource Border.Base.Primary}" />
+    </Style>
+  </Window.Styles>
+  <StackPanel Margin="10">
+    <RelativePanel>
+      <c:TitledBorder Title="New Tag" Name="Input"
+                      RelativePanel.AlignLeftWithPanel="True"
+                      RelativePanel.AlignRightWithPanel="True"
+                    >
+        <StackPanel Orientation="Vertical" Spacing="20">
+          <StackPanel Orientation="Vertical">
+            <TextBlock Classes="Label">Name</TextBlock>
+            <TextBox Watermark="vacation" Text="{Binding Key}" />
+          </StackPanel>
+          <StackPanel Orientation="Vertical">
+            <TextBlock Classes="Label">Value (optional)</TextBlock>
+            <TextBox Watermark="202507" Text="{Binding Value}" />
+          </StackPanel>
+        </StackPanel>
+      </c:TitledBorder>
+      <StackPanel Orientation="Horizontal" Spacing="10"
+                  RelativePanel.Below="Input"
+                  RelativePanel.AlignRightWithPanel="True"
+                  Margin="0 0 10 0">
+        <Button Command="{Binding Save}">Save</Button>
+        <Button Command="{Binding Cancel}">Cancel</Button>
+      </StackPanel>
+    </RelativePanel>
+  </StackPanel>
+</Window>
+
+

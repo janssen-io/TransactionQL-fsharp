@@ -67,6 +67,10 @@ public static class DesignData
         IsError = false,
         Icon = DialogIcon.Success,
     };
+
+    public static readonly NewTagPromptViewModel NewTagPrompt = new()
+    {
+    };
 }
 
 internal class MockAccountSelector : ISelectAccounts
