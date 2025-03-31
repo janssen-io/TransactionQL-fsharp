@@ -48,6 +48,9 @@ public class Posting
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(t.Key))
+                    return;
+
                 if (!Tags.Contains(t))
                     Tags.Add(t);
             }
@@ -80,7 +83,7 @@ public class Posting
 public struct Tag
 {
     [DataMember] public required string Key { get; set; }
-    [DataMember] public string? Value { get; set; }
+    [DataMember] public string? Value { get; set => field = value?.Trim(); }
 
     public Tag() { }
 

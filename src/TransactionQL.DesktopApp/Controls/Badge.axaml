@@ -75,6 +75,7 @@
   <ControlTheme x:Key="{x:Type controls:Badge}" TargetType="controls:Badge">
     <ControlTheme.Resources>
       <c:HasValueConverter x:Key="hasValue" />
+      <c:EmptyToNullConverter x:Key="emptyToNull" />
       <c:RelativeSizeConverter x:Key="relativeSize" />
     </ControlTheme.Resources>
     <Setter Property="BorderThickness" Value="1"/>
@@ -130,7 +131,7 @@
                 VerticalAlignment="Top"
                 BorderBrush="{TemplateBinding BorderBrush}"
                 BorderThickness="{TemplateBinding BorderThickness}" 
-                ToolTip.Tip="{TemplateBinding Detail}">
+                ToolTip.Tip="{TemplateBinding Detail, Converter={StaticResource emptyToNull}}">
           <StackPanel Orientation="Horizontal">
             <i:Icon Value="{TemplateBinding Icon}"
                     Classes="Label" Classes.WithText="{TemplateBinding Text, Converter={StaticResource hasValue} }" 
