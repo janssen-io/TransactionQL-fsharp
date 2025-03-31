@@ -14,7 +14,7 @@ let test<'T> parser txt (expected: 'T) =
 let trx (accounts, amount) =
     { Account = accounts
       Amount = amount
-      Tag = None }
+      Tags = [||] }
 
 let parseEquals<'T> (parser: Parser<'T, unit>) a b =
     let parsedA = run parser a
@@ -117,7 +117,7 @@ let ``Transactions: amount with tag`` () =
         "Expenses:Living:Food EUR 13.37 ; Key: value"
         { Account = AccountLiteral [ "Expenses"; "Living"; "Food" ]
           Amount = Amount(Commodity "EUR", 13.37) |> Some
-          Tag = "Key: value" |> Some }
+          Tags = [|"Key: value"|] }
 
 [<Fact>]
 let ``Transactions: just account with tag`` () =
@@ -126,7 +126,7 @@ let ``Transactions: just account with tag`` () =
         "Expenses:Living:Food ; Key: value"
         { Account = AccountLiteral [ "Expenses"; "Living"; "Food" ]
           Amount = None
-          Tag = "Key: value" |> Some }
+          Tags = [|"Key: value"|] }
 
 [<Fact>]
 let ``Posting: empty`` () =

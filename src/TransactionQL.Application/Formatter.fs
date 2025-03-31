@@ -11,10 +11,11 @@ module Format =
           Precision = 2
           Comment = "; " }
 
+    let INDENT = "    ";
+
 module Formatter =
     open System
     open TransactionQL.Parser.QLInterpreter
-    open TransactionQL.Parser.AST
     open Format
 
     let sprintHeader format (Header(date, payee)) =
@@ -22,12 +23,18 @@ module Formatter =
 
     let commentLine format = sprintf "%s%s" format.Comment
 
+    let formatTags (tags: string array) =
+        match tags with
+        | [||] -> ""
+        | xs -> Array.map (fun t -> $"{Environment.NewLine}{INDENT}; {t}") xs
+                |> String.concat String.Empty
+
     let sprintLine
         format
         floatWidth
         ({ Account = accountParts
            Amount = amount
-           Tag = tag }: Line)
+           Tags = tag }: Line)
         =
         let account = String.Join(":", accountParts)
         let numOfSpaces = Math.Max(0, 43 - account.Length)
@@ -38,11 +45,10 @@ module Formatter =
                 // Accounts and commodities must be separated by atleast two spaces
                 sprintf "%s  %*s %*.*f" account numOfSpaces commodity floatWidth format.Precision sum
             | None -> account
+        
+        let tags = formatTags tag
 
-        match tag with
-        | Some text -> $"%s{line}  ; %s{text}"
-        | None -> line
-        |> sprintf "    %s" // indent lines
+        String.concat String.Empty [|INDENT; line; tags|]
 
     let sprintPosting format sprintDescription (modifyLine: string -> string) entry =
         let { Header = header

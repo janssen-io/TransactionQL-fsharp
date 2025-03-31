@@ -22,7 +22,7 @@ module AST =
     type Transaction =
         { Account: Account
           Amount: Amount option
-          Tag: string option }
+          Tags: string array }
 
     type Posting = Posting of string option * Transaction list
 

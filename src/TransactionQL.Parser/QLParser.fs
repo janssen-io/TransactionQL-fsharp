@@ -103,7 +103,7 @@ module QLParser =
         pipe3 qaccount maybeAmount maybeTag (fun account amount tag ->
             { Account = account
               Amount = amount
-              Tag = tag })
+              Tags = match tag with | None -> [||] | Some t -> [|t|] })
 
     let qnote = pstringCI "note " >>. manySatisfy (fun c -> c <> '\n')
 

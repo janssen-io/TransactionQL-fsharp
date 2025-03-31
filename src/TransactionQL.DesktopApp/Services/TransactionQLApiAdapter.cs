@@ -22,7 +22,7 @@ public interface ITransactionQLApi
         FSharpMap<string, string> variables,
         IEnumerable<Row> rows);
 
-    string FormatPosting(DateTime date, string title, string description, Tuple<string, string?, decimal?>[] trx);
+    string FormatPosting(DateTime date, string title, string description, string[] tags, Tuple<string, string?, decimal?, string[]>[] trx);
 
     Either<IConverter, string> LoadReader(string name, string pluginDirectory);
 
@@ -40,8 +40,8 @@ public class TransactionQLApiAdapter : ITransactionQLApi
         IEnumerable<Row> rows)
         => API.filter(reader, queries, variables, rows);
 
-    public string FormatPosting(DateTime date, string title, string description, Tuple<string, string?, decimal?>[] trx)
-        => API.formatPosting(date, title, description, trx);
+    public string FormatPosting(DateTime date, string title, string description, string[] tags, Tuple<string, string?, decimal?, string[]>[] trx)
+        => API.formatPosting(date, title, description, FSharpList.Create<string>(tags), trx);
 
     public Either<IConverter, string> LoadReader(string name, string pluginDirectory)
         => API.loadReader(name, pluginDirectory);

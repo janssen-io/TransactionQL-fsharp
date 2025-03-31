@@ -96,4 +96,7 @@ public struct Tag
         Key = key;
         Value = value;
     }
+
+    public override readonly string ToString()
+        => string.IsNullOrEmpty(Value) ? $":{Key}:" : $"{Key}: {Value}";
 }

@@ -38,12 +38,12 @@ module API =
             | Interpretation(_, Some entry) -> Left entry
             | Interpretation(_, None) -> Right row)
 
-    let formatPosting date title (description: string) trx =
+    let formatPosting date title (description: string) (tags: string list) trx =
         let header = Header(date, title)
 
         let lines =
             trx
-            |> Array.map (fun (account, (currency: string), (amount: Nullable<decimal>)) ->
+            |> Array.map (fun (account, (currency: string), (amount: Nullable<decimal>), (postingTags: string array)) ->
                 let acc = (account :: [])
 
                 match (String.IsNullOrEmpty currency, Option.ofNullable amount) with
@@ -51,21 +51,21 @@ module API =
                 | _, None ->
                     { Account = acc
                       Amount = None
-                      Tag = None }
+                      Tags = postingTags }
                 | _, Some a ->
                     { Account = acc
                       Amount = Some(currency, float a)
-                      Tag = None })
+                      Tags = postingTags })
             |> List.ofArray
 
         let newLines = [| "\r\n"; "\n" |]
-
         let entry =
             { Header = header
               Lines = lines
-              Comments = List.ofArray (description.Split(newLines, StringSplitOptions.RemoveEmptyEntries)) }
+              Comments = 
+                List.ofArray (description.Split(newLines, StringSplitOptions.RemoveEmptyEntries))
+                |> List.append tags
+            }
 
-        // TODO: generalize indents, not sure if this is the right place.
-        let sprintDesc = (List.map <| (fun line -> $"    ; %s{line}"))
-
+        let sprintDesc = (List.map <| (fun line -> $"{Format.INDENT}; {line}"))
         Formatter.sprintPosting Format.ledger sprintDesc id entry

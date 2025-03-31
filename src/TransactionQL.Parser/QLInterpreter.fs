@@ -13,7 +13,7 @@ module QLInterpreter =
     type Line =
         { Account: string list
           Amount: (string * float) option
-          Tag: string option }
+          Tags: string array }
 
     type Entry = // Entry of Header * Line list
         { Header: Header
@@ -53,7 +53,7 @@ module QLInterpreter =
         env
         ({ Account = accounts
            Amount = amount
-           Tag = tag }: Transaction)
+           Tags = tag }: Transaction)
         =
         let remainder = Map.find "remainder" env.Variables
 
@@ -78,14 +78,14 @@ module QLInterpreter =
             { env with Variables = vars },
             { Account = account
               Amount = Some(c, f)
-              Tag = tag }
+              Tags = tag }
         | _ ->
             let vars = Map.add "remainder" 0.0 env.Variables // update remainder to 0
 
             { env with Variables = vars },
             { Account = account
               Amount = None
-              Tag = tag }
+              Tags = tag }
         |> Interpretation
 
     let generatePosting env transactions =
