@@ -44,6 +44,14 @@ public static class DesignData
         IsActive = false
     };
 
+    public static readonly PostingViewModel Posting = new()
+    {
+        Account = "Expenses:Living:Utilities",
+        Currency = "€",
+        Amount = 13.37m,
+        Tags = [new Tag("Events", "2025-Yadayada")]
+    };
+
     public static readonly MainWindowViewModel MainWindow = new()
     {
         BankTransactions = [PaymentDetails, PaymentDetails2]

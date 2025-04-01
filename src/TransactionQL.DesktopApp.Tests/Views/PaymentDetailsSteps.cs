@@ -57,7 +57,7 @@ public partial class PaymentDetailsTests
         /// <param name="selectIndex">The index of the item to select after filtering (auto-complete)</param>
         /// <param name="amount">The amount to enter for this posting</param>
         /// <returns></returns>
-        public Models.Posting AddPosting(string name, int selectIndex = 0, decimal? amount = null)
+        public PostingViewModel AddPosting(string name, int selectIndex = 0, decimal? amount = null)
         {
             AddPosting();
             _w.KeyTextInput(name);
@@ -79,7 +79,7 @@ public partial class PaymentDetailsTests
         /// <param name="name">The complete account name</param>
         /// <param name="amount">The amount to enter for this posting</param>
         /// <returns></returns>
-        public Models.Posting AddPosting(string name, decimal? amount = null)
+        public PostingViewModel AddPosting(string name, decimal? amount = null)
         {
             AddPosting();
             _w.KeyTextInput(name);

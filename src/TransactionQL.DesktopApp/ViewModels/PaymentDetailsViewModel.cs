@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
-using TransactionQL.DesktopApp.Models;
 using TransactionQL.DesktopApp.Services;
 
 namespace TransactionQL.DesktopApp.ViewModels;
@@ -99,7 +98,7 @@ public class PaymentDetailsViewModel : ViewModelBase
 
     #endregion properties
 
-    [DataMember] public ObservableCollection<Posting> Postings { get; set; } = [];
+    [DataMember] public ObservableCollection<PostingViewModel> Postings { get; set; } = [];
 
     public ICommand AddTransactionCommand { get; }
 
@@ -129,7 +128,7 @@ public class PaymentDetailsViewModel : ViewModelBase
     private PaymentDetailsViewModel()
     {
         AddTransactionCommand = ReactiveCommand.Create(
-            () => Postings.Add(Posting.Empty));
+            () => Postings.Add(PostingViewModel.Empty));
 
         _accountSelector = AccountSelector ?? EmptySelector.Instance;
         _accountAutoCompletePredicate = _accountSelector.IsMatch;
@@ -184,7 +183,7 @@ public class PaymentDetailsViewModel : ViewModelBase
                 : Array.Empty<string>(),
         ];
 
-        IEnumerable<Posting> nonEmptyPostings = Postings.Where(p => !string.IsNullOrEmpty(p.Account));
+        IEnumerable<PostingViewModel> nonEmptyPostings = Postings.Where(p => !string.IsNullOrEmpty(p.Account));
         if (nonEmptyPostings.Count(p => !p.HasAmount()) > 1)
         {
             errors.Add("The transaction may contain at most one auto-calculated posting (one without costs).");

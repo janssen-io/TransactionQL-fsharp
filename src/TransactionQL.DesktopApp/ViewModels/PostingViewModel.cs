@@ -2,17 +2,15 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using DynamicData;
 using ReactiveUI;
-using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
 using TransactionQL.DesktopApp.Controls;
-using TransactionQL.DesktopApp.ViewModels;
 
-namespace TransactionQL.DesktopApp.Models;
-public class Posting
+namespace TransactionQL.DesktopApp.ViewModels;
+public class PostingViewModel
 {
     [DataMember]
     public string? Account { get; set; } = "";
@@ -25,14 +23,14 @@ public class Posting
     public ICommand AddTagCommand { get; }
     public ICommand RemoveTagCommand { get; }
 
-    public static Posting Empty => new()
+    public static PostingViewModel Empty => new()
     {
         Account = "",
         Currency = "EUR",
         Amount = null
     };
 
-    public Posting()
+    public PostingViewModel()
     {
         RemoveTagCommand = ReactiveCommand.Create(
             (Badge e) => Tags.RemoveMany(Tags.Where(t => t.Equals(e.DataContext))));
@@ -44,7 +42,7 @@ public class Posting
         var vm = new NewTagPromptViewModel();
         var prompt = new NewTagPrompt() { DataContext = vm };
 
-        vm.TagCreated += (object? sender, Tag t) =>
+        vm.TagCreated += (sender, t) =>
         {
             try
             {
@@ -59,7 +57,7 @@ public class Posting
                 prompt.Close();
             }
         };
-        vm.Cancelled += (object? sender, EventArgs ea) =>
+        vm.Cancelled += (sender, ea) =>
         {
             prompt.Close();
         };

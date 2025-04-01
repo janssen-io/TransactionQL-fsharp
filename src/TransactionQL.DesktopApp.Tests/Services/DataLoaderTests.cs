@@ -2,6 +2,7 @@
 using System.Globalization;
 using TransactionQL.DesktopApp.Models;
 using TransactionQL.DesktopApp.Services;
+using TransactionQL.DesktopApp.ViewModels;
 using TransactionQL.Parser;
 using TransactionQL.Shared.Disposables;
 using static TransactionQL.Input.Converters;
@@ -271,7 +272,7 @@ public class DataLoaderTests
             t =>
             {
                 Assert.Equal("Jumbo", t.Title);
-                Posting p = Assert.Single(t.Postings);
+                PostingViewModel p = Assert.Single(t.Postings);
                 Assert.Equal(_data.DefaultCheckingAccount, p.Account);
                 Assert.Equal(_data.DefaultCurrency, p.Currency);
                 Assert.Equal(-15m, p.Amount);

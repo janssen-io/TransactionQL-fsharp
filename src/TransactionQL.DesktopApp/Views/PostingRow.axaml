@@ -1,0 +1,72 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
+             xmlns:v="using:TransactionQL.DesktopApp.Views"
+             xmlns:m="using:TransactionQL.DesktopApp.Models"
+             xmlns:dd="using:TransactionQL.DesktopApp"
+             xmlns:c="using:TransactionQL.DesktopApp.Controls"
+             xmlns:views="clr-namespace:TransactionQL.DesktopApp.Views"
+             xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="400" 
+             x:DataType="vm:PostingViewModel"
+             d:DataContext="{x:Static dd:DesignData.Posting}"
+             x:Class="TransactionQL.DesktopApp.Views.PostingRow">
+
+  <Design.DesignStyle>
+    <Styles>
+      <StyleInclude Source="/Assets/Styles.axaml" />
+    </Styles>
+  </Design.DesignStyle>
+
+  <UserControl.Styles>
+    <Style Selector="v|PostingRow">
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate>
+            <Grid Classes="Editable"
+              ShowGridLines="False"
+              RowDefinitions="*,*,*" >
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
+                <ColumnDefinition Width="Auto" SharedSizeGroup="B" />
+              </Grid.ColumnDefinitions>
+              <AutoCompleteBox
+                               BorderBrush="Transparent"
+                               SelectedItem="{Binding Account}"
+                               Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Border}}"
+                               TextFilter="{Binding Details.AccountAutoCompletePredicate,
+                                             RelativeSource={RelativeSource TemplatedParent}}"
+                               ItemsSource="{Binding Details.AccountSelector.AvailableAccounts,
+                                             RelativeSource={RelativeSource TemplatedParent}}"
+                     />
+              <TextBox Grid.Row="0" Grid.Column="1"
+                       Text="{Binding Currency}" TextAlignment="Right" />
+              <TextBox Grid.Row="0" Grid.Column="2"
+                       Text="{Binding Amount}" TextAlignment="Right" />
+              <WrapPanel Grid.Row="1">
+                <ItemsControl ItemsSource="{Binding Tags}">
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <c:Badge Text="{Binding Key}"
+                               Detail="{Binding Value}"
+                               RemoveCommand="{Binding $parent[ItemsControl].((vm:PostingViewModel)DataContext).RemoveTagCommand}" />
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <c:Badge IsRemovable="False"
+                         Icon="fa-plus" Text="Add"
+                         Foreground="{DynamicResource FG.Soft.Neutral}"
+                         BorderBrush="{DynamicResource FG.Soft.Primary}"
+                         Command="{Binding AddTagCommand}" />
+              </WrapPanel>
+              <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" />
+            </Grid>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </UserControl.Styles>
+</UserControl>
