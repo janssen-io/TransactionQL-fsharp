@@ -21,12 +21,12 @@ let evalFilter' = uncurry evalFilter >> Interpretation.result
 let trx (accounts, amount) =
     { Account = accounts
       Amount = amount
-      Tag = None } : Transaction
+      Tags = [||] } : Transaction
 
 let line (accounts, amount) =
     { Account = accounts
       Amount = amount
-      Tag = None } : Line
+      Tags = [||] } : Line
 
 let testAmount ({ Amount = amount }: Line) expectedAmount =
     match expectedAmount with
@@ -283,7 +283,7 @@ let ``Posting lines: No amount`` () =
     let transaction =
         { Account = AccountLiteral [ "Expenses"; "Food" ]
           Amount = None
-          Tag = None }
+          Tags = [||] }
 
     let (Interpretation(updatedEnv, ({ Amount = amount }: Line))) =
         generatePostingLine env' transaction
@@ -300,7 +300,7 @@ let ``Posting lines: with amount`` () =
     let transaction =
         { Account = AccountLiteral [ "Expenses"; "Food" ]
           Amount = Some <| Amount(Commodity "€", 5.00)
-          Tag = None }
+          Tags = [||] }
 
     let (Interpretation(updatedEnv, ({ Amount = amount }: Line))) =
         generatePostingLine env' transaction
@@ -317,7 +317,7 @@ let ``Posting lines: with amount expression`` () =
     let transaction =
         { Account = AccountLiteral [ "Expenses"; "Food" ]
           Amount = Some <| AmountExpression(Commodity "€", ExprNum 20.00)
-          Tag = None }
+          Tags = [||] }
 
     let (Interpretation(updatedEnv, ({ Amount = amount }: Line))) =
         generatePostingLine env' transaction
@@ -539,10 +539,10 @@ let ``Queries: tags are added to the posting line`` () =
                   "this is a note" |> Some,
                   [ { Account = AccountLiteral [ "Expenses"; "Subscription" ]
                       Amount = (Some << AmountExpression) (Commodity "€", Variable "total")
-                      Tag = Some "My: FirstTag" }
+                      Tags = [|"My: FirstTag"|] }
                     { Account = AccountLiteral [ "Assets"; "Savings" ]
                       Amount = None
-                      Tag = Some "My: OtherTag" } ]
+                      Tags = [|"My: OtherTag"|] } ]
               )
           ) ]
 
@@ -554,5 +554,5 @@ let ``Queries: tags are added to the posting line`` () =
            Comments = _ }) =
         Option.get entry
 
-    let containsTag expectedTag ({ Tag = tag }: Line) = Assert.Equal(expectedTag, tag)
-    Assert.Collection(lines, containsTag (Some "My: FirstTag"), containsTag (Some "My: OtherTag"))
+    let containsTag expectedTag ({ Tags = [|tag|] }: Line) = Assert.Equal(expectedTag, tag)
+    Assert.Collection(lines, containsTag "My: FirstTag", containsTag "My: OtherTag")

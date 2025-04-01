@@ -4,13 +4,12 @@ open Xunit
 open TransactionQL.Application
 open TransactionQL.Application.Format
 open TransactionQL.Parser.QLInterpreter
-open TransactionQL.Parser.AST
 open System
 
 let line (account, amount, tag) =
     { Account = account
       Amount = amount
-      Tag = tag }
+      Tags = tag }
     : Line
 
 [<Fact>]
@@ -41,7 +40,7 @@ let ``Header: ends with the payee`` () =
 
 [<Fact>]
 let ``Line: is indented`` () =
-    let line = line ([ "A"; "B" ], None, None)
+    let line = line ([ "A"; "B" ], None, [||])
 
     let result =
         Formatter.sprintLine
@@ -55,7 +54,7 @@ let ``Line: is indented`` () =
 
 [<Fact>]
 let ``Line: concatenates accounts with colon`` () =
-    let line = line ([ "A"; "B" ], None, None)
+    let line = line ([ "A"; "B" ], None, [||])
 
     let result =
         Formatter.sprintLine
@@ -69,7 +68,7 @@ let ``Line: concatenates accounts with colon`` () =
 
 [<Fact>]
 let ``Line: separates accounts and commodity with at least two spaces`` () =
-    let line = line ([ "A"; "B" ], Some("$", 25.00), None)
+    let line = line ([ "A"; "B" ], Some("$", 25.00), [||])
 
     let result =
         Formatter.sprintLine
@@ -95,7 +94,7 @@ let ``Line: prints the float with the given precision`` () =
           Comment = "# " }
 
     let amount = 25.12345678
-    let line = line ([ "A"; "B" ], Some("€", amount), None)
+    let line = line ([ "A"; "B" ], Some("€", amount), [||])
     let result = Formatter.sprintLine format 0 line
     Assert.EndsWith("25.123", result)
 
@@ -107,7 +106,7 @@ let ``Line: Adds tags (if any) after two spaces`` () =
           Comment = "; " }
 
     let amount = 25.12345678
-    let line = line ([ "A"; "B" ], Some("€", amount), Some "My: Tag")
+    let line = line ([ "A"; "B" ], Some("€", amount), [|"My: Tag"|])
     let result = Formatter.sprintLine format 0 line
     Assert.EndsWith("  ; My: Tag", result)
 
@@ -116,8 +115,8 @@ let ``Posting: prints header and lines on separate lines`` () =
     let posting =
         { Header = Header(new DateTime(2019, 1, 1), "Payee")
           Lines =
-            [ line ([ "A"; "B" ], Some("€", 10.00), None)
-              line ([ "C"; "D" ], None, None) ]
+            [ line ([ "A"; "B" ], Some("€", 10.00), [||])
+              line ([ "C"; "D" ], None, [||]) ]
           Comments = [] }
 
     let result =
@@ -137,8 +136,8 @@ let ``Posting: aligns amounts to the right`` () =
     let posting =
         { Header = Header(new DateTime(2019, 1, 1), "Payee")
           Lines =
-            [ line ([ "Assets"; "Checking" ], Some("€", 10.), None)
-              line ([ "Expenses"; "Vacation" ], Some("$", -1000.), None) ]
+            [ line ([ "Assets"; "Checking" ], Some("€", 10.), [||])
+              line ([ "Expenses"; "Vacation" ], Some("$", -1000.), [||]) ]
           Comments = [] }
 
     let result =
@@ -160,8 +159,8 @@ let ``Missing posting: adds comment before each line`` () =
     let posting =
         { Header = Header(new DateTime(2019, 1, 1), "Payee")
           Lines =
-            [ line ([ "A"; "B" ], Some("€", 10.00), None)
-              line ([ "C"; "D" ], None, None) ]
+            [ line ([ "A"; "B" ], Some("€", 10.00), [||])
+              line ([ "C"; "D" ], None, [||]) ]
           Comments = [] }
 
     let format: Format =
@@ -178,8 +177,8 @@ let ``Comments: comments are added between the header and transactions`` () =
     let posting =
         { Header = Header(new DateTime(2019, 1, 1), "Payee")
           Lines =
-            [ line ([ "A"; "B" ], Some("€", 10.00), None)
-              line ([ "C"; "D" ], None, None) ]
+            [ line ([ "A"; "B" ], Some("€", 10.00), [||])
+              line ([ "C"; "D" ], None, [||]) ]
           Comments = [ "Two lines"; "Of comments" ] }
 
     let format: Format =

@@ -177,9 +177,10 @@ public class MainWindowViewModel : ViewModelBase
                     posting.Date,
                     posting.Title!.Trim(), // Valid transactions must have a title
                     posting.Description?.Trim() ?? string.Empty,
+                    Array.Empty<string>(),
                     posting.Postings
                         .Where(trx => !string.IsNullOrEmpty(trx.Account))
-                        .Select(trx => Tuple.Create(trx.Account!.Trim(), trx.Currency?.Trim(), trx.Amount))
+                        .Select(trx => Tuple.Create(trx.Account!.Trim(), trx.Currency?.Trim(), trx.Amount, trx.Tags.Select(x => x.ToString()!).ToArray()))
                         .ToArray()));
 
             Saved?.Invoke(this, string.Join(Environment.NewLine + Environment.NewLine, postings) + Environment.NewLine);

@@ -8,6 +8,7 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <ApplicationIcon>Assets\lion.ico</ApplicationIcon>
     <InformationalVersion>0.0.0-dev</InformationalVersion>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -87,6 +88,10 @@
     <Compile Update="Controls\Dropzone.axaml.cs">
       <DependentUpon>Dropzone.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Controls\Badge.axaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>Badge.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\MessageDialog.axaml.cs">
       <DependentUpon>MessageDialog.axaml</DependentUpon>
     </Compile>
@@ -107,5 +112,12 @@
 
   <ItemGroup>
     <AvaloniaResource Remove="Assets\ledgerleo.ico" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <AvaloniaXaml Update="Controls\Badge.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
   </ItemGroup>
 </Project>

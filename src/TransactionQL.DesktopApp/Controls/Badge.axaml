@@ -1,0 +1,154 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:TransactionQL.DesktopApp.Controls"
+        xmlns:c="using:TransactionQL.DesktopApp.Controls"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia" >
+
+  <!--
+    Additional resources 
+    Using Control Themes:
+         https://docs.avaloniaui.net/docs/basics/user-interface/styling/control-themes
+    Using Theme Variants:
+         https://docs.avaloniaui.net/docs/guides/styles-and-resources/how-to-use-theme-variants
+  -->
+
+  <Design.PreviewWith>
+    <StackPanel Orientation="Horizontal" Spacing="3" Background="{DynamicResource BG.Base.Primary}">
+      <ThemeVariantScope RequestedThemeVariant="Light">
+        <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}" Width="250">
+          <WrapPanel Orientation="Horizontal">
+            <controls:Badge Text="Events"
+                            Icon="fa-flag"
+                            Background="{DynamicResource BG.Soft.Primary}"
+                            BorderBrush="{DynamicResource Border.Base.Primary}"
+                            Foreground="{DynamicResource FG.Elevated.Primary}"/>
+            <controls:Badge Text="Events"
+                            Icon="fa-flag"
+                            Background="{DynamicResource BG.Base.Error}"
+                            BorderBrush="{DynamicResource Border.Base.Error}"
+                            Foreground="{DynamicResource FG.Elevated.Error}"/>
+            <controls:Badge Text="Trips" Icon="fa-plane" />
+            <controls:Badge Text="Social" />
+            <controls:Badge Text="Gift" />
+            <controls:Badge Text="Wedding" Icon="fa-church" />
+            <controls:Badge Text="Add"
+                            Icon="fa-plus"
+                            IsRemovable="False"
+                            FontSize="18"
+                            BorderBrush="{DynamicResource Border.Soft.Neutral}"
+                            Foreground="{DynamicResource FG.Subtle.Neutral}"/>
+            <controls:Badge Icon="fa-plus" Text="" IsRemovable="False" />
+          </WrapPanel>
+
+        </Border>
+      </ThemeVariantScope>
+      <ThemeVariantScope RequestedThemeVariant="Dark">
+        <Border Padding="20" Background="{DynamicResource BG.Base.Neutral}" Width="250">
+          <WrapPanel Orientation="Horizontal">
+            <controls:Badge Text="Events"
+                            Icon="fa-flag"
+                            Background="{DynamicResource BG.Soft.Primary}"
+                            BorderBrush="{DynamicResource Border.Base.Primary}"
+                            Foreground="{DynamicResource FG.Elevated.Primary}"/>
+            <controls:Badge Text="Events"
+                            Icon="fa-flag"
+                            Background="{DynamicResource BG.Base.Error}"
+                            BorderBrush="{DynamicResource Border.Base.Error}"
+                            Foreground="{DynamicResource FG.Elevated.Error}"/>
+            <controls:Badge Text="Trips" Icon="fa-plane" />
+            <controls:Badge Text="Social" />
+            <controls:Badge Text="Gift" />
+            <controls:Badge Text="Wedding" Icon="fa-church" />
+            <controls:Badge Text="Add"
+                            Icon="fa-plus"
+                            IsRemovable="False"
+                            FontSize="18"
+                            BorderBrush="{DynamicResource Border.Soft.Neutral}"
+                            Foreground="{DynamicResource FG.Subtle.Neutral}"/>
+            <controls:Badge Icon="fa-plus" Text="" IsRemovable="False" />
+          </WrapPanel>
+        </Border>
+      </ThemeVariantScope>
+    </StackPanel>
+  </Design.PreviewWith>
+
+  <ControlTheme x:Key="{x:Type controls:Badge}" TargetType="controls:Badge">
+    <ControlTheme.Resources>
+      <c:HasValueConverter x:Key="hasValue" />
+      <c:EmptyToNullConverter x:Key="emptyToNull" />
+      <c:RelativeSizeConverter x:Key="relativeSize" />
+    </ControlTheme.Resources>
+    <Setter Property="BorderThickness" Value="1"/>
+    <Setter Property="BorderBrush" Value="{DynamicResource Border.Base.Neutral}" />
+    <Setter Property="Background" Value="{DynamicResource BG.Base.Neutral}" />
+    <Setter Property="Foreground" Value="{DynamicResource FG.Base.Neutral}" />
+    <Setter Property="FontSize" Value="10" />
+    <Styles>
+
+      <Style Selector="Border.Section">
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="Padding" Value="5" />
+        <Setter Property="CornerRadius" Value="100" />
+        <Setter Property="Background">
+          <Binding RelativeSource="{RelativeSource AncestorType={x:Type controls:Badge}}" Path="Background" />
+        </Setter>
+
+        <Style Selector="^ StackPanel TextBlock.Title">
+          <Setter Property="Margin" Value="5 0" />
+          <Setter Property="FontSize">
+            <Binding RelativeSource="{RelativeSource AncestorType={x:Type controls:Badge}}" Path="FontSize" />
+          </Setter>
+          <Style Selector="^.WithIcon">
+            <Setter Property="Margin" Value="0 0 5 0" />
+          </Style>
+        </Style>
+        <Style Selector="^ StackPanel i|Icon.Label">
+          <Setter Property="Margin" Value="0" />
+          <Setter Property="FontSize">
+            <Binding RelativeSource="{RelativeSource AncestorType={x:Type controls:Badge}}" Path="FontSize" />
+          </Setter>
+          <Style Selector="^.WithText">
+            <Setter Property="Margin" Value="5 0" />
+          </Style>
+        </Style>
+        <Style Selector="^ StackPanel i|Icon.Remove">
+          <Setter Property="Margin" Value="0 0 0 0" />
+          <Setter Property="Foreground">
+            <Binding RelativeSource="{RelativeSource AncestorType={x:Type controls:Badge}}" Path="Foreground" />
+          </Setter>
+        </Style>
+        <Style Selector="^ StackPanel Button">
+          <Setter Property="Margin" Value="0 1 1 0" />
+          <Setter Property="Padding" Value="1" />
+          <Setter Property="Background" Value="Transparent"/>
+        </Style>
+      </Style>
+    </Styles>
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Classes="Section"
+                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                VerticalAlignment="Top"
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}" 
+                ToolTip.Tip="{TemplateBinding Detail, Converter={StaticResource emptyToNull}}">
+          <StackPanel Orientation="Horizontal">
+            <i:Icon Value="{TemplateBinding Icon}"
+                    Classes="Label" Classes.WithText="{TemplateBinding Text, Converter={StaticResource hasValue} }" 
+                    IsVisible="{TemplateBinding Icon, Converter={StaticResource hasValue} }" />
+            <TextBlock Classes="Title" 
+                       Classes.WithIcon="{TemplateBinding Icon, Converter={StaticResource hasValue} }"
+                       Text="{TemplateBinding Text}"
+                       Name="Title"
+                       IsVisible="{TemplateBinding Text, Converter={StaticResource hasValue} }" />
+            <Button IsVisible="{TemplateBinding IsRemovable}" Name="RemoveButton">
+              <i:Icon Classes="Remove" Value="fa-x"
+                      FontSize="{Binding FontSize, ElementName=Title, Converter={StaticResource relativeSize}, ConverterParameter=0.5}"
+                      />
+            </Button>
+          </StackPanel>
+        </Border>
+      </ControlTemplate>
+    </Setter>
+  </ControlTheme>
+</ResourceDictionary>
