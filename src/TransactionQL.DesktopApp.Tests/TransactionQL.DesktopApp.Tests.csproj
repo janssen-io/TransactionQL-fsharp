@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia.Headless.XUnit" Version="11.2.5" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.5" />
+    <PackageReference Include="Avalonia.Headless.XUnit" Version="11.2.6" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.6" />
     <PackageReference Include="FSharp.Core" Version="9.0.201" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
