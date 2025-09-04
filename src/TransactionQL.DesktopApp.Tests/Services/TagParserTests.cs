@@ -59,12 +59,16 @@ public class TagParserTests
 
 public static class TagParser
 {
+    private const string TagPrefix = "tag ";
+    private const string AssertPrefix = "assert value =~ /";
+    private const string AssertSuffix = "/";
+
     public static async Task<IEnumerable<string>> ReadTagNames(string filePath)
     {
         var lines = await File.ReadAllLinesAsync(filePath);
         return lines
-            .Where(line => line.StartsWith("tag "))
-            .Select(line => line.Substring(4).Trim())
+            .Where(line => line.StartsWith(TagPrefix))
+            .Select(line => line.Substring(TagPrefix.Length).Trim())
             .ToList();
     }
 
@@ -74,17 +78,29 @@ public static class TagParser
         
         for (int i = 0; i < lines.Length - 1; i++)
         {
-            if (lines[i].Trim() == $"tag {tagName}")
+            if (IsTagLine(lines[i], tagName))
             {
                 var nextLine = lines[i + 1].Trim();
-                if (nextLine.StartsWith("assert value =~ /") && nextLine.EndsWith("/"))
+                if (IsAssertLine(nextLine))
                 {
-                    var valuesSection = nextLine.Substring(17, nextLine.Length - 18);
-                    return valuesSection.Split('|').Select(v => v.Trim()).ToList();
+                    return ParseValues(nextLine);
                 }
             }
         }
         
         return new List<string>();
+    }
+
+    private static bool IsTagLine(string line, string tagName) =>
+        line.Trim() == $"{TagPrefix}{tagName}";
+
+    private static bool IsAssertLine(string line) =>
+        line.StartsWith(AssertPrefix) && line.EndsWith(AssertSuffix);
+
+    private static IEnumerable<string> ParseValues(string assertLine)
+    {
+        var valuesSection = assertLine.Substring(AssertPrefix.Length, 
+            assertLine.Length - AssertPrefix.Length - AssertSuffix.Length);
+        return valuesSection.Split('|').Select(v => v.Trim()).ToList();
     }
 }
