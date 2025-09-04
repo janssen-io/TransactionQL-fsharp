@@ -68,8 +68,23 @@ public static class TagParser
             .ToList();
     }
 
-    public static Task<IEnumerable<string>> ReadTagValues(string filePath, string tagName)
+    public static async Task<IEnumerable<string>> ReadTagValues(string filePath, string tagName)
     {
-        throw new System.NotImplementedException();
+        var lines = await File.ReadAllLinesAsync(filePath);
+        
+        for (int i = 0; i < lines.Length - 1; i++)
+        {
+            if (lines[i].Trim() == $"tag {tagName}")
+            {
+                var nextLine = lines[i + 1].Trim();
+                if (nextLine.StartsWith("assert value =~ /") && nextLine.EndsWith("/"))
+                {
+                    var valuesSection = nextLine.Substring(17, nextLine.Length - 18);
+                    return valuesSection.Split('|').Select(v => v.Trim()).ToList();
+                }
+            }
+        }
+        
+        return new List<string>();
     }
 }
