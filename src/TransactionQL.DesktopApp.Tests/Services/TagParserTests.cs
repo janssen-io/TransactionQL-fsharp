@@ -30,6 +30,31 @@ public class TagParserTests
             File.Delete(tempFile);
         }
     }
+
+    [Fact]
+    public async Task ReadTagValues_WithTagAndValues_ReturnsValues()
+    {
+        // Arrange
+        var content = "tag vacation\nassert value =~ /2024|2025|summer/\n";
+        var tempFile = Path.GetTempFileName();
+        await File.WriteAllTextAsync(tempFile, content);
+
+        try
+        {
+            // Act
+            var tagValues = await TagParser.ReadTagValues(tempFile, "vacation");
+
+            // Assert
+            Assert.Equal(3, tagValues.Count());
+            Assert.Contains("2024", tagValues);
+            Assert.Contains("2025", tagValues);
+            Assert.Contains("summer", tagValues);
+        }
+        finally
+        {
+            File.Delete(tempFile);
+        }
+    }
 }
 
 public static class TagParser
@@ -41,5 +66,10 @@ public static class TagParser
             .Where(line => line.StartsWith("tag "))
             .Select(line => line.Substring(4).Trim())
             .ToList();
+    }
+
+    public static Task<IEnumerable<string>> ReadTagValues(string filePath, string tagName)
+    {
+        throw new System.NotImplementedException();
     }
 }
