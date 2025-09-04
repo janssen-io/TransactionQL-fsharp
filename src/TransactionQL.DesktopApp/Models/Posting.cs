@@ -83,7 +83,12 @@ public class Posting
 public struct Tag
 {
     [DataMember] public required string Key { get; set; }
-    [DataMember] public string? Value { get; set => field = value?.Trim(); }
+    private string? _value;
+    [DataMember] public string? Value 
+    { 
+        get => _value; 
+        set => _value = value?.Trim(); 
+    }
 
     public Tag() { }
 
