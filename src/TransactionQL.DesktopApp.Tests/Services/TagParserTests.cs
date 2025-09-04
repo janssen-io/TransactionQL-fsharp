@@ -34,8 +34,12 @@ public class TagParserTests
 
 public static class TagParser
 {
-    public static Task<IEnumerable<string>> ReadTagNames(string filePath)
+    public static async Task<IEnumerable<string>> ReadTagNames(string filePath)
     {
-        throw new System.NotImplementedException();
+        var lines = await File.ReadAllLinesAsync(filePath);
+        return lines
+            .Where(line => line.StartsWith("tag "))
+            .Select(line => line.Substring(4).Trim())
+            .ToList();
     }
 }
