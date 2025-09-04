@@ -36,11 +36,15 @@
         <StackPanel Orientation="Vertical" Spacing="20">
           <StackPanel Orientation="Vertical">
             <TextBlock Classes="Label">Name</TextBlock>
-            <TextBox Watermark="vacation" Text="{Binding Key}" />
+            <AutoCompleteBox Watermark="vacation" 
+                           Text="{Binding Key}"
+                           ItemsSource="{Binding TagSelector.AvailableTagNames}" />
           </StackPanel>
           <StackPanel Orientation="Vertical">
             <TextBlock Classes="Label">Value (optional)</TextBlock>
-            <TextBox Watermark="202507" Text="{Binding Value}" />
+            <AutoCompleteBox Watermark="202507" 
+                           Text="{Binding Value}"
+                           ItemsSource="{Binding AvailableTagValues}" />
           </StackPanel>
         </StackPanel>
       </c:TitledBorder>
