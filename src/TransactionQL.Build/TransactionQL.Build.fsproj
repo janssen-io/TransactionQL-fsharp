@@ -16,11 +16,11 @@
     <PackageReference Include="Fake.DotNet.Cli" Version="6.1.3" />
     <PackageReference Include="Fake.Installer.InnoSetup" Version="6.1.3" />
     <PackageReference Include="Fake.IO.Zip" Version="6.1.3" />
-    <PackageReference Include="MSBuild.StructuredLogger" Version="2.2.472" />
+    <PackageReference Include="MSBuild.StructuredLogger" Version="2.3.45" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="9.0.201" />
+    <PackageReference Update="FSharp.Core" Version="9.0.303" />
   </ItemGroup>
 
 </Project>
