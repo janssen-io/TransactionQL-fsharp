@@ -1,7 +1,6 @@
 ﻿using ReactiveUI;
 using System;
 using System.Windows.Input;
-using TransactionQL.DesktopApp.Models;
 
 namespace TransactionQL.DesktopApp.ViewModels;
 

@@ -100,42 +100,7 @@
                 </ItemsControl.Styles>
                 <ItemsControl.ItemTemplate>
                   <DataTemplate>
-                    <Grid Classes="Editable"
-                          ShowGridLines="False"
-                          RowDefinitions="*,*,*" >
-                      <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="A" />
-                        <ColumnDefinition Width="Auto" SharedSizeGroup="B" />
-                      </Grid.ColumnDefinitions>
-                      <AutoCompleteBox
-                                       BorderBrush="Transparent"
-                                       SelectedItem="{Binding Account}"
-                                       Background="{Binding Background, RelativeSource={RelativeSource AncestorType=Border}}"
-                                       TextFilter="{Binding Path=#Details.((vm:PaymentDetailsViewModel)DataContext).AccountAutoCompletePredicate}"
-                                       ItemsSource="{Binding Path=#Details.((vm:PaymentDetailsViewModel)DataContext).AccountSelector.AvailableAccounts}" />
-                      <TextBox Grid.Row="0" Grid.Column="1"
-                               Text="{Binding Currency}" TextAlignment="Right" />
-                      <TextBox Grid.Row="0" Grid.Column="2"
-                               Text="{Binding Amount}" TextAlignment="Right" />
-                      <WrapPanel Grid.Row="1">
-                        <ItemsControl ItemsSource="{Binding Tags}">
-                          <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                              <c:Badge Text="{Binding Key}"
-                                       Detail="{Binding Value}"
-                                       RemoveCommand="{Binding $parent[ItemsControl].((m:Posting)DataContext).RemoveTagCommand}" />
-                            </DataTemplate>
-                          </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                        <c:Badge IsRemovable="False"
-                                 Icon="fa-plus" Text="Add"
-                                 Foreground="{DynamicResource FG.Soft.Neutral}"
-                                 BorderBrush="{DynamicResource FG.Soft.Primary}"
-                                 Command="{Binding AddTagCommand}" />
-                      </WrapPanel>
-                      <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" />
-                    </Grid>
+                    <views:PostingRow Details="{Binding #Details.DataContext}"/>
                   </DataTemplate>
                 </ItemsControl.ItemTemplate>
               </ItemsControl>

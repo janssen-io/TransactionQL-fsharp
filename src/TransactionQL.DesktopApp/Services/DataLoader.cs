@@ -51,13 +51,13 @@ public class DataLoader : ILoadData
         return true;
     }
 
-    private static IEnumerable<Posting> ParsePostings(QLInterpreter.Entry entry)
+    private static IEnumerable<PostingViewModel> ParsePostings(QLInterpreter.Entry entry)
     {
         return entry.Lines.Select(line =>
         {
             Tuple<string, double> amountOrDefault = line.Amount.Or(_defaultAmount);
 
-            return new Posting()
+            return new PostingViewModel()
             {
                 Account = string.Join(':', line.Account),
                 // we don't want to display 0, if there's no amount.
@@ -110,7 +110,7 @@ public class DataLoader : ILoadData
             row["Amount"],
             NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint);
 
-        var posting = new Posting { Account = defaultAccount, Currency = defaultCurrency, Amount = amount };
+        var posting = new PostingViewModel { Account = defaultAccount, Currency = defaultCurrency, Amount = amount };
 
         return new PaymentDetailsViewModel(_accountSelector, title, date, description, defaultCurrency, amount)
         {

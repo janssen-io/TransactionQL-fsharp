@@ -187,13 +187,13 @@ public partial class MainWindowTests
                 Amount = -44.34m,
                 Postings =
                 {
-                    new Models.Posting
+                    new()
                     {
                         Account = "Expenses:Living",
                         Currency = "€",
                         Amount = 44.34m,
                     },
-                    new Models.Posting { Account = "Assets:Checking" },
+                    new() { Account = "Assets:Checking" },
                 }
             },
             new(accountSelector)

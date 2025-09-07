@@ -131,7 +131,7 @@ public partial class PaymentDetailsTests
         Assert.Equal("Expenses:Recreation", completedAccount.Account);
     }
 
-    private static void AssertEmptyPosting(Models.Posting posting)
+    private static void AssertEmptyPosting(PostingViewModel posting)
     {
         Assert.Equal(string.Empty, posting.Account);
         Assert.Equal("EUR", posting.Currency);
