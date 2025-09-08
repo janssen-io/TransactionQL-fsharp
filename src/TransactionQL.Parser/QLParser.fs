@@ -80,7 +80,7 @@ module QLParser =
     let readUntil terminator =
         manySatisfy (fun c -> c <> terminator)
 
-    let qmetadata =
+    let qmetadata : Parser<Metadata, unit> =
         pstring "metadata" >>. spaces1 >>. readUntil ' ' .>> spaces .>> pchar '=' .>> spaces .>>. readUntil '\n'
         |>> Metadata
 
@@ -164,6 +164,6 @@ module QLParser =
         let posting = between spaces spaces qposting
         pipe3 qpayee filters posting (curry3 Query)
 
-    let qprogram = many qmetadata >>. many (qquery .>> spaces)
+    let qprogram = many qmetadata >>. many newline |>> ignore >>. many (qquery .>> spaces)
 
     let parse = run qprogram

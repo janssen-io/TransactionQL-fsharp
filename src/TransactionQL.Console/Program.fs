@@ -202,7 +202,8 @@ module Program =
 
                 parseFilters options
                     |> function
-                    | Some _ -> 0
+                    | Some _ ->
+                        0
                     | None -> 2
             | _ -> 
                 0
