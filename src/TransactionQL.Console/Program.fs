@@ -20,6 +20,8 @@ module Program =
         | Never
         | OnlyOnMissing
 
+    type ParseOptions = { FilterFile: string }
+
     type Options =
         { Format: Format
           TrxFile: FilePath
@@ -38,7 +40,15 @@ module Program =
           Locale = "en_US"
           AddDescription = Always }
 
-    type Arguments =
+    type VerifyArguments =
+        | [<MainCommand; ExactlyOnce>] File of string
+
+        interface IArgParserTemplate with
+            member s.Usage =
+                match s with
+                | File _ -> "the path to the filter file"
+
+    type ApplyArguments =
         | [<MainCommand; ExactlyOnce; Last>] Files of ``transactions.csv``: string * ``filter.tql``: string
         | [<AltCommandLine("-d"); Unique>] Date of format: string
         | [<AltCommandLine("-p"); Unique>] Precision of int
@@ -47,7 +57,7 @@ module Program =
         | [<AltCommandLine("-h"); Unique>] HasHeader of bool
         | [<AltCommandLine("-l"); Unique>] Locale of string
         | [<AltCommandLine("--desc"); Unique>] AddDescription of AddDescriptionFlag
-        | [<Unique>] Version
+        | [<Inherit>] Version
 
         interface IArgParserTemplate with
             member s.Usage =
@@ -64,9 +74,20 @@ module Program =
                 | Locale _ -> $"the locale used to parse decimal values (default: %s{defaultOpts.Locale})"
                 | AddDescription _ ->
                     $"add the transaction's description below the header (default: %A{defaultOpts.AddDescription})"
-                | Version -> $"You're running tql {Configuration.getAppVersion}"
+                | Version -> $"You are running tql %s{Configuration.getAppVersion}" 
 
-    let parseFilters options =
+    type CliArgs =
+        | [<Unique>] Version
+        | [<CliPrefix(CliPrefix.None)>] Validate of ParseResults<VerifyArguments>
+        | [<CliPrefix(CliPrefix.None)>] Apply of ParseResults<ApplyArguments>
+        interface IArgParserTemplate with
+            member s.Usage =
+                match s with
+                | Version -> $"You are running tql %s{Configuration.getAppVersion}" 
+                | Validate _ -> "Validate the filters file"
+                | Apply _ -> "Apply the filters to the transactions"
+
+    let parseFilters (options: ParseOptions) =
         let filter = QLParser.parse ((new StreamReader(options.FilterFile)).ReadToEnd())
 
         match filter with
@@ -115,7 +136,7 @@ module Program =
         |> fun lines -> String.Join(Environment.NewLine + Environment.NewLine, lines)
         |> Console.WriteLine
 
-    let rec mapArgs options (args: Arguments list) =
+    let rec mapArgs options (args: ApplyArguments list) =
         match args with
         | [] -> Some options
         | (arg :: args') ->
@@ -148,23 +169,43 @@ module Program =
             | HasHeader h -> mapArgs { options with HasHeader = h } args'
             | Locale l -> mapArgs { options with Locale = l } args'
             | AddDescription wd -> mapArgs { options with AddDescription = wd } args'
-            | Version -> mapArgs options args'
+            | ApplyArguments.Version -> mapArgs options args'
 
     [<EntryPoint>]
     let main argv =
-        let argParser = ArgumentParser.Create<Arguments>(programName = "tql")
+        let argParser = ArgumentParser.Create<CliArgs>(programName = "tql")
 
         try
             let results = argParser.Parse argv
             let args = results.GetAllResults()
-            let options = mapArgs defaultOpts args
 
-            options
-            |> Option.bind parseFilters
-            |> Option.map (writeLedger <| Option.get options)
-            |> function
-                | Some _ -> 0
-                | None -> 2
+            match args with
+            | [Apply applyArgs] ->
+                let options = mapArgs defaultOpts (applyArgs.GetAllResults())
+                let parseOptions = Option.map (fun opts -> { FilterFile = opts.FilterFile }) options
+
+                parseOptions
+                |> Option.bind parseFilters
+                |> Option.map (writeLedger <| Option.get options)
+                |> function
+                    | Some _ -> 0
+                    | None -> 2
+            | [Validate validateArgs] ->
+                let initOptions = { FilterFile = String.Empty }
+                let options = 
+                    validateArgs.GetAllResults()
+                    |> List.fold 
+                        (fun opts  arg -> 
+                            match arg with
+                            | File f -> { opts with FilterFile = f } : ParseOptions) 
+                        initOptions // need some empty form of ParseOptions to get the fold started
+
+                parseFilters options
+                    |> function
+                    | Some _ -> 0
+                    | None -> 2
+            | _ -> 
+                0
         with
         | :? ArguException as ex ->
             printfn "%s" ex.Message

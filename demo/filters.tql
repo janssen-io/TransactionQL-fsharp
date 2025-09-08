@@ -1,3 +1,5 @@
+metadata lsp.accounts = ./accounts.ldg
+
 # Smart Grocer
 
 Description matches /Smart Grocer/
