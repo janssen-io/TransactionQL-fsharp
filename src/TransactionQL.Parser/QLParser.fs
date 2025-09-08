@@ -9,8 +9,8 @@ module QLParser =
     let curry2 f a b = f (a, b)
     let curry3 f a b c = f (a, b, c)
 
-    let maybe p = ((attempt >> opt) p) <|> preturn None
-    let either p q = (attempt p) <|> q
+    let maybe p = (attempt >> opt) p <|> preturn None
+    let either p q = attempt p <|> q
 
     let pword =
         let islower x = List.contains x [ 'a' .. 'z' ]
@@ -77,10 +77,17 @@ module QLParser =
 
         opp.ExpressionParser |> between (pchar '(') (pchar ')')
 
+    let readUntil terminator =
+        manySatisfy (fun c -> c <> terminator)
+
+    let qmetadata =
+        pstring "metadata" >>. spaces1 >>. readUntil ' ' .>> spaces .>> pchar '=' .>> spaces .>>. readUntil '\n'
+        |>> Metadata
+
     let qaccount = 
-        let qliteral = sepBy1 (pword) (pstring ":") |>> id
+        let qliteral = sepBy1 pword (pstring ":") |>> id
         let qvariable = 
-            (pchar '(' >>. qliteral .>> pchar ')') |>> (fun n -> String.Join(":", n))
+            pchar '(' >>. qliteral .>> pchar ')' |>> fun n -> String.Join(":", n)
         choice [qliteral |>> AccountLiteral; qvariable |>> AccountVariable]
             
 
@@ -94,7 +101,7 @@ module QLParser =
             | ExprNum f -> Amount(commodity, f)
             | expression -> AmountExpression(commodity, expression))
 
-    let qtag: Parser<string, unit> = pstring "; " >>. manySatisfy (fun c -> c <> '\n')
+    let qtag: Parser<string, unit> = pstring "; " >>. readUntil '\n'
 
     let qtransaction =
         let maybeTag = maybe (spaces1 >>. qtag)
@@ -105,7 +112,7 @@ module QLParser =
               Amount = amount
               Tags = match tag with | None -> [||] | Some t -> [|t|] })
 
-    let qnote = pstringCI "note " >>. manySatisfy (fun c -> c <> '\n')
+    let qnote = pstringCI "note " >>. readUntil '\n'
 
     let qposting =
         let transaction = spaces >>. qtransaction .>> newline
@@ -117,10 +124,10 @@ module QLParser =
 
     let qcolumnIdentifier =
         attempt (
-            (anyOf [ 'A' .. 'Z' ]) .>>. pword
+            anyOf [ 'A' .. 'Z' ] .>>. pword
             |>> fun (first, rest) -> Column(string first + rest)
         )
-        <|> ((anyOf [ 'A' .. 'Z' ]) |>> (string >> Column))
+        <|> (anyOf [ 'A' .. 'Z' ] |>> (string >> Column))
 
     let qfilter: Parser<Filter, unit> =
         let pcolumn = qcolumnIdentifier .>> spaces
@@ -128,14 +135,15 @@ module QLParser =
         let patom = choice [ qnumber; qstring; qregex ]
 
         let pfilter =
-            pipe3 pcolumn poperator patom <| (fun col op atom -> Filter(col, op, atom))
+            pipe3 pcolumn poperator patom <| fun col op atom -> Filter(col, op, atom)
 
         let por = spaces >>. pstring "or" .>> spaces
         let orGroup, orGroupRef = createParserForwardedToRef ()
 
-        orGroupRef
-        := (attempt <| pipe3 pfilter por orGroup (fun f _ g -> OrGroup [ f; g ]))
-           <|> pfilter
+        orGroupRef.Value <- 
+            attempt 
+            <| pipe3 pfilter por orGroup (fun f _ g -> OrGroup [ f; g ])
+            <|> pfilter
 
         orGroup
 
@@ -147,15 +155,15 @@ module QLParser =
     let qpayee: Parser<Payee, unit> =
         let isWhitespaceOrVar = fun c -> List.contains c [ "\n"; "\r"; "\t"; " "; "@" ]
         let ptext = manySatisfy (not << isWhitespaceOrVar << string)
-        let payeeParts = ((either qcolumnToken (ptext |>> Word)) .>>? pspace)
-        let pinterpolation = (many1Till payeeParts newline) |>> Interpolation
-        (pchar '#' .>> spaces1) >>. pinterpolation
+        let payeeParts = either qcolumnToken (ptext |>> Word) .>>? pspace
+        let pinterpolation = many1Till payeeParts newline |>> Interpolation
+        pchar '#' .>> spaces1 >>. pinterpolation
 
     let qquery =
         let filters = many (between spaces spaces1 qfilter)
         let posting = between spaces spaces qposting
         pipe3 qpayee filters posting (curry3 Query)
 
-    let qprogram = many (qquery .>> spaces)
+    let qprogram = many qmetadata >>. many (qquery .>> spaces)
 
     let parse = run qprogram

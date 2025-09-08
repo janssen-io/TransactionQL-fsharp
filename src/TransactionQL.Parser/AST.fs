@@ -28,6 +28,8 @@ module AST =
 
     type Column = Column of string
 
+    type Metadata = Metadata of string * string
+
     type FilterAtom =
         | RegExp of string
         | String of string

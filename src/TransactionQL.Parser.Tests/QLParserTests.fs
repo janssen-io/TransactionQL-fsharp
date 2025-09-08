@@ -290,3 +290,9 @@ let ``Queries: multiple queries`` () =
                  Filter(Column "C", EqualTo, Number 1.0) ],
                Posting(None, [ trx (AccountLiteral [ "Assets"; "Checking" ], None) ])
            ) ])
+
+[<Fact>]
+let ``Metadata: Key = value pairs`` () =
+    let txt = "metadata lsp.accounts = ./accounts.ldg"
+    let expected = ("lsp.accounts", "./accounts.ldg") |> Metadata
+    test QLParser.qmetadata txt expected
