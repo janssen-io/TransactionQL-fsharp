@@ -1,0 +1,58 @@
+{
+    "name": "tql-vscode-extension",
+    "displayName": "TransactionQL",
+    "description": "VS Code extension for TransactionQL with syntax highlighting and language server support.",
+    "version": "0.1.0",
+    "publisher": "janssen-io",
+    "engines": {
+        "vscode": "^1.100.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "languages": [
+            {
+                "id": "tql",
+                "aliases": [
+                    "TransactionQL",
+                    "TQL"
+                ],
+                "extensions": [
+                    ".tql"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "tql",
+                "scopeName": "source.tql",
+                "path": "./syntaxes/tql.tmLanguage.json"
+            }
+        ]
+    },
+    "scripts": {
+        "compile": "tsc -p ./ && tsc -p ../server",
+        "watch": "tsc -p ./ --watch",
+        "package": "vsce package"
+    },
+    "devDependencies": {
+        "@types/node": "^24.3.1",
+        "@types/vscode": "^1.103.0",
+        "typescript": "^5.2.0",
+        "vsce": "^2.15.0",
+        "vscode-languageclient": "^9.0.1"
+    },
+    "dependencies": {
+        "vscode-languageclient": "^9.0.1"
+    },
+    "files": [
+        "out",
+        "../server/out",
+        "syntaxes",
+        "../language-configuration.json",
+        "package.json"
+    ]
+}

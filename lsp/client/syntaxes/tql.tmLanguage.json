@@ -1,0 +1,84 @@
+{
+    "scopeName": "source.tql",
+    "name": "TransactionQL",
+    "fileTypes": [
+        "tql"
+    ],
+    "patterns": [
+        {
+            "include": "#header"
+        },
+        {
+            "include": "#condition"
+        },
+        {
+            "include": "#posting"
+        },
+        {
+            "name": "constant.numeric.integer.tql",
+            "match": "\\b\\d+\\b"
+        },
+        {
+            "name": "constant.numeric.float.tql",
+            "match": "\\b\\d+\\.\\d*\\b"
+        }
+    ],
+    "repository": {
+        "header": {
+            "patterns": [
+                {
+                    "name": "markup.heading.tql",
+                    "match": "^# .*$"
+                },
+                {
+                    "name": "variable.parameter.header.tql",
+                    "match": "@[A-Za-z_][A-Za-z0-9_]*"
+                }
+            ]
+        },
+        "condition": {
+            "patterns": [
+                {
+                    "name": "meta.condition.tql",
+                    "begin": "^(or\\s+)?[A-Za-z_][A-Za-z0-9_]*\\s+",
+                    "end": "$",
+                    "patterns": [
+                        {
+                            "name": "keyword.operator.tql",
+                            "match": "\\b(matches|=)\\b"
+                        },
+                        {
+                            "name": "string.regexp.tql",
+                            "begin": "/",
+                            "end": "/"
+                        },
+                        {
+                            "name": "variable.other.condition.tql",
+                            "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
+                        }
+                    ]
+                }
+            ]
+        },
+        "posting": {
+            "patterns": [
+                {
+                    "name": "meta.posting.tql",
+                    "begin": "^posting\\s*\\{",
+                    "end": "^\\}",
+                    "patterns": [
+                        {
+                            "name": "variable.parameter.posting.tql",
+                            "match": "\\([A-Za-z_][A-Za-z0-9_]*(:[A-Za-z0-9_]+)*\\)"
+                        },
+                        {
+                            "name": "constant.numeric.currency.tql",
+                            "match": "\\b[A-Z]{3}\\s+[0-9]+(\\.[0-9]+)?\\b"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    "uuid": "tql-grammar-001"
+}
