@@ -17,13 +17,9 @@ connection.onInitialize((_params: InitializeParams) => {
   console.log("TQL | Initializing!");
   return {
     capabilities: {
-      textDocumentSync: TextDocumentSyncKind.Full,
+      textDocumentSync: TextDocumentSyncKind.Incremental,
     },
   };
-});
-
-connection.onInitialized(() => {
-  console.log("Initialized :)");
 });
 
 documents.onDidOpen((e: TextDocumentChangeEvent<TextDocument>) => {
@@ -32,9 +28,20 @@ documents.onDidOpen((e: TextDocumentChangeEvent<TextDocument>) => {
 documents.onDidChangeContent(
   (change: TextDocumentChangeEvent<TextDocument>) => {
     console.log("Content changed: " + change.document.version);
-    validateTextDocument(change.document);
+    validateChanges(change.document);
   },
 );
+
+documents.onDidSave(
+  (saved: TextDocumentChangeEvent<TextDocument>) => {
+    console.log("Content changed: " + saved.document.version);
+    validateTextDocument(saved.document);
+  },
+);
+
+async function validateChanges(textDocument: TextDocument): Promise<void> {
+  console.log('Changes:', textDocument.getText());
+}
 
 async function validateTextDocument(textDocument: TextDocument): Promise<void> {
   const diagnostics: Diagnostic[] = [];
