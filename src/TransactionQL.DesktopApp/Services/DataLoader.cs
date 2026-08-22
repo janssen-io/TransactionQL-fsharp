@@ -1,6 +1,8 @@
 ﻿using Microsoft.FSharp.Collections;
+using Microsoft.FSharp.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -11,7 +13,6 @@ using TransactionQL.DesktopApp.ViewModels;
 using TransactionQL.Parser;
 using TransactionQL.Shared.Extensions;
 using static TransactionQL.Input.Converters;
-using static TransactionQL.Shared.Types;
 
 namespace TransactionQL.DesktopApp.Services;
 
@@ -84,17 +85,18 @@ public class DataLoader : ILoadData
         ]);
 
         FSharpMap<string, string>[] rows = reader.Read(bankTransactionCsv.ReadToEnd());
-        Either<QLInterpreter.Entry, FSharpMap<string, string>>[] filteredRows
+        FSharpChoice<QLInterpreter.Entry, FSharpMap<string, string>>[] filteredRows
             = _api.Filter(reader, queries, variables, rows).ToArray();
 
         foreach (var filteredRow in filteredRows.Zip(rows))
         {
-            yield return filteredRow.First.TryGetLeft(out QLInterpreter.Entry? entry)
-                ? CreateFilteredTransaction(
-                    data.DefaultCurrency, filteredRow.Second, entry)
-                : CreateTransaction(
-                    data.DefaultCheckingAccount, data.DefaultCurrency,
-                    reader, filteredRow.Second);
+            yield return filteredRow.First.TryGetChoice1<QLInterpreter.Entry, FSharpMap<string, string>>(
+                out QLInterpreter.Entry? entry)
+                    ? CreateFilteredTransaction(
+                        data.DefaultCurrency, filteredRow.Second, entry)
+                    : CreateTransaction(
+                        data.DefaultCheckingAccount, data.DefaultCurrency,
+                        reader, filteredRow.Second);
         }
     }
 
@@ -141,15 +143,19 @@ public class DataLoader : ILoadData
         [NotNullWhen(true)] out IConverter? reader, out string error, string pluginDir)
     {
         error = string.Empty;
-        Either<IConverter, string> loader = _api.LoadReader(
+        FSharpResult<IConverter, string> loader = _api.LoadReader(
             module, pluginDir);
 
-        if (!loader.TryGetLeft(out reader))
+        reader = default;
+        error = string.Empty;
+
+        if (!loader.IsOk)
         {
-            _ = loader.TryGetRight(out error);
+            error = loader.ErrorValue;
             return false;
         }
 
+        reader = loader.ResultValue;
         return true;
     }
 
@@ -164,14 +170,17 @@ public class DataLoader : ILoadData
         using Stream f = _streamer.Open(filtersFile);
         using StreamReader filterTql = new(f);
 
-        Either<AST.Query[], string> parser = _api.ParseFilters(filterTql.ReadToEnd());
+        FSharpResult<AST.Query[], string> parser = _api.ParseFilters(filterTql.ReadToEnd());
 
-        if (!parser.TryGetLeft(out queries))
+        queries = default;
+        error = string.Empty;
+        if (!parser.IsOk)
         {
-            _ = parser.TryGetRight(out error);
+            error = parser.ErrorValue;
             return false;
         }
 
+        queries = parser.ResultValue;
         return true;
     }
 }

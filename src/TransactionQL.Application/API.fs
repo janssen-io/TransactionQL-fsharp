@@ -10,19 +10,18 @@ module API =
     open TransactionQL.Parser
     open TransactionQL.Parser.AST
     open TransactionQL.Parser.QLInterpreter
-    open TransactionQL.Shared.Types
 
     let parseFilters filterContents =
         let filter = QLParser.parse filterContents
 
         match filter with
-        | Success(parsedFilter, _, _) -> Left(Array.ofList parsedFilter)
-        | Failure(error, _, _) -> Right error
+        | Success(parsedFilter, _, _) -> Result.Ok(Array.ofList parsedFilter)
+        | Failure(error, _, _) -> Result.Error error
 
     let loadReader name pluginDirectory =
         match PluginLoader.load name pluginDirectory with
-        | Some reader -> Left reader
-        | None -> Right $"Unable to load plugin from directory %s{pluginDirectory}"
+        | Some reader -> Result.Ok reader
+        | None -> Result.Error $"Unable to load plugin from directory %s{pluginDirectory}"
 
     let filter (reader: IConverter) (queries: Query array) (variables: Map<string, string>) rows =
         rows
@@ -35,8 +34,8 @@ module API =
         |> (fun results -> Seq.zip results rows)
         |> Seq.map (fun (res, row) ->
             match res with
-            | Interpretation(_, Some entry) -> Left entry
-            | Interpretation(_, None) -> Right row)
+            | Interpretation(_, Some entry) -> Choice1Of2 entry
+            | Interpretation(_, None) -> Choice2Of2 row)
 
     let formatPosting date title (description: string) (tags: string list) trx =
         let header = Header(date, title)
