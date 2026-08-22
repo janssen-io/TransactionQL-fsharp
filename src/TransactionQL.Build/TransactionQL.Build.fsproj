@@ -11,15 +11,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fake.Core.Target" Version="6.1.4" />
-    <PackageReference Include="Fake.DotNet.Cli" Version="6.1.4" />
-    <PackageReference Include="Fake.Installer.InnoSetup" Version="6.1.4" />
-    <PackageReference Include="Fake.IO.Zip" Version="6.1.4" />
-    <PackageReference Include="MSBuild.StructuredLogger" Version="2.3.71" />
+    <PackageReference Include="Fake.Core.Target" />
+    <PackageReference Include="Fake.DotNet.Cli" />
+    <PackageReference Include="Fake.Installer.InnoSetup" />
+    <PackageReference Include="Fake.IO.Zip" />
+    <PackageReference Include="MSBuild.StructuredLogger" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="9.0.303" />
+    
   </ItemGroup>
 
 </Project>
