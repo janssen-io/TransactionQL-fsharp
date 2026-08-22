@@ -43,18 +43,19 @@ module API =
 
         let lines =
             trx
-            |> Array.map (fun (account, (currency: string), (amount: Nullable<decimal>), (postingTags: string array)) ->
+            |> Array.map (fun (account, (currency: (string | null)), (amount: Nullable<decimal>), (postingTags: string array)) ->
                 let acc = (account :: [])
 
-                match (String.IsNullOrEmpty currency, Option.ofNullable amount) with
-                | true, _
+                match (currency, Option.ofNullable amount) with
+                | "", _
+                | null, _
                 | _, None ->
                     { Account = acc
                       Amount = None
                       Tags = postingTags }
-                | _, Some a ->
+                | curr, Some a ->
                     { Account = acc
-                      Amount = Some(currency, float a)
+                      Amount = Some(curr, float a)
                       Tags = postingTags })
             |> List.ofArray
 
@@ -62,7 +63,7 @@ module API =
         let entry =
             { Header = header
               Lines = lines
-              Comments = 
+              Comments =
                 List.ofArray (description.Split(newLines, StringSplitOptions.RemoveEmptyEntries))
                 |> List.append tags
             }
