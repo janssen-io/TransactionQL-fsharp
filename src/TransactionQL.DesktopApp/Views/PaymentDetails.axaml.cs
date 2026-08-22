@@ -3,6 +3,7 @@ using Avalonia.Interactivity;
 using Avalonia.VisualTree;
 
 namespace TransactionQL.DesktopApp.Views;
+
 public partial class PaymentDetails : UserControl
 {
     public PaymentDetails()
