@@ -31,8 +31,11 @@ jobs:
       - name: Build
         run: dotnet build
 
-      - name: Format
+      - name: Format C#
         run: dotnet format --verify-no-changes --verbosity diagnostic
+
+      - name: Format F#
+        run: dotnet tool exec fantomas -- --check .
 
       - name: Test
         run: >
