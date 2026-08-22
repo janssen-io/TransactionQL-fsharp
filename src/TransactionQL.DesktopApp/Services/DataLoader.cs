@@ -146,7 +146,7 @@ public class DataLoader : ILoadData
         FSharpResult<IConverter, string> loader = _api.LoadReader(
             module, pluginDir);
 
-        reader = default;
+        reader = null;
         error = string.Empty;
 
         if (!loader.IsOk)
@@ -172,7 +172,7 @@ public class DataLoader : ILoadData
 
         FSharpResult<AST.Query[], string> parser = _api.ParseFilters(filterTql.ReadToEnd());
 
-        queries = default;
+        queries = null;
         error = string.Empty;
         if (!parser.IsOk)
         {
