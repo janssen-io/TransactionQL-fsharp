@@ -14,18 +14,19 @@ module Bunq =
     type BunqTransactions = CsvProvider<"bunq.csv">
 
     type BunqReader() =
-        let toMap (row: BunqTransactions.Row) =
+        let toMap (row : BunqTransactions.Row) =
             let isSent = row.Amount.[0] = '-'
 
-            Map.ofList
-                [ ("Sender", (if isSent then row.Account else row.CounterParty))
-                  ("Receiver", (if isSent then row.CounterParty else row.Account))
-                  ("Amount", row.Amount.Replace(",", "."))
-                  ("Total", (if isSent then row.Amount.Substring(1) else row.Amount))
-                  ("Date", row.CreatedAt)
-                  ("Description", row.Description)
-                  ("Name", row.CounterPartyName)
-                  ("Currency", row.Currency) ]
+            Map.ofList [
+                ("Sender", (if isSent then row.Account else row.CounterParty))
+                ("Receiver", (if isSent then row.CounterParty else row.Account))
+                ("Amount", row.Amount.Replace(",", "."))
+                ("Total", (if isSent then row.Amount.Substring(1) else row.Amount))
+                ("Date", row.CreatedAt)
+                ("Description", row.Description)
+                ("Name", row.CounterPartyName)
+                ("Currency", row.Currency)
+            ]
 
         interface IConverter with
             member this.DateFormat = dateFormat
@@ -36,16 +37,27 @@ module Bunq =
             member this.Map row =
                 let fromRow col = Map.find col row
 
-                { Header =
-                    Header(
-                        DateTime.ParseExact(fromRow "Date", dateFormat, CultureInfo.InvariantCulture),
-                        fromRow "Name"
-                    )
-                  Lines =
-                    [ { Account = [ fromRow "Receiver" ]
-                        Amount = (fromRow "Currency", (fromRow >> float) "Total") |> Some
-                        Tags = [||] }
-                      { Account = [ fromRow "Sender" ]
-                        Amount = None
-                        Tags = [||] } ]
-                  Comments = [ fromRow "Description" ] }
+                {
+                    Header =
+                        Header(
+                            DateTime.ParseExact(
+                                fromRow "Date",
+                                dateFormat,
+                                CultureInfo.InvariantCulture
+                            ),
+                            fromRow "Name"
+                        )
+                    Lines = [
+                        {
+                            Account = [ fromRow "Receiver" ]
+                            Amount = (fromRow "Currency", (fromRow >> float) "Total") |> Some
+                            Tags = [||]
+                        }
+                        {
+                            Account = [ fromRow "Sender" ]
+                            Amount = None
+                            Tags = [||]
+                        }
+                    ]
+                    Comments = [ fromRow "Description" ]
+                }

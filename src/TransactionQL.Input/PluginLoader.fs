@@ -14,10 +14,10 @@ module PluginLoader =
         |> Path.Combine
         |> context.LoadFromAssemblyPath
         |> fun assembly -> assembly.GetTypes()
-        |> Array.tryFind (fun t -> (typeof<IConverter>).IsAssignableFrom t)
-        |> Option.map (fun t -> Activator.CreateInstance t :?> (IConverter|null))
-        |> Option.bind (
+        |> Array.tryFind(fun t -> (typeof<IConverter>).IsAssignableFrom t)
+        |> Option.map(fun t -> Activator.CreateInstance t :?> (IConverter | null))
+        |> Option.bind(
             function
             | null -> None
             | converter -> Some converter
-            )
+        )

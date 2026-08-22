@@ -51,9 +51,9 @@ public class FileWatchingAccountSelectorTests : IDisposable
 
         // Act
         using StreamWriter write = new(new FileStream(_fileName, FileMode.Append), Encoding.Default, 4 * 1024 * 1024);
-        write.WriteLine("");
-        write.WriteLine("account Income:Test");
-        write.Flush();
+        await write.WriteLineAsync("");
+        await write.WriteLineAsync("account Income:Test");
+        await write.FlushAsync();
         write.Close();
 
         waitForUpdate.WaitOne(FilewatchingAccountSelector.DebounceMillis + 50);
@@ -78,27 +78,29 @@ public class FileWatchingAccountSelectorTests : IDisposable
         // Arrange
         using var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
         ManualResetEvent waitForUpdate = new(false);
-        watcher.AccountsChanged += (sender, args) => waitForUpdate.Set();
+        watcher.AccountsChanged += (_, _) => waitForUpdate.Set();
 
         // Act
         string[] contents;
         using (StreamReader read = new(new FileStream(_fileName, FileMode.Open)))
         {
-            contents = read.ReadToEnd().Split(Environment.NewLine);
+            contents = (await read.ReadToEndAsync())
+                .Split("\n", StringSplitOptions.TrimEntries);
         }
 
         using StreamWriter write = new(new FileStream(_fileName, FileMode.Truncate, FileAccess.Write), Encoding.Default, 4 * 1024 * 1024);
         foreach (var line in contents)
         {
             if (!line.StartsWith("account Expenses:Recreation"))
-                write.WriteLine(line);
+                await write.WriteLineAsync(line);
         }
-        write.Flush();
+        await write.FlushAsync();
         write.Close();
 
-        waitForUpdate.WaitOne(FilewatchingAccountSelector.DebounceMillis + 50);
+        var isUpdated = waitForUpdate.WaitOne(FilewatchingAccountSelector.DebounceMillis + 50);
 
         // Assert
+        Assert.True(isUpdated);
         Assert.Collection(watcher.AvailableAccounts,
             a => Assert.Equal("Assets:Checking", a),
             a => Assert.Equal("Assets:Savings", a),
@@ -117,9 +119,9 @@ public class FileWatchingAccountSelectorTests : IDisposable
         var newFile = Path.GetTempFileName();
         using (StreamWriter write = new(new FileStream(newFile, FileMode.Append)))
         {
-            write.WriteLine("account Test:Account:One");
-            write.WriteLine("account Test:Account:Two");
-            write.Flush();
+            await write.WriteLineAsync("account Test:Account:One");
+            await write.WriteLineAsync("account Test:Account:Two");
+            await write.FlushAsync();
         }
 
         using var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
@@ -151,11 +153,11 @@ public class FileWatchingAccountSelectorTests : IDisposable
 
         // Arrange
         var newFile = Path.GetTempFileName();
-        using (StreamWriter write = new(new FileStream(newFile, FileMode.Append)))
+        await using (StreamWriter write = new(new FileStream(newFile, FileMode.Append)))
         {
-            write.WriteLine("account Test:Account:One");
-            write.WriteLine("account Test:Account:Two");
-            write.Flush();
+            await write.WriteLineAsync("account Test:Account:One");
+            await write.WriteLineAsync("account Test:Account:Two");
+            await write.FlushAsync();
         }
 
         using var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);

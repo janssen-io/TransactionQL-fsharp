@@ -7,9 +7,11 @@ open TransactionQL.Parser.QLInterpreter
 open System
 
 let line (account, amount, tag) =
-    { Account = account
-      Amount = amount
-      Tags = tag }
+    {
+        Account = account
+        Amount = amount
+        Tags = tag
+    }
     : Line
 
 [<Fact>]
@@ -18,9 +20,11 @@ let ``Header: starts with formatted date`` () =
 
     let result =
         Formatter.sprintHeader
-            { Date = "yyyy-MM-dd"
-              Precision = 2
-              Comment = "# " }
+            {
+                Date = "yyyy-MM-dd"
+                Precision = 2
+                Comment = "# "
+            }
             header
 
     Assert.StartsWith("2019-04-27", result)
@@ -31,22 +35,26 @@ let ``Header: ends with the payee`` () =
 
     let result =
         Formatter.sprintHeader
-            { Date = "yyyy-MM-dd"
-              Precision = 2
-              Comment = "# " }
+            {
+                Date = "yyyy-MM-dd"
+                Precision = 2
+                Comment = "# "
+            }
             header
 
     Assert.EndsWith("some title", result)
 
 [<Fact>]
 let ``Line: is indented`` () =
-    let line = line ([ "A"; "B" ], None, [||])
+    let line = line([ "A" ; "B" ], None, [||])
 
     let result =
         Formatter.sprintLine
-            { Date = "yyyy-MM-dd"
-              Precision = 2
-              Comment = "# " }
+            {
+                Date = "yyyy-MM-dd"
+                Precision = 2
+                Comment = "# "
+            }
             0
             line
 
@@ -54,13 +62,15 @@ let ``Line: is indented`` () =
 
 [<Fact>]
 let ``Line: concatenates accounts with colon`` () =
-    let line = line ([ "A"; "B" ], None, [||])
+    let line = line([ "A" ; "B" ], None, [||])
 
     let result =
         Formatter.sprintLine
-            { Date = "yyyy-MM-dd"
-              Precision = 2
-              Comment = "# " }
+            {
+                Date = "yyyy-MM-dd"
+                Precision = 2
+                Comment = "# "
+            }
             0
             line
 
@@ -68,13 +78,15 @@ let ``Line: concatenates accounts with colon`` () =
 
 [<Fact>]
 let ``Line: separates accounts and commodity with at least two spaces`` () =
-    let line = line ([ "A"; "B" ], Some("$", 25.00), [||])
+    let line = line([ "A" ; "B" ], Some("$", 25.00), [||])
 
     let result =
         Formatter.sprintLine
-            { Date = "yyyy-MM-dd"
-              Precision = 2
-              Comment = "# " }
+            {
+                Date = "yyyy-MM-dd"
+                Precision = 2
+                Comment = "# "
+            }
             0
             line
 
@@ -88,42 +100,48 @@ let ``Line: separates accounts and commodity with at least two spaces`` () =
 
 [<Fact>]
 let ``Line: prints the float with the given precision`` () =
-    let format: Format =
-        { Date = "yyyy-MM-dd"
-          Precision = 3
-          Comment = "# " }
+    let format : Format = {
+        Date = "yyyy-MM-dd"
+        Precision = 3
+        Comment = "# "
+    }
 
     let amount = 25.12345678
-    let line = line ([ "A"; "B" ], Some("€", amount), [||])
+    let line = line([ "A" ; "B" ], Some("€", amount), [||])
     let result = Formatter.sprintLine format 0 line
     Assert.EndsWith("25.123", result)
 
 [<Fact>]
 let ``Line: Adds tags (if any) after two spaces`` () =
-    let format: Format =
-        { Date = "yyyy-MM-dd"
-          Precision = 2
-          Comment = "; " }
+    let format : Format = {
+        Date = "yyyy-MM-dd"
+        Precision = 2
+        Comment = "; "
+    }
 
     let amount = 25.12345678
-    let line = line ([ "A"; "B" ], Some("€", amount), [|"My: Tag"|])
+    let line = line([ "A" ; "B" ], Some("€", amount), [| "My: Tag" |])
     let result = Formatter.sprintLine format 0 line
     Assert.EndsWith("  ; My: Tag", result)
 
 [<Fact>]
 let ``Posting: prints header and lines on separate lines`` () =
-    let posting =
-        { Header = Header(new DateTime(2019, 1, 1), "Payee")
-          Lines =
-            [ line ([ "A"; "B" ], Some("€", 10.00), [||])
-              line ([ "C"; "D" ], None, [||]) ]
-          Comments = [] }
+    let posting = {
+        Header = Header(new DateTime(2019, 1, 1), "Payee")
+        Lines = [
+            line([ "A" ; "B" ], Some("€", 10.00), [||])
+            line([ "C" ; "D" ], None, [||])
+        ]
+        Comments = []
+    }
 
     let result =
         Formatter.sprintPosting
-            { Date = "yyyy-MM-dd"
-              Precision = 2
-              Comment = "# " }
+            {
+                Date = "yyyy-MM-dd"
+                Precision = 2
+                Comment = "# "
+            }
             (fun _ -> [])
             id
             posting
@@ -133,18 +151,22 @@ let ``Posting: prints header and lines on separate lines`` () =
 
 [<Fact>]
 let ``Posting: aligns amounts to the right`` () =
-    let posting =
-        { Header = Header(new DateTime(2019, 1, 1), "Payee")
-          Lines =
-            [ line ([ "Assets"; "Checking" ], Some("€", 10.), [||])
-              line ([ "Expenses"; "Vacation" ], Some("$", -1000.), [||]) ]
-          Comments = [] }
+    let posting = {
+        Header = Header(new DateTime(2019, 1, 1), "Payee")
+        Lines = [
+            line([ "Assets" ; "Checking" ], Some("€", 10.), [||])
+            line([ "Expenses" ; "Vacation" ], Some("$", -1000.), [||])
+        ]
+        Comments = []
+    }
 
     let result =
         Formatter.sprintPosting
-            { Date = "yyyy-MM-dd"
-              Precision = 2
-              Comment = "# " }
+            {
+                Date = "yyyy-MM-dd"
+                Precision = 2
+                Comment = "# "
+            }
             (fun _ -> [])
             id
             posting
@@ -156,17 +178,20 @@ let ``Posting: aligns amounts to the right`` () =
 
 [<Fact>]
 let ``Missing posting: adds comment before each line`` () =
-    let posting =
-        { Header = Header(new DateTime(2019, 1, 1), "Payee")
-          Lines =
-            [ line ([ "A"; "B" ], Some("€", 10.00), [||])
-              line ([ "C"; "D" ], None, [||]) ]
-          Comments = [] }
+    let posting = {
+        Header = Header(new DateTime(2019, 1, 1), "Payee")
+        Lines = [
+            line([ "A" ; "B" ], Some("€", 10.00), [||])
+            line([ "C" ; "D" ], None, [||])
+        ]
+        Comments = []
+    }
 
-    let format: Format =
-        { Date = "yyyy-MM-dd"
-          Precision = 2
-          Comment = "# " }
+    let format : Format = {
+        Date = "yyyy-MM-dd"
+        Precision = 2
+        Comment = "# "
+    }
 
     let result = Formatter.sprintMissingPosting format (fun _ -> []) posting
     let lines = result.Split(Environment.NewLine)
@@ -174,20 +199,23 @@ let ``Missing posting: adds comment before each line`` () =
 
 [<Fact>]
 let ``Comments: comments are added between the header and transactions`` () =
-    let posting =
-        { Header = Header(new DateTime(2019, 1, 1), "Payee")
-          Lines =
-            [ line ([ "A"; "B" ], Some("€", 10.00), [||])
-              line ([ "C"; "D" ], None, [||]) ]
-          Comments = [ "Two lines"; "Of comments" ] }
+    let posting = {
+        Header = Header(new DateTime(2019, 1, 1), "Payee")
+        Lines = [
+            line([ "A" ; "B" ], Some("€", 10.00), [||])
+            line([ "C" ; "D" ], None, [||])
+        ]
+        Comments = [ "Two lines" ; "Of comments" ]
+    }
 
-    let format: Format =
-        { Date = "yyyy-MM-dd"
-          Precision = 2
-          Comment = "# " }
+    let format : Format = {
+        Date = "yyyy-MM-dd"
+        Precision = 2
+        Comment = "# "
+    }
 
     let result = Formatter.sprintPosting format (fun _ -> []) id posting
     let lines = result.Split(Environment.NewLine)
 
-    let expected = [| "# Two lines"; "# Of comments" |]
+    let expected = [| "# Two lines" ; "# Of comments" |]
     expected = ((Array.tail >> Array.take 2) lines)

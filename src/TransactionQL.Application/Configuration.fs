@@ -21,12 +21,14 @@ module Configuration =
 
     let getAppVersion =
         let assembly = Assembly.GetExecutingAssembly()
-        let fileVersionInfo = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+
+        let fileVersionInfo =
+            assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+
         let v =
             match fileVersionInfo with
             | null -> "0.0.0"
             | attribute -> attribute.InformationalVersion
+
         let i = v.LastIndexOf("+")
-        if i < 0
-            then v
-            else v.Substring(0, i)
+        if i < 0 then v else v.Substring(0, i)
