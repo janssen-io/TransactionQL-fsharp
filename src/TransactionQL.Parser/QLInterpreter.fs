@@ -8,25 +8,27 @@ module QLInterpreter =
     open AST
     open Interpretation
 
-    type Header = Header of System.DateTime * string
+    type Header = | Header of System.DateTime * string
 
-    type Line =
-        { Account: string list
-          Amount: (string * float) option
-          Tags: string array }
+    type Line = {
+        Account : string list
+        Amount : (string * float) option
+        Tags : string array
+    }
 
-    type Entry = // Entry of Header * Line list
-        { Header: Header
-          Lines: Line list
-          Comments: string list }
+    type Entry = { // Entry of Header * Line list
+        Header : Header
+        Lines : Line list
+        Comments : string list
+    }
 
-    let getVar (env: Env) (name: string) =
+    let getVar (env : Env) (name : string) =
         if env.EnvVars.ContainsKey name then
             Map.find name env.EnvVars
         else
             failwith <| $"Unknown variable '%s{name}'"
 
-    let rec eval (env: Env) (expr: Expression) =
+    let rec eval (env : Env) (expr : Expression) =
         let rec eval' e =
             let arithmetic op (l, r) = op (eval' l) (eval' r)
 
@@ -44,16 +46,18 @@ module QLInterpreter =
 
         eval' expr |> fun n -> Interpretation(env, n)
 
-    let evalAccount (env: Env) (account: Account) =
+    let evalAccount (env : Env) (account : Account) =
         match account with
         | AccountLiteral l -> l
         | AccountVariable v -> getVar env v |> (fun s -> s.Split(":")) |> List.ofArray
 
     let generatePostingLine
         env
-        ({ Account = accounts
-           Amount = amount
-           Tags = tag }: Transaction)
+        ({
+             Account = accounts
+             Amount = amount
+             Tags = tag
+         } : Transaction)
         =
         let remainder = Map.find "remainder" env.Variables
 
@@ -65,7 +69,7 @@ module QLInterpreter =
         let evalAmount amount =
             match amount with
             | Amount(Commodity _, f) -> f
-            | AmountExpression(Commodity _, e) -> Interpretation.result (eval env e)
+            | AmountExpression(Commodity _, e) -> Interpretation.result(eval env e)
 
         let commodity = Option.map getCommodity amount
         let amount = Option.map evalAmount amount
@@ -76,16 +80,20 @@ module QLInterpreter =
             let vars = Map.add "remainder" (remainder + f) env.Variables
 
             { env with Variables = vars },
-            { Account = account
-              Amount = Some(c, f)
-              Tags = tag }
+            {
+                Account = account
+                Amount = Some(c, f)
+                Tags = tag
+            }
         | _ ->
             let vars = Map.add "remainder" 0.0 env.Variables // update remainder to 0
 
             { env with Variables = vars },
-            { Account = account
-              Amount = None
-              Tags = tag }
+            {
+                Account = account
+                Amount = None
+                Tags = tag
+            }
         |> Interpretation
 
     let generatePosting env transactions =
@@ -96,21 +104,22 @@ module QLInterpreter =
                 let (Interpretation(newEnv, line)) = generatePostingLine env x
                 gen newEnv xs (line :: acc)
 
-        let envWithRemainder =
-            { env with
-                Variables = Map.add "remainder" 0.0 env.Variables }
+        let envWithRemainder = {
+            env with
+                Variables = Map.add "remainder" 0.0 env.Variables
+        }
 
         let (Interpretation(env', lines)) = gen envWithRemainder transactions []
         Interpretation(env', List.rev lines)
 
-    let rec evalString text (column: string) op =
+    let rec evalString text (column : string) op =
         match op with
         | EqualTo -> column = text
         | NotEqualTo -> not <| evalString text column EqualTo
         | Contains -> column.Contains text
         | _ -> failwith $"Operator '%A{op}' is not supported for strings."
 
-    let evalRegex regex (column: string) op =
+    let evalRegex regex (column : string) op =
         match op with
         | Matches -> Regex(regex, RegexOptions.IgnoreCase).IsMatch(column)
         | _ -> failwith $"Operator '%A{op}' is not supported for regular expressions."
@@ -144,17 +153,14 @@ module QLInterpreter =
 
             Interpretation(env, evalType value op)
 
-        | OrGroup filters -> Interpretation.fold evalFilter (||) (Interpretation(env, false)) filters
+        | OrGroup filters ->
+            Interpretation.fold evalFilter (||) (Interpretation(env, false)) filters
 
     let rec evalPayee env payee =
         match payee with
         | Word p -> p
-        | ColumnToken (Column col) -> 
-            Map.tryFind col env.Row
-            |> Option.defaultValue $"@{col}"
-        | Interpolation xs -> 
-            List.map (evalPayee env) xs
-            |> (String.concat " ")
+        | ColumnToken(Column col) -> Map.tryFind col env.Row |> Option.defaultValue $"@{col}"
+        | Interpolation xs -> List.map (evalPayee env) xs |> (String.concat " ")
 
     let evalQuery env (Query(payee, filters, posting)) =
         let (Interpretation(envFilter, isMatch)) =
@@ -165,21 +171,28 @@ module QLInterpreter =
         else
             let total = float <| Map.find "Amount" envFilter.Row
 
-            let envTotal =
-                { envFilter with
-                    Variables = envFilter.Variables |> Map.add "amount" total |> Map.add "total" (abs total) }
+            let envTotal = {
+                envFilter with
+                    Variables =
+                        envFilter.Variables |> Map.add "amount" total |> Map.add "total" (abs total)
+            }
 
             // TODO: (20240818) (wrong spot, probably) Update Date variable with ISO-formatted date?
             //       Or (better solution) proper filter parsing for date to allow for comparison to other dates
             let date =
-                System.DateTime.ParseExact(Map.find "Date" env.Row, env.DateFormat, CultureInfo.InvariantCulture)
+                System.DateTime.ParseExact(
+                    Map.find "Date" env.Row,
+                    env.DateFormat,
+                    CultureInfo.InvariantCulture
+                )
 
             let payeeString = evalPayee env payee
             let header = Header(date, payeeString)
 
-            let comments =
-                [ if Map.containsKey "Description" envFilter.Row then
-                      Map.find "Description" envFilter.Row ]
+            let comments = [
+                if Map.containsKey "Description" envFilter.Row then
+                    Map.find "Description" envFilter.Row
+            ]
 
             let (Posting(note, transactions)) = posting
 
@@ -193,10 +206,11 @@ module QLInterpreter =
 
             Interpretation(
                 envPosting,
-                Some
-                    { Header = header
-                      Lines = postingLines
-                      Comments = newComments }
+                Some {
+                    Header = header
+                    Lines = postingLines
+                    Comments = newComments
+                }
             )
 
     let rec evalProgram env queries =

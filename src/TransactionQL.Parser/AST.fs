@@ -9,24 +9,25 @@ module AST =
         | Divide of Expression * Expression
         | Multiply of Expression * Expression
 
-    type Account = 
+    type Account =
         | AccountLiteral of string list
         | AccountVariable of string
 
-    type Commodity = Commodity of string
+    type Commodity = | Commodity of string
 
     type Amount =
         | Amount of Commodity * float
         | AmountExpression of Commodity * Expression
 
-    type Transaction =
-        { Account: Account
-          Amount: Amount option
-          Tags: string array }
+    type Transaction = {
+        Account : Account
+        Amount : Amount option
+        Tags : string array
+    }
 
-    type Posting = Posting of string option * Transaction list
+    type Posting = | Posting of string option * Transaction list
 
-    type Column = Column of string
+    type Column = | Column of string
 
     type FilterAtom =
         | RegExp of string
@@ -47,9 +48,9 @@ module AST =
         | Filter of Column * FilterOperator * FilterAtom
         | OrGroup of Filter list
 
-    type Payee = 
+    type Payee =
         | Word of string
         | ColumnToken of Column
         | Interpolation of Payee list
 
-    type Query = Query of Payee * Filter list * Posting
+    type Query = | Query of Payee * Filter list * Posting

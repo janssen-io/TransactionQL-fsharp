@@ -15,42 +15,58 @@ module Amex =
     type AmexTransactions = CsvProvider<"Amex.csv">
 
     type AmexReader() =
-        let toMap (row: AmexTransactions.Row) =
+        let toMap (row : AmexTransactions.Row) =
             let amount =
-                -1m * Decimal.Parse(row.Bedrag, NumberStyles.AllowLeadingSign ||| NumberStyles.AllowDecimalPoint)
+                -1m
+                * Decimal.Parse(
+                    row.Bedrag,
+                    NumberStyles.AllowLeadingSign ||| NumberStyles.AllowDecimalPoint
+                )
 
             let isSent = amount < 0m
 
-            Map.ofList
-                [ ("Sender", if isSent then row.Omschrijving else row.Kaartlid)
-                  ("Receiver", if isSent then row.Kaartlid else row.Omschrijving)
-                  ("Amount", string amount)
-                  ("Total", (string <| Math.Abs amount))
-                  ("Date", row.Datum)
-                  ("Description", row.Omschrijving)
-                  ("Name", row.Omschrijving) ]
+            Map.ofList [
+                ("Sender", if isSent then row.Omschrijving else row.Kaartlid)
+                ("Receiver", if isSent then row.Kaartlid else row.Omschrijving)
+                ("Amount", string amount)
+                ("Total", (string <| Math.Abs amount))
+                ("Date", row.Datum)
+                ("Description", row.Omschrijving)
+                ("Name", row.Omschrijving)
+            ]
 
         interface IConverter with
             member this.DateFormat = dateFormat
 
             member this.Read lines =
-                using (Disposables.changeCulture "nl-NL") (fun _ -> 
-                    lines |> AmexTransactions.ParseRows |> Array.map toMap
-                )
+                using
+                    (Disposables.changeCulture "nl-NL")
+                    (fun _ -> lines |> AmexTransactions.ParseRows |> Array.map toMap)
 
             member this.Map row =
                 let fromRow col = Map.find col row
 
-                { Header =
-                    Header(
-                        DateTime.ParseExact(fromRow "Date", dateFormat, CultureInfo.InvariantCulture),
-                        fromRow "Name"
-                    )
-                  Lines =
-                    [ { Account = [ fromRow "Receiver" ]
-                        Amount = ("EUR", float (fromRow "Total")) |> Some
-                        Tags = [||] }
-                      { Account = [ fromRow "Sender" ]
-                        Amount = None
-                        Tags = [||] } ]
-                  Comments = [ fromRow "Description" ] }
+                {
+                    Header =
+                        Header(
+                            DateTime.ParseExact(
+                                fromRow "Date",
+                                dateFormat,
+                                CultureInfo.InvariantCulture
+                            ),
+                            fromRow "Name"
+                        )
+                    Lines = [
+                        {
+                            Account = [ fromRow "Receiver" ]
+                            Amount = ("EUR", float(fromRow "Total")) |> Some
+                            Tags = [||]
+                        }
+                        {
+                            Account = [ fromRow "Sender" ]
+                            Amount = None
+                            Tags = [||]
+                        }
+                    ]
+                    Comments = [ fromRow "Description" ]
+                }

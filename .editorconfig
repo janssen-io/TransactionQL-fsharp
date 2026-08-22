@@ -1,6 +1,34 @@
 # Remove the line below if you want to inherit .editorconfig settings from higher directories
 root = true
 
+# F#
+
+[*.fs]
+indent_size = 4
+fsharp_keep_max_number_of_blank_lines=1
+max_line_length = 100
+insert_final_newline = true
+fsharp_space_around_delimeter = true
+fsharp_space_before_uppercase_invocation = false
+fsharp_space_before_lowercase_invocation = false
+fsharp_space_before_member = true
+fsharp_space_before_colon = true
+fsharp_space_before_semicolon = true
+fsharp_multiline_bracket_style = stroustrup
+fsharp_newline_between_type_definition_and_members = true
+fsharp_align_function_signature_to_indentation = true
+fsharp_alternative_long_member_definitions = true
+fsharp_multi_line_lambda_closing_newline = true
+fsharp_experimental_keep_indent_in_branch = true
+fsharp_bar_before_discriminated_union_declaration = true
+fsharp_max_function_binding_width=40
+fsharp_max_if_then_else_short_width=60
+fsharp_max_infix_operator_expression=80
+fsharp_max_array_or_list_width=80
+fsharp_max_array_or_list_number_of_items=5
+fsharp_max_dot_get_expression_width=80
+fsharp_multiline_block_brackets_on_same_column=true
+
 # C# files
 [*.cs]
 
