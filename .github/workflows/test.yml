@@ -28,6 +28,9 @@ jobs:
         with:
           dotnet-version: 10.x
 
+      - name: Build
+        run: dotnet build
+
       - name: Format
         run: dotnet format --verify-no-changes --verbosity diagnostic
 
