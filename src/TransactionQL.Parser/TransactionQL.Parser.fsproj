@@ -1,9 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-  </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="Interpretation.fs" />
     <Compile Include="AST.fs" />
@@ -12,7 +8,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FParsec" Version="1.1.1" />
+    <PackageReference Include="FParsec" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="9.0.303" />
+    
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
     <AssemblyTitle>Bunq</AssemblyTitle>
   </PropertyGroup>
 
@@ -20,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="FSharp.Core" Version="9.0.303" />
+    
   </ItemGroup>
 
 </Project>

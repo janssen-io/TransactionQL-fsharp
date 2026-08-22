@@ -1,18 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
     <ItemGroup>
         <Compile Include="Disposables.fs" />
         <Compile Include="Extensions.fs" />
-        <Compile Include="Types.fs" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Update="FSharp.Core" Version="9.0.303" />
     </ItemGroup>
 
 </Project>

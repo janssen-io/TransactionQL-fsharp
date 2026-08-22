@@ -338,7 +338,7 @@ let ``Posting: multiple lines`` () =
           trx (AccountVariable "account:default", None) ]
 
     let (Interpretation(_, lines)) = generatePosting env' transactions
-    Assert.Collection(lines, 
+    Assert.Collection(lines,
         (fun l -> Assert.Equal(line(["Expenses"; "Food"], Some ("€", float 20)), l)),
         (fun l -> Assert.Equal(line(["Default"], None), l))
     )
@@ -554,5 +554,5 @@ let ``Queries: tags are added to the posting line`` () =
            Comments = _ }) =
         Option.get entry
 
-    let containsTag expectedTag ({ Tags = [|tag|] }: Line) = Assert.Equal(expectedTag, tag)
+    let containsTag expectedTag ({ Tags = tags; Account = _; Amount = _ }: Line) = Assert.Equal(expectedTag, tags.[0])
     Assert.Collection(lines, containsTag "My: FirstTag", containsTag "My: OtherTag")

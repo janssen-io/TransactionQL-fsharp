@@ -10,6 +10,7 @@ using System.Windows.Input;
 using TransactionQL.DesktopApp.Controls;
 
 namespace TransactionQL.DesktopApp.ViewModels;
+
 public class PostingViewModel
 {
     [DataMember]

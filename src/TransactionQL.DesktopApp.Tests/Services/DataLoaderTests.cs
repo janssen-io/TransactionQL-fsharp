@@ -1,12 +1,11 @@
-﻿using Moq;
-using System.Globalization;
+﻿using Microsoft.FSharp.Core;
+using Moq;
 using TransactionQL.DesktopApp.Models;
 using TransactionQL.DesktopApp.Services;
 using TransactionQL.DesktopApp.ViewModels;
 using TransactionQL.Parser;
 using TransactionQL.Shared.Disposables;
 using static TransactionQL.Input.Converters;
-using static TransactionQL.Shared.Types;
 
 namespace TransactionQL.DesktopApp.Tests.Services;
 
@@ -29,7 +28,7 @@ public class DataLoaderTests
         // Arrange
         Mock<ITransactionQLApi> api = new();
         api.Setup(a => a.ParseFilters(It.IsAny<string>()))
-            .Returns(Either<AST.Query[], string>.NewRight("My Error"));
+            .Returns(FSharpResult<AST.Query[], string>.NewError("My Error"));
 
         Mock<IStreamFiles> streamer = new();
         streamer
@@ -55,10 +54,10 @@ public class DataLoaderTests
         // Arrange
         Mock<ITransactionQLApi> api = new();
         api.Setup(a => a.ParseFilters(It.IsAny<string>()))
-            .Returns(Either<AST.Query[], string>.NewLeft([]));
+            .Returns(FSharpResult<AST.Query[], string>.NewOk([]));
 
         api.Setup(a => a.LoadReader(_data.Module, It.IsAny<string>()))
-            .Returns(Either<IConverter, string>.NewRight("My Error"));
+            .Returns(FSharpResult<IConverter, string>.NewError("My Error"));
 
         Mock<IStreamFiles> streamer = new();
         streamer

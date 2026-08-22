@@ -150,7 +150,7 @@ public class Dropzone : TemplatedControl
         }
 
         // We only care about files
-        System.Collections.Generic.IEnumerable<IStorageItem>? files = e.Data.GetFiles();
+        System.Collections.Generic.IEnumerable<IStorageItem>? files = e.DataTransfer.TryGetFiles();
         if (files == null)
         {
             return;

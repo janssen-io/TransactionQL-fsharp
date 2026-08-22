@@ -20,7 +20,7 @@ internal static class Program
             _ = BuildAvaloniaApp()
                 .StartWithClassicDesktopLifetime(args);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             // TODO: logging
             throw;

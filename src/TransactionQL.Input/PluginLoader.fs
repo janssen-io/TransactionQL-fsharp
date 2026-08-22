@@ -7,7 +7,7 @@ open System.Runtime.Loader
 
 module PluginLoader =
 
-    let load pluginName pluginDirectory =
+    let load pluginName pluginDirectory : IConverter option =
         let context = new AssemblyLoadContext("PluginLoader", true)
 
         (Path.GetFullPath pluginDirectory, pluginName)
@@ -15,4 +15,9 @@ module PluginLoader =
         |> context.LoadFromAssemblyPath
         |> fun assembly -> assembly.GetTypes()
         |> Array.tryFind (fun t -> (typeof<IConverter>).IsAssignableFrom t)
-        |> Option.map (fun t -> Activator.CreateInstance t :?> IConverter)
+        |> Option.map (fun t -> Activator.CreateInstance t :?> (IConverter|null))
+        |> Option.bind (
+            function
+            | null -> None
+            | converter -> Some converter
+            )
