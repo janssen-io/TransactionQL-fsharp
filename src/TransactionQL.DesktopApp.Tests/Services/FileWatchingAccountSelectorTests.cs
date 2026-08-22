@@ -26,7 +26,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
         _output.WriteLine(_fileName);
 
         // Arrange
-        var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
+        using var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
 
         // Assert
         Assert.Collection(watcher.AvailableAccounts,
@@ -45,7 +45,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
         _output.WriteLine(_fileName);
 
         // Arrange
-        var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
+        using var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
         ManualResetEvent waitForUpdate = new(false);
         watcher.AccountsChanged += (sender, args) => waitForUpdate.Set();
 
@@ -76,7 +76,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
         _output.WriteLine(_fileName);
 
         // Arrange
-        var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
+        using var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
         ManualResetEvent waitForUpdate = new(false);
         watcher.AccountsChanged += (sender, args) => waitForUpdate.Set();
 
@@ -122,7 +122,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
             write.Flush();
         }
 
-        var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
+        using var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
 
         ManualResetEvent waitForUpdate = new(false);
         watcher.AccountsChanged += (sender, args) => waitForUpdate.Set();
@@ -158,7 +158,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
             write.Flush();
         }
 
-        var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
+        using var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
 
         int numOfEvents = 0;
         watcher.AccountsChanged += (sender, args) => numOfEvents++;
