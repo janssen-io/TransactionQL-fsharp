@@ -11,6 +11,8 @@ using TransactionQL.DesktopApp.Tests;
 
 [assembly: AvaloniaTestApplication(typeof(TestApp))]
 
+namespace TransactionQL.DesktopApp.Tests;
+
 public static class TestApp
 {
     public static readonly AppBuilder Instance = BuildAvaloniaApp();
@@ -18,8 +20,8 @@ public static class TestApp
     public static AppBuilder BuildAvaloniaApp()
     {
         _ = IconProvider.Current
-                .Register<FontAwesomeIconProvider>()
-                .Register<MaterialDesignIconProvider>();
+            .Register<FontAwesomeIconProvider>()
+            .Register<MaterialDesignIconProvider>();
 
         return AppBuilder
             .Configure<App>()
