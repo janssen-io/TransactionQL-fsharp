@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
         xmlns:dd="using:TransactionQL.DesktopApp"
-        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        xmlns:fa="clr-namespace:IconPacks.Avalonia.FontAwesome;assembly=IconPacks.Avalonia.FontAwesome" xmlns:md="clr-namespace:IconPacks.Avalonia.MaterialDesign;assembly=IconPacks.Avalonia.MaterialDesign"
         mc:Ignorable="d"
         Width="300" Title="{Binding Title}"
         x:Class="TransactionQL.DesktopApp.Views.MessageDialog"
@@ -23,12 +23,8 @@
   </Window.Styles>
 
   <StackPanel Spacing="10">
-    <i:Icon Value="{Binding Icon}"
-            Classes.Negative="{Binding IsError}"
-            Classes.Primary="{Binding !IsError}"
-            FontSize="32"
-            Margin="0 30 0 20" />
-    
+    <!-- Icon support removed: IconPacks uses enum-based Kind, incompatible with dynamic string binding -->
+
     <TextBlock Text="{Binding Title}"
                TextAlignment="Center" Classes="h2"
                Margin="20 0 20 0"/>

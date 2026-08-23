@@ -7,7 +7,7 @@
              xmlns:dd="using:TransactionQL.DesktopApp"
              xmlns:c="using:TransactionQL.DesktopApp.Controls"
              xmlns:views="clr-namespace:TransactionQL.DesktopApp.Views"
-             xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             xmlns:fa="clr-namespace:IconPacks.Avalonia.FontAwesome;assembly=IconPacks.Avalonia.FontAwesome" xmlns:md="clr-namespace:IconPacks.Avalonia.MaterialDesign;assembly=IconPacks.Avalonia.MaterialDesign"
              mc:Ignorable="d"
              d:DesignHeight="800"
              d:DesignWidth="500"
@@ -60,10 +60,12 @@
               <TextBlock Text="{Binding Error}" />
             </StackPanel>
           </ToolTip.Tip>
-          <i:Icon Value="mdi-alert-box"
-                  Grid.Column="3" FontSize="18"
+          <md:PackIconMaterialDesign Grid.Column="3" FontSize="18"
                   Foreground="{DynamicResource Border.Base.Error}">
-          </i:Icon>
+            <md:PackIconMaterialDesign.Kind>
+              <md:PackIconMaterialDesignKind>AlertBox</md:PackIconMaterialDesignKind>
+            </md:PackIconMaterialDesign.Kind>
+          </md:PackIconMaterialDesign>
         </Border>
       </RelativePanel>
     </Border>
@@ -112,10 +114,10 @@
                 RelativePanel.AlignRightWithPanel="True"
                 RelativePanel.Below="Table"
                 Command="{Binding AddTransactionCommand}"
-                i:Attached.Icon="fa-plus"
                 HotKey="Ctrl+D"
                 IsEnabled="{Binding IsActive}"
                 Margin="0 10 20 20">
+          <fa:PackIconFontAwesome Kind="PlusSolid" />
           <ToolTip.Tip>Add Line (Ctrl+D)</ToolTip.Tip>
         </Button>
       </RelativePanel>

@@ -6,7 +6,7 @@
         xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
         xmlns:models="using:TransactionQL.DesktopApp.Models"
         xmlns:dd="using:TransactionQL.DesktopApp"
-        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        xmlns:fa="clr-namespace:IconPacks.Avalonia.FontAwesome;assembly=IconPacks.Avalonia.FontAwesome" xmlns:md="clr-namespace:IconPacks.Avalonia.MaterialDesign;assembly=IconPacks.Avalonia.MaterialDesign"
         mc:Ignorable="d" Width="300" Height="450"
         x:Class="TransactionQL.DesktopApp.DataWizardWindow"
         Title="Ledger Leo - Data Selection"
@@ -43,10 +43,12 @@
       <Border Name="Dragbar" Height="20" Cursor="SizeAll" Background="{Binding Background, RelativeSource={RelativeSource AncestorType=DockPanel}}"
               PointerMoved="Dragbar_OnPointerMoved" PointerPressed="Dragbar_OnPointerPressed" PointerReleased="Dragbar_OnPointerReleased"
                 />
-      <Button Grid.Column="1" i:Attached.Icon="fa-solid fa-x"
+      <Button Grid.Column="1"
               Background="Transparent" RelativePanel.AlignRightWithPanel="True"
               FontSize="8" Foreground="{DynamicResource FG.Soft.Neutral}"
-              Click="Close" />
+              Click="Close">
+        <fa:PackIconFontAwesome Kind="XmarkSolid" />
+      </Button>
     </Grid>
     <Border Padding="20 5 20 20">
       <DockPanel>

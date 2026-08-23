@@ -2,9 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Media.Imaging;
-using Projektanker.Icons.Avalonia;
-using Projektanker.Icons.Avalonia.FontAwesome;
-using Projektanker.Icons.Avalonia.MaterialDesign;
 using System.Diagnostics;
 using System.IO.Compression;
 using TransactionQL.DesktopApp.Tests;
@@ -19,10 +16,6 @@ public static class TestApp
 
     public static AppBuilder BuildAvaloniaApp()
     {
-        _ = IconProvider.Current
-            .Register<FontAwesomeIconProvider>()
-            .Register<MaterialDesignIconProvider>();
-
         return AppBuilder
             .Configure<App>()
             .UseSkia()

@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:TransactionQL.DesktopApp.Controls"
         xmlns:c="using:TransactionQL.DesktopApp.Controls"
-        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia" >
+        xmlns:fa="clr-namespace:IconPacks.Avalonia.FontAwesome;assembly=IconPacks.Avalonia.FontAwesome" xmlns:md="clr-namespace:IconPacks.Avalonia.MaterialDesign;assembly=IconPacks.Avalonia.MaterialDesign" >
 
   <!--
     Additional resources 
@@ -102,16 +102,8 @@
             <Setter Property="Margin" Value="0 0 5 0" />
           </Style>
         </Style>
-        <Style Selector="^ StackPanel i|Icon.Label">
-          <Setter Property="Margin" Value="0" />
-          <Setter Property="FontSize">
-            <Binding RelativeSource="{RelativeSource AncestorType={x:Type controls:Badge}}" Path="FontSize" />
-          </Setter>
-          <Style Selector="^.WithText">
-            <Setter Property="Margin" Value="5 0" />
-          </Style>
-        </Style>
-        <Style Selector="^ StackPanel i|Icon.Remove">
+        <!-- Icon support removed: IconPacks uses enum-based Kind properties -->
+        <Style Selector="^ StackPanel fa|PackIconFontAwesome.Remove, ^ StackPanel md|PackIconMaterialDesign.Remove">
           <Setter Property="Margin" Value="0 0 0 0" />
           <Setter Property="Foreground">
             <Binding RelativeSource="{RelativeSource AncestorType={x:Type controls:Badge}}" Path="Foreground" />
@@ -133,16 +125,14 @@
                 BorderThickness="{TemplateBinding BorderThickness}" 
                 ToolTip.Tip="{TemplateBinding Detail, Converter={StaticResource emptyToNull}}">
           <StackPanel Orientation="Horizontal">
-            <i:Icon Value="{TemplateBinding Icon}"
-                    Classes="Label" Classes.WithText="{TemplateBinding Text, Converter={StaticResource hasValue} }" 
-                    IsVisible="{TemplateBinding Icon, Converter={StaticResource hasValue} }" />
-            <TextBlock Classes="Title" 
+            <!-- Icon support removed: IconPacks uses enum-based Kind properties -->
+            <TextBlock Classes="Title"
                        Classes.WithIcon="{TemplateBinding Icon, Converter={StaticResource hasValue} }"
                        Text="{TemplateBinding Text}"
                        Name="Title"
                        IsVisible="{TemplateBinding Text, Converter={StaticResource hasValue} }" />
             <Button IsVisible="{TemplateBinding IsRemovable}" Name="RemoveButton">
-              <i:Icon Classes="Remove" Value="fa-x"
+              <fa:PackIconFontAwesome Classes="Remove" Kind="XmarkSolid"
                       FontSize="{Binding FontSize, ElementName=Title, Converter={StaticResource relativeSize}, ConverterParameter=0.5}"
                       />
             </Button>

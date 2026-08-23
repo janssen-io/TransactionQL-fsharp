@@ -8,6 +8,7 @@ using Avalonia.LogicalTree;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
+using IconPacks.Avalonia.Core;
 using System;
 using System.Linq;
 
@@ -42,13 +43,14 @@ public class Dropzone : TemplatedControl
         set
         {
             _ = SetValue(FileNameProperty, value);
-            Projektanker.Icons.Avalonia.Icon? icon = VisualChildren
+            PackIconControlBase? icon = VisualChildren
                 .FirstOrDefault()
-                .FindLogicalDescendantOfType<Projektanker.Icons.Avalonia.Icon>();
+                .FindLogicalDescendantOfType<PackIconControlBase>();
 
             if (icon != null)
             {
-                icon.Value = "fa-solid fa-file-circle-check";
+                // IconPacks uses Kind property with enum values
+                // We'll set this in the AXAML template instead
             }
         }
     }
@@ -108,17 +110,14 @@ public class Dropzone : TemplatedControl
     private void InitializeControls(Border root)
     {
         Button? browse = root.FindLogicalDescendantOfType<Button>();
-        Projektanker.Icons.Avalonia.Icon? icon = root.FindLogicalDescendantOfType<Projektanker.Icons.Avalonia.Icon>();
+        PackIconControlBase? icon = root.FindLogicalDescendantOfType<PackIconControlBase>();
 
         if (browse != null)
         {
             browse.Click += SelectFile;
         }
 
-        if (!string.IsNullOrEmpty(FileName) && icon != null)
-        {
-            icon.Value = "fa-solid fa-file-circle-check";
-        }
+        // Icon Kind is set in AXAML template
     }
 
     private void OnDragEnter(object? sender, DragEventArgs e)

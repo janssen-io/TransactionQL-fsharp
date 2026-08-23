@@ -34,9 +34,8 @@
     <PackageReference Include="FSharp.Core" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="Projektanker.Icons.Avalonia" />
-    <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" />
-    <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" />
+    <PackageReference Include="IconPacks.Avalonia.FontAwesome" />
+    <PackageReference Include="IconPacks.Avalonia.MaterialDesign" />
     <PackageReference Include="System.Reactive" />
   </ItemGroup>
 

@@ -6,7 +6,7 @@
         xmlns:dd="using:TransactionQL.DesktopApp"
         xmlns:c="using:TransactionQL.DesktopApp.Controls"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        xmlns:fa="clr-namespace:IconPacks.Avalonia.FontAwesome;assembly=IconPacks.Avalonia.FontAwesome" xmlns:md="clr-namespace:IconPacks.Avalonia.MaterialDesign;assembly=IconPacks.Avalonia.MaterialDesign"
         mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="550"
         Width="1000"
         x:Class="TransactionQL.DesktopApp.Views.MainWindow"
@@ -28,15 +28,17 @@
                 <Image Height="16" Width="16" Source="/Assets/lion.png"/>
                 <ToolTip.Tip>About Ledger Leo</ToolTip.Tip>
               </Button>
-              <Button Click="Open" HotKey="Ctrl+O" Classes="IconAction" i:Attached.Icon="fa-regular fa-folder-open">
+              <Button Click="Open" HotKey="Ctrl+O" Classes="IconAction">
+                <fa:PackIconFontAwesome Kind="FolderOpenRegular" />
                 <ToolTip.Tip>Open Bank Transactions (Ctrl+O)</ToolTip.Tip>
               </Button>
-              <Button Command="{Binding SaveStateCommand}" Classes="IconAction" HotKey="Ctrl+S"
-                      i:Attached.Icon="fa-regular fa-floppy-disk">
+              <Button Command="{Binding SaveStateCommand}" Classes="IconAction" HotKey="Ctrl+S">
+                <fa:PackIconFontAwesome Kind="FloppyDiskRegular" />
                 <ToolTip.Tip>Save Progress (Ctrl+S)</ToolTip.Tip>
               </Button>
               <Button Command="{Binding SaveCommand}" Classes="IconAction" HotKey="Ctrl+Alt+S"
-                      IsEnabled="{Binding IsDone}" i:Attached.Icon="fa-solid fa-file-export">
+                      IsEnabled="{Binding IsDone}">
+                <fa:PackIconFontAwesome Kind="FileExportSolid" />
                 <ToolTip.Tip>Export to Ledger (Ctrl+Alt+S)</ToolTip.Tip>
               </Button>
             </StackPanel>
@@ -51,10 +53,12 @@
                 <TextBlock Text="/" />
                 <TextBlock Text="{Binding BankTransactions.Count}" />
               </StackPanel>
-              <Button Classes="Hidden" Name="CarouselPrevious" HotKey="Ctrl+Q" i:Attached.Icon="fa-angle-left">
+              <Button Classes="Hidden" Name="CarouselPrevious" HotKey="Ctrl+Q">
+                <fa:PackIconFontAwesome Kind="AngleLeftSolid" />
                 <ToolTip.Tip>Previous (Ctrl+Q)</ToolTip.Tip>
               </Button>
-              <Button Classes="Hidden" Name="CarouselNext" HotKey="Ctrl+E" i:Attached.Icon="fa-angle-right">
+              <Button Classes="Hidden" Name="CarouselNext" HotKey="Ctrl+E">
+                <fa:PackIconFontAwesome Kind="AngleRightSolid" />
                 <ToolTip.Tip>Next (Ctrl+E)</ToolTip.Tip>
               </Button>
             </StackPanel>

@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:TransactionQL.DesktopApp.Controls"
-        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia">
+        xmlns:fa="clr-namespace:IconPacks.Avalonia.FontAwesome;assembly=IconPacks.Avalonia.FontAwesome" xmlns:md="clr-namespace:IconPacks.Avalonia.MaterialDesign;assembly=IconPacks.Avalonia.MaterialDesign">
 
   <!--
     Additional resources 
@@ -39,7 +39,7 @@
             <Style Selector="Border.Active">
               <Setter Property="Background" Value="{Binding ActiveBackground, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type controls:StepIndicator}}}" />
             </Style>
-            <Style Selector="i|Icon">
+            <Style Selector="fa|PackIconFontAwesome, md|PackIconMaterialDesign">
               <Setter Property="FontSize" Value="10" />
               <Setter Property="VerticalAlignment" Value="Center" />
               <Setter Property="HorizontalAlignment" Value="Center" />
@@ -106,7 +106,7 @@
                               Grid.Column="1">
                         <UniformGrid>
                           <TextBlock Text="{Binding Name}" IsVisible="{Binding !IsCompleted}" />
-                          <i:Icon Value="fa-solid fa-check" IsVisible="{Binding IsCompleted}" />
+                          <fa:PackIconFontAwesome Kind="CheckSolid" IsVisible="{Binding IsCompleted}" />
                         </UniformGrid>
                       </Border>
                     </StackPanel>

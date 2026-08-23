@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="using:TransactionQL.DesktopApp.Controls"
-        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia" >
+        xmlns:fa="clr-namespace:IconPacks.Avalonia.FontAwesome;assembly=IconPacks.Avalonia.FontAwesome" xmlns:md="clr-namespace:IconPacks.Avalonia.MaterialDesign;assembly=IconPacks.Avalonia.MaterialDesign" >
 
   <!--
     Additional resources 
@@ -57,7 +57,7 @@
           BorderBrush="{DynamicResource BackgroundBrush}"
           DragDrop.AllowDrop="True" >
           <StackPanel Orientation="Vertical" Spacing="20" DragDrop.AllowDrop="True">
-            <i:Icon Value="fa-solid fa-file-import" FontSize="32" Foreground="{TemplateBinding IconForeground}"/>
+            <fa:PackIconFontAwesome Kind="FileImportSolid" FontSize="32" Foreground="{TemplateBinding IconForeground}"/>
             <TextBlock Name="FileName"
                        Text="{TemplateBinding FileName, Converter={StaticResource filePathConverter}}"
                        FontSize="10"

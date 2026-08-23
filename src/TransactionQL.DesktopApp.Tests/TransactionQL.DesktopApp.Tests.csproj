@@ -11,6 +11,8 @@
     <PackageReference Include="Avalonia.Headless.XUnit" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="FSharp.Core" />
+    <PackageReference Include="IconPacks.Avalonia.FontAwesome" />
+    <PackageReference Include="IconPacks.Avalonia.MaterialDesign" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Moq" />
     <PackageReference Include="xunit.v3" />

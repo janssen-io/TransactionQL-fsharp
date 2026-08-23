@@ -1,7 +1,7 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:app="using:TransactionQL.DesktopApp.Application"
         xmlns:c="using:TransactionQL.DesktopApp.Controls"
-        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        xmlns:fa="clr-namespace:IconPacks.Avalonia.FontAwesome;assembly=IconPacks.Avalonia.FontAwesome" xmlns:md="clr-namespace:IconPacks.Avalonia.MaterialDesign;assembly=IconPacks.Avalonia.MaterialDesign"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Design.PreviewWith>
     <StackPanel Orientation="Horizontal">
@@ -90,11 +90,11 @@
     <Setter Property="Foreground" Value="{DynamicResource FG.Base.Primary}" />
   </Style>
 
-  <Style Selector="i|Icon.Primary">
+  <Style Selector="fa|PackIconFontAwesome.Primary, md|PackIconMaterialDesign.Primary">
     <Setter Property="Foreground" Value="{DynamicResource FG.Base.Primary}" />
   </Style>
 
-  <Style Selector="i|Icon.Negative">
+  <Style Selector="fa|PackIconFontAwesome.Negative, md|PackIconMaterialDesign.Negative">
     <Setter Property="Foreground" Value="{DynamicResource FG.Base.Error}" />
   </Style>
 

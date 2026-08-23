@@ -5,7 +5,7 @@
         xmlns:vm="using:TransactionQL.DesktopApp.ViewModels"
         xmlns:controls="using:TransactionQL.DesktopApp.Controls"
         xmlns:app="using:TransactionQL.DesktopApp"
-        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        xmlns:fa="clr-namespace:IconPacks.Avalonia.FontAwesome;assembly=IconPacks.Avalonia.FontAwesome" xmlns:md="clr-namespace:IconPacks.Avalonia.MaterialDesign;assembly=IconPacks.Avalonia.MaterialDesign"
         mc:Ignorable="d" Width="420" Height="520"
         x:Class="TransactionQL.DesktopApp.AboutWindow"
         Title="About Ledger Leo"
@@ -32,10 +32,10 @@
         </Style>
       </Style>
 
-      <Style Selector="^ TextBlock.SectionHeader">
+      <Style Selector="^ StackPanel.SectionHeader">
         <Setter Property="Margin" Value="10 0" />
 
-        <Style Selector="^ i|Icon">
+        <Style Selector="^ fa|PackIconFontAwesome, ^ md|PackIconMaterialDesign">
           <Setter Property="Foreground" Value="{DynamicResource FG.Elevated.Neutral}" />
         </Style>
         <Style Selector="^ Image">
@@ -48,10 +48,12 @@
   <DockPanel>
     <DockPanel Margin="10 5 0 5" DockPanel.Dock="Top">
       <TextBlock Text="About Ledger Leo" HorizontalAlignment="Left" />
-      <Button Grid.Column="1" i:Attached.Icon="fa-solid fa-x"
+      <Button Grid.Column="1"
               Background="Transparent" RelativePanel.AlignRightWithPanel="True"
               FontSize="8" Foreground="{DynamicResource FG.Soft.Neutral}"
-              Click="Close" HorizontalAlignment="Right" />
+              Click="Close" HorizontalAlignment="Right">
+        <fa:PackIconFontAwesome Kind="XmarkSolid" />
+      </Button>
     </DockPanel>
     <ScrollViewer>
       <StackPanel Orientation="Vertical" Spacing="10">
@@ -69,9 +71,10 @@
 
             <controls:TitledBorder Title="GitHub" Foreground="{DynamicResource FG.Soft.Neutral}" BorderBrush="{Binding $self.Foreground}">
               <HyperlinkButton NavigateUri="https://github.com/janssen-io/TransactionQL-fsharp">
-                <TextBlock>
-                  <i:Icon Value="fa-brands fa-github" /> janssen-io/TransactionQL-fsharp
-                </TextBlock>
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                  <fa:PackIconFontAwesome Kind="GithubBrands" />
+                  <TextBlock>janssen-io/TransactionQL-fsharp</TextBlock>
+                </StackPanel>
               </HyperlinkButton>
             </controls:TitledBorder>
           </StackPanel>
@@ -79,9 +82,10 @@
 
         <Expander HorizontalAlignment="Stretch" IsExpanded="True">
           <Expander.Header>
-            <TextBlock Classes="SectionHeader">
-              <i:Icon Value="fa-solid fa-wrench" /> Advanced Settings
-            </TextBlock>
+            <StackPanel Orientation="Horizontal" Spacing="5" Classes="SectionHeader">
+              <fa:PackIconFontAwesome Kind="WrenchSolid" />
+              <TextBlock>Advanced Settings</TextBlock>
+            </StackPanel>
           </Expander.Header>
           <StackPanel Orientation="Vertical">
             <controls:TitledBorder Title="TransactionQL Binary Location">

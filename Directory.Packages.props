@@ -25,9 +25,8 @@
     <PackageVersion Include="Moq" Version="4.20.72" />
     <PackageVersion Include="MSBuild.StructuredLogger" Version="2.3.246" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageVersion Include="Projektanker.Icons.Avalonia" Version="9.6.2" />
-    <PackageVersion Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.6.2" />
-    <PackageVersion Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="9.6.2" />
+    <PackageVersion Include="IconPacks.Avalonia.FontAwesome" Version="2.0.0" />
+    <PackageVersion Include="IconPacks.Avalonia.MaterialDesign" Version="2.0.0" />
     <PackageVersion Include="System.Reactive" Version="5.0.0" />
     <PackageVersion Include="xunit.v3" Version="3.2.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
