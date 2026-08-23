@@ -6,9 +6,9 @@ open System
 open TransactionQL.Parser.AST
 open TransactionQL.Parser
 
-let test<'T> parser txt (expected : 'T) =
+let test<'T> (parser : Parser<'T, unit>) txt (expected : 'T) =
     match run parser txt with
-    | Success(actual, _, _) -> Assert.Equal(expected, actual)
+    | Success(actual, _, _) -> Assert.Equal<'T>(expected, actual)
     | Failure(msg, _, _) -> Assert.True(false, msg)
 
 let trx (accounts, amount) = {
@@ -22,7 +22,7 @@ let parseEquals<'T> (parser : Parser<'T, unit>) a b =
     let parsedB = run parser b
 
     match (parsedA, parsedB) with
-    | Success(a', _, _), Success(b', _, _) -> Assert.Equal(a', b')
+    | Success(a', _, _), Success(b', _, _) -> Assert.Equal<'T>(a', b')
     | Success(_, _, _), Failure(msg, _, _) -> Assert.True(false, msg)
     | Failure(msg, _, _), Success(_, _, _) -> Assert.True(false, msg)
     | Failure(msgA, _, _), Failure(msgB, _, _) ->
