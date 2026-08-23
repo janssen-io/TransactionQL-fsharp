@@ -13,7 +13,7 @@
         x:DataType="vm:NewTagPromptViewModel"
         SizeToContent="Height"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="NoChrome"
+        WindowDecorations="None"
         Name="Prompt"
         >
   <Window.Styles>

@@ -11,7 +11,7 @@
         x:Class="TransactionQL.DesktopApp.DataWizardWindow"
         Title="Ledger Leo - Data Selection"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="NoChrome"
+        WindowDecorations="None"
         d:DataContext="{x:Static dd:DesignData.DataWizard}"
         x:DataType="vm:SelectDataWindowViewModel"
         Name="DataWizard" CanResize="False">

@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using DynamicData;
 using ReactiveUI;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -34,7 +33,7 @@ public class PostingViewModel
     public PostingViewModel()
     {
         RemoveTagCommand = ReactiveCommand.Create(
-            (Badge e) => Tags.RemoveMany(Tags.Where(t => t.Equals(e.DataContext))));
+            (Badge e) => Tags.RemoveWhere(t => t.Equals(e.DataContext)));
         AddTagCommand = ReactiveCommand.Create(CreateTag);
     }
 
@@ -79,7 +78,7 @@ public class PostingViewModel
     }
 }
 
-public struct Tag
+public record struct Tag
 {
     [DataMember] public required string Key { get; set; }
     [DataMember] public string? Value { get; set => field = value?.Trim(); }

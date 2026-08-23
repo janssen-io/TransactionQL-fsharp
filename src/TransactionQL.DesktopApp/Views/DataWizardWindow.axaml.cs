@@ -12,9 +12,6 @@ public partial class DataWizardWindow : Window
     public DataWizardWindow()
     {
         InitializeComponent();
-#if DEBUG
-        this.AttachDevTools();
-#endif
 
         KeyDown += HandleKeyDown;
     }

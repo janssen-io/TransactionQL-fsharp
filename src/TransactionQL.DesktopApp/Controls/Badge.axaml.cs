@@ -2,7 +2,9 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
+using Microsoft.FSharp.Core;
 using ReactiveUI;
+using ReactiveUI.Primitives;
 using System.Reactive;
 
 namespace TransactionQL.DesktopApp.Controls;
@@ -45,10 +47,10 @@ public class Badge : Button
         set => SetValue(IsRemovableProperty, value);
     }
 
-    public static readonly StyledProperty<IReactiveCommand<Badge, Unit>> RemoveCommandProperty =
-    AvaloniaProperty.Register<Badge, IReactiveCommand<Badge, Unit>>(nameof(RemoveCommand));
+    public static readonly StyledProperty<IReactiveCommand<Badge, RxVoid>> RemoveCommandProperty =
+    AvaloniaProperty.Register<Badge, IReactiveCommand<Badge, RxVoid>>(nameof(RemoveCommand));
 
-    public IReactiveCommand<Badge, Unit> RemoveCommand
+    public IReactiveCommand<Badge, RxVoid> RemoveCommand
     {
         get => GetValue(RemoveCommandProperty);
         set => SetValue(RemoveCommandProperty, value);
@@ -65,5 +67,5 @@ public class Badge : Button
     }
 
     private void Remove_PointerPressed(object? sender, RoutedEventArgs e)
-        => this.RemoveCommand.Execute(this).Subscribe(Observer.Create<Unit>(_ => { }));
+        => this.RemoveCommand.Execute(this).Subscribe(Observer.Create<RxVoid>(_ => { }));
 }

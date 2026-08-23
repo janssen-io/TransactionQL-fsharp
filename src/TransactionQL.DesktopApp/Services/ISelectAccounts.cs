@@ -1,5 +1,4 @@
 ﻿using Avalonia.Threading;
-using DynamicData;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -134,7 +133,10 @@ public sealed class FilewatchingAccountSelector : ISelectAccounts, IDisposable
         _dispatcher?.Invoke(() =>
         {
             AvailableAccounts.Clear();
-            AvailableAccounts.AddRange(ReadAccounts(_path).Result);
+
+            foreach (string account in ReadAccounts(_path).Result)
+                AvailableAccounts.Add(account);
+
             AccountsChanged?.Invoke(this, new());
         });
     }

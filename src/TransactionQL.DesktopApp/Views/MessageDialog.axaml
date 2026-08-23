@@ -11,7 +11,7 @@
         DataContext="{x:Static dd:DesignData.Popup}"
         SizeToContent="Height"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="NoChrome"
+        WindowDecorations="None"
         Name="Dialog"
         x:DataType="vm:MessageDialogViewModel"
         WindowStartupLocation="CenterOwner">

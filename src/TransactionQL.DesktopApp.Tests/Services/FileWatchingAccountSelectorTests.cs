@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 using System.Text;
 using TransactionQL.DesktopApp.Services;
-using Xunit.Abstractions;
 
 namespace TransactionQL.DesktopApp.Tests.Services;
 
@@ -53,7 +52,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
         using StreamWriter write = new(new FileStream(_fileName, FileMode.Append), Encoding.Default, 4 * 1024 * 1024);
         await write.WriteLineAsync("");
         await write.WriteLineAsync("account Income:Test");
-        await write.FlushAsync();
+        await write.FlushAsync(TestContext.Current.CancellationToken);
         write.Close();
 
         waitForUpdate.WaitOne(FilewatchingAccountSelector.DebounceMillis + 50);
@@ -84,7 +83,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
         string[] contents;
         using (StreamReader read = new(new FileStream(_fileName, FileMode.Open)))
         {
-            contents = (await read.ReadToEndAsync())
+            contents = (await read.ReadToEndAsync(TestContext.Current.CancellationToken))
                 .Split("\n", StringSplitOptions.TrimEntries);
         }
 
@@ -94,7 +93,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
             if (!line.StartsWith("account Expenses:Recreation"))
                 await write.WriteLineAsync(line);
         }
-        await write.FlushAsync();
+        await write.FlushAsync(TestContext.Current.CancellationToken);
         write.Close();
 
         var isUpdated = waitForUpdate.WaitOne(FilewatchingAccountSelector.DebounceMillis + 50);
@@ -121,7 +120,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
         {
             await write.WriteLineAsync("account Test:Account:One");
             await write.WriteLineAsync("account Test:Account:Two");
-            await write.FlushAsync();
+            await write.FlushAsync(TestContext.Current.CancellationToken);
         }
 
         using var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
@@ -157,7 +156,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
         {
             await write.WriteLineAsync("account Test:Account:One");
             await write.WriteLineAsync("account Test:Account:Two");
-            await write.FlushAsync();
+            await write.FlushAsync(TestContext.Current.CancellationToken);
         }
 
         using var watcher = await FilewatchingAccountSelector.Monitor(_fileName, DummyDispatch);
@@ -173,7 +172,7 @@ public class FileWatchingAccountSelectorTests : IDisposable
 
         // By testing, we saw that the above operation trigger about 12 events.
         // So by waiting for 20x the debounce time, we should be able to see if it triggered multiple times.
-        await Task.Delay(20 * FilewatchingAccountSelector.DebounceMillis + 1000);
+        await Task.Delay(20 * FilewatchingAccountSelector.DebounceMillis + 1000, TestContext.Current.CancellationToken);
 
         // Assert
         Assert.Equal(1, numOfEvents);

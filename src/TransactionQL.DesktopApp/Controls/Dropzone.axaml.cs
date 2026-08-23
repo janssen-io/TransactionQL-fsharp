@@ -98,7 +98,7 @@ public class Dropzone : TemplatedControl
         AddHandler(DragDrop.DragEnterEvent, OnDragEnter);
         AddHandler(DragDrop.DragLeaveEvent, OnDragLeave);
 
-        _area = this.GetTemplateChildren().First() as Border;
+        _area = this.GetTemplateDescendants().First() as Border;
         if (_area != null)
         {
             InitializeControls(_area);

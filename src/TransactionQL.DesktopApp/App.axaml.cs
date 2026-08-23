@@ -1,28 +1,32 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using ReactiveUI;
+using ReactiveUI.Primitives.Signals;
 using System;
 using System.Globalization;
 using System.Reactive.Disposables;
-using System.Reactive.Subjects;
 using System.Threading;
 using TransactionQL.DesktopApp.Application;
 using TransactionQL.DesktopApp.ViewModels;
 using TransactionQL.DesktopApp.Views;
-using TransactionQL.Shared.Disposables;
 
 namespace TransactionQL.DesktopApp;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Major Code Smell", "S3881:\"IDisposable\" should be implemented correctly", Justification = "Framework/template code")]
 public partial class App : Avalonia.Application, IDisposable
 {
-    private readonly Subject<IDisposable> _shouldPersistState = new();
+    private readonly Signal<IDisposable> _shouldPersistState = new();
 
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+
+#if DEBUG
+        this.AttachDeveloperTools();
+#endif
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -40,7 +44,7 @@ public partial class App : Avalonia.Application, IDisposable
             CustomSuspensionHelper suspensionHelper = new(_shouldPersistState, ApplicationLifetime);
 
             // Load the state and start the app
-            MainWindowViewModel state = RxApp.SuspensionHost.GetAppState<MainWindowViewModel>();
+            MainWindowViewModel state = RxSuspension.SuspensionHost.GetAppState<MainWindowViewModel>();
 
             desktop.MainWindow = new MainWindow { DataContext = state };
             state.StateSaved += OnStateSaved;

@@ -1,5 +1,4 @@
 ﻿using Avalonia.Threading;
-using DynamicData;
 using Newtonsoft.Json;
 using ReactiveUI;
 using System;
@@ -155,7 +154,9 @@ public class MainWindowViewModel : ViewModelBase
         NumberOfValidTransactions = payments.Aggregate(0, (count, p) => p.IsValid(out string _) ? count + 1 : count);
 
         BankTransactions.Clear();
-        BankTransactions.AddRange(payments);
+
+        foreach (PaymentDetailsViewModel p in payments)
+            BankTransactions.Add(p);
 
         // If parsing was successful, only then save previously selected data.
         // If it's bogus, we probably don't want to remember it.

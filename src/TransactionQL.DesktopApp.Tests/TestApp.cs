@@ -1,10 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Headless;
+using Avalonia.Media.Imaging;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
 using Projektanker.Icons.Avalonia.MaterialDesign;
 using System.Diagnostics;
+using System.IO.Compression;
 using TransactionQL.DesktopApp.Tests;
 
 [assembly: AvaloniaTestApplication(typeof(TestApp))]
@@ -36,7 +38,10 @@ public static class TestApp
         }
 
         var frame = w.CaptureRenderedFrame();
-        frame!.Save(fileName);
+        frame!.Save(fileName, new PngBitmapEncoderOptions()
+        {
+            CompressionLevel = CompressionLevel.Fastest,
+        });
 
         if (shouldShow)
         {

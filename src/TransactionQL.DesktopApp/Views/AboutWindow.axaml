@@ -10,7 +10,7 @@
         x:Class="TransactionQL.DesktopApp.AboutWindow"
         Title="About Ledger Leo"
         x:DataType="vm:AboutViewModel"
-        ExtendClientAreaChromeHints="NoChrome"
+        WindowDecorations="None"
         ExtendClientAreaToDecorationsHint="True"
         DataContext="{x:Static app:DesignData.About}">
   <Window.Styles>

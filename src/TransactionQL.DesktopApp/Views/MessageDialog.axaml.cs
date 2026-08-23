@@ -10,9 +10,6 @@ public partial class MessageDialog : Window
     public MessageDialog()
     {
         InitializeComponent();
-#if DEBUG
-        this.AttachDevTools();
-#endif
     }
 
     private void InitializeComponent()

@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using DynamicData;
 using Newtonsoft.Json;
 using ReactiveUI;
 using System;
@@ -207,6 +206,6 @@ public class PaymentDetailsViewModel : ViewModelBase
         return !HasError;
     }
 
-    private void RemoveEmptyPostings()
-        => Postings.RemoveMany(Postings.Where(p => string.IsNullOrEmpty(p.Account)));
+    private void RemoveEmptyPostings() =>
+        Postings.RemoveWhere(p => string.IsNullOrEmpty(p.Account));
 }
